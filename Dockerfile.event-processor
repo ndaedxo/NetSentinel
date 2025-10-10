@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+RUN pip install --no-cache-dir kafka-python redis prometheus-client flask
+
+# Set working directory
+WORKDIR /app
+
+# Copy event processor
+COPY opencanary/event_processor.py ./event_processor.py
+
+# Expose port
+EXPOSE 8082
+
+# Run the event processor
+CMD ["python", "event_processor.py"]
