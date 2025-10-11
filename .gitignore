@@ -231,11 +231,13 @@ helm/*/charts/
 .tmp/
 .backup/
 
-# Old test locations (NetSentinel tests moved to netsentinel/tests/)
-tests/unit/
-tests/integration/
+# Old NetSentinel test locations (moved to netsentinel/tests/)
+# Only ignore specific NetSentinel test files, keep anomalib tests
+tests/unit/test_*.py
+tests/integration/test_*.py
 tests/conftest.py
 tests/README.md
+tests/helpers/
 
 # Node.js and npm (if any frontend tools are used)
 node_modules/
