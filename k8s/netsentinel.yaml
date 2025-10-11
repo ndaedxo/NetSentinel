@@ -1,0 +1,127 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netsentinel-config
+  namespace: netsentinel
+data:
+  opencanary.conf: |
+    {
+      "device.node_id": "netsentinel-honeypot",
+      "ftp.enabled": true,
+      "ftp.port": 21,
+      "ssh.enabled": true,
+      "ssh.port": 22,
+      "telnet.enabled": true,
+      "telnet.port": 23,
+      "http.enabled": true,
+      "http.port": 80,
+      "https.enabled": true,
+      "https.port": 443,
+      "mysql.enabled": true,
+      "mysql.port": 3307,
+      "logger.kafka.enabled": true,
+      "logger.kafka.hosts": "kafka:29092",
+      "logger.kafka.topic": "netsentinel-events",
+      "logger.redis.enabled": true,
+      "logger.redis.host": "valkey",
+      "logger.redis.port": 6379,
+      "logger.redis.password": "hybrid-detection-2024"
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netsentinel-honeypot
+  namespace: netsentinel
+  labels:
+    app: netsentinel-honeypot
+    component: honeypot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netsentinel-honeypot
+  template:
+    metadata:
+      labels:
+        app: netsentinel-honeypot
+    spec:
+      containers:
+      - name: netsentinel
+        image: netsentinel-honeypot:latest
+        ports:
+        - containerPort: 21
+          name: ftp
+        - containerPort: 22
+          name: ssh
+        - containerPort: 23
+          name: telnet
+        - containerPort: 80
+          name: http
+        - containerPort: 443
+          name: https
+        - containerPort: 3307
+          name: mysql
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["NET_ADMIN", "NET_RAW"]
+        volumeMounts:
+        - name: config
+          mountPath: /root/.opencanary.conf
+          subPath: opencanary.conf
+        - name: logs
+          mountPath: /var/log/opencanary
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka:29092"
+        - name: VALKEY_HOST
+          value: "valkey"
+        - name: VALKEY_PORT
+          value: "6379"
+        - name: VALKEY_PASSWORD
+          value: "hybrid-detection-2024"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 30
+      volumes:
+      - name: config
+        configMap:
+          name: netsentinel-config
+      - name: logs
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netsentinel-honeypot
+  namespace: netsentinel
+  labels:
+    app: netsentinel-honeypot
+spec:
+  type: ClusterIP
+  ports:
+  - port: 21
+    targetPort: 21
+    name: ftp
+  - port: 22
+    targetPort: 22
+    name: ssh
+  - port: 23
+    targetPort: 23
+    name: telnet
+  - port: 80
+    targetPort: 80
+    name: http
+  - port: 443
+    targetPort: 443
+    name: https
+  - port: 3307
+    targetPort: 3307
+    name: mysql
+  selector:
+    app: netsentinel-honeypot

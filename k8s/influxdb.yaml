@@ -1,0 +1,79 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: influxdb-pvc
+  namespace: netsentinel
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb
+  namespace: netsentinel
+  labels:
+    app: influxdb
+    component: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb
+  template:
+    metadata:
+      labels:
+        app: influxdb
+    spec:
+      containers:
+      - name: influxdb
+        image: influxdb:2.7
+        ports:
+        - containerPort: 8086
+          name: api
+        env:
+        - name: DOCKER_INFLUXDB_INIT_MODE
+          value: "setup"
+        - name: DOCKER_INFLUXDB_INIT_USERNAME
+          value: "admin"
+        - name: DOCKER_INFLUXDB_INIT_PASSWORD
+          value: "netsentinel2024!"
+        - name: DOCKER_INFLUXDB_INIT_ORG
+          value: "netsentinel"
+        - name: DOCKER_INFLUXDB_INIT_BUCKET
+          value: "netsentinel-metrics"
+        - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+          value: "netsentinel-token-2024"
+        volumeMounts:
+        - name: influxdb-data
+          mountPath: /var/lib/influxdb2
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8086
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+      volumes:
+      - name: influxdb-data
+        persistentVolumeClaim:
+          claimName: influxdb-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb
+  namespace: netsentinel
+  labels:
+    app: influxdb
+spec:
+  ports:
+  - port: 8086
+    targetPort: 8086
+    name: api
+  selector:
+    app: influxdb

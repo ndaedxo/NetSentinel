@@ -1,0 +1,462 @@
+name: NetSentinel CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.9"
+
+jobs:
+  # Pre-commit hooks and basic linting
+  pre-commit:
+    name: Pre-commit Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run pre-commit
+        run: pre-commit run --all-files --show-diff-on-failure
+
+  # Code quality checks
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Run mypy type checking
+        run: mypy netsentinel/
+
+      - name: Run pylint
+        run: pylint netsentinel/ --rcfile=pyproject.toml
+
+      - name: Run bandit security checks
+        run: bandit -r netsentinel/
+
+      - name: Check dependencies security
+        run: safety check
+
+  # Unit tests
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpcap-dev
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Run unit tests
+        run: pytest netsentinel/tests/unit/ -v --cov=netsentinel --cov-report=xml --cov-report=term-missing --durations=10
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: unit-tests
+          name: unit-tests-py${{ matrix.python-version }}
+
+  # Integration tests
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+      zookeeper:
+        image: confluentinc/cp-zookeeper:7.4.0
+        ports:
+          - 2181:2181
+        env:
+          ZOOKEEPER_CLIENT_PORT: 2181
+          ZOOKEEPER_TICK_TIME: 2000
+      kafka:
+        image: confluentinc/cp-kafka:7.4.0
+        ports:
+          - 9092:9092
+        env:
+          KAFKA_BROKER_ID: 1
+          KAFKA_ZOOKEEPER_CONNECT: localhost:2181
+          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpcap-dev iptables
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Run integration tests
+        run: pytest netsentinel/tests/integration/ -v --tb=short
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          KAFKA_BOOTSTRAP_SERVERS: localhost:9092
+
+  # API tests with Playwright
+  api-tests:
+    name: API Tests
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+      zookeeper:
+        image: confluentinc/cp-zookeeper:7.4.0
+        ports:
+          - 2181:2181
+        env:
+          ZOOKEEPER_CLIENT_PORT: 2181
+          ZOOKEEPER_TICK_TIME: 2000
+      kafka:
+        image: confluentinc/cp-kafka:7.4.0
+        ports:
+          - 9092:9092
+        env:
+          KAFKA_BROKER_ID: 1
+          KAFKA_ZOOKEEPER_CONNECT: localhost:2181
+          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpcap-dev iptables
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Install Playwright
+        run: |
+          playwright install
+          playwright install-deps
+
+      - name: Start NetSentinel services
+        run: |
+          # Start event processor in background
+          python -m netsentinel.event_processor &
+          sleep 10
+
+      - name: Run API tests
+        run: pytest tests/playwright/ -v --tb=short
+        env:
+          NETSENTINEL_API_URL: http://localhost:8082
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          KAFKA_BOOTSTRAP_SERVERS: localhost:9092
+
+  # Docker build and test
+  docker-tests:
+    name: Docker Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build NetSentinel image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile.event-processor
+          tags: netsentinel:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test Docker image
+        run: |
+          # Test if container starts
+          docker run --rm -d --name netsentinel-test netsentinel:test
+          sleep 10
+
+          # Check if container is running
+          if [ "$(docker ps -q -f name=netsentinel-test)" ]; then
+              echo "✅ Container started successfully"
+              docker stop netsentinel-test
+          else
+              echo "❌ Container failed to start"
+              docker logs netsentinel-test
+              exit 1
+          fi
+
+  # Security tests
+  security-tests:
+    name: Security Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Run security tests
+        run: pytest tests/unit/ -k "security" -v
+
+      - name: Run dependency vulnerability scan
+        run: safety check
+
+  # Performance tests
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Run performance tests
+        run: pytest tests/unit/ -k "performance" -v --tb=short
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+
+  # ML model tests
+  ml-tests:
+    name: ML Model Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Run ML tests
+        run: pytest netsentinel/tests/unit/ -k "ml" -v --tb=short
+
+  # Comprehensive smoke tests
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpcap-dev iptables
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Run smoke tests
+        run: pytest netsentinel/tests/unit/ -k "smoke" -v --tb=short
+
+      - name: Test basic imports
+        run: |
+          python -c "import netsentinel; print('✅ NetSentinel imports successfully')"
+          python -c "from netsentinel.event_processor import EventProcessor; print('✅ EventProcessor imports')"
+          python -c "from netsentinel.firewall_manager import FirewallManager; print('✅ FirewallManager imports')"
+          python -c "from netsentinel.siem_integration import SiemManager; print('✅ SiemManager imports')"
+          python -c "from netsentinel.sdn_integration import SDNManager; print('✅ SDNManager imports')"
+
+      - name: Test basic functionality
+        run: |
+          python -c "
+          from netsentinel.firewall_manager import FirewallManager
+          fm = FirewallManager()
+          print(f'✅ FirewallManager detects: {fm._detect_firewall_type()}')
+          fm.cleanup_test_rules()
+          "
+
+      - name: Test configuration loading
+        run: |
+          python -c "
+          import os
+          os.environ['ALERTING_ENABLED'] = 'false'
+          os.environ['ENTERPRISE_DB_ENABLED'] = 'false'
+          from netsentinel.event_processor import EventProcessor
+          processor = EventProcessor()
+          print('✅ EventProcessor initializes with test config')
+          processor.cleanup()
+          "
+
+  # Generate test report
+  test-report:
+    name: Generate Test Report
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [unit-tests, integration-tests, api-tests]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate test summary
+        run: |
+          echo "## Test Results Summary" > test-summary.md
+          echo "" >> test-summary.md
+          echo "| Job | Status |" >> test-summary.md
+          echo "|-----|--------|" >> test-summary.md
+          echo "| Pre-commit | ${{ needs.pre-commit.result }} |" >> test-summary.md
+          echo "| Code Quality | ${{ needs.code-quality.result }} |" >> test-summary.md
+          echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> test-summary.md
+          echo "| Integration Tests | ${{ needs.integration-tests.result }} |" >> test-summary.md
+          echo "| API Tests | ${{ needs.api-tests.result }} |" >> test-summary.md
+          echo "| Docker Tests | ${{ needs.docker-tests.result }} |" >> test-summary.md
+          echo "| Security Tests | ${{ needs.security-tests.result }} |" >> test-summary.md
+          echo "| Performance Tests | ${{ needs.performance-tests.result }} |" >> test-summary.md
+          echo "| ML Tests | ${{ needs.ml-tests.result }} |" >> test-summary.md
+
+      - name: Upload test summary
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-summary
+          path: test-summary.md
+
+  # Deploy to staging (only on main branch)
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && needs.test-report.result == 'success'
+    needs: [test-report]
+    environment: staging
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add your staging deployment commands here
+
+  # Release (only on tags)
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    needs: [test-report]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false

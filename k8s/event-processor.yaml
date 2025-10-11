@@ -1,0 +1,100 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netsentinel-event-processor
+  namespace: netsentinel
+  labels:
+    app: netsentinel-event-processor
+    component: analytics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netsentinel-event-processor
+  template:
+    metadata:
+      labels:
+        app: netsentinel-event-processor
+    spec:
+      containers:
+      - name: event-processor
+        image: netsentinel-event-processor:latest
+        ports:
+        - containerPort: 8082
+          name: api
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["NET_ADMIN", "NET_RAW"]
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka:29092"
+        - name: VALKEY_HOST
+          value: "valkey"
+        - name: VALKEY_PORT
+          value: "6379"
+        - name: VALKEY_PASSWORD
+          value: "hybrid-detection-2024"
+        - name: FIREWALL_BLOCK_THRESHOLD
+          value: "7.0"
+        - name: ENTERPRISE_DB_ENABLED
+          value: "true"
+        - name: ELASTICSEARCH_HOSTS
+          value: "http://elasticsearch:9200"
+        - name: INFLUXDB_URL
+          value: "http://influxdb:8086"
+        - name: INFLUXDB_TOKEN
+          value: "netsentinel-token-2024"
+        - name: INFLUXDB_ORG
+          value: "netsentinel"
+        - name: INFLUXDB_BUCKET
+          value: "netsentinel-metrics"
+        - name: ALERTING_ENABLED
+          value: "true"
+        - name: PACKET_ANALYSIS_ENABLED
+          value: "true"
+        - name: THREAT_INTEL_ENABLED
+          value: "true"
+        - name: PACKET_ANALYSIS_INTERFACE
+          value: "any"
+        - name: SMTP_SERVER
+          value: "smtp.gmail.com"
+        - name: SMTP_PORT
+          value: "587"
+        - name: ALERT_FROM_EMAIL
+          value: "alerts@netsentinel.local"
+        volumeMounts:
+        - name: iptables
+          mountPath: /var/lib/iptables
+        - name: iptables-etc
+          mountPath: /etc/iptables
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 30
+      volumes:
+      - name: iptables
+        hostPath:
+          path: /var/lib/iptables
+      - name: iptables-etc
+        hostPath:
+          path: /etc/iptables
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netsentinel-event-processor
+  namespace: netsentinel
+  labels:
+    app: netsentinel-event-processor
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8082
+    targetPort: 8082
+    name: api
+  selector:
+    app: netsentinel-event-processor

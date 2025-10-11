@@ -119,6 +119,26 @@ services:
       - ALERT_FROM_EMAIL=alerts@netsentinel.local
       - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
       - ALERT_WEBHOOK_URL=${ALERT_WEBHOOK_URL:-}
+      - SIEM_ENABLED=true
+      - SPLUNK_HEC_URL=${SPLUNK_HEC_URL:-}
+      - SPLUNK_HEC_TOKEN=${SPLUNK_HEC_TOKEN:-}
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL:-http://elasticsearch:9200}
+      - SYSLOG_HOST=${SYSLOG_HOST:-}
+      - SIEM_WEBHOOK_URL=${SIEM_WEBHOOK_URL:-}
+      - SDN_ENABLED=${SDN_ENABLED:-false}
+      - SDN_CONTROLLER_NAME=${SDN_CONTROLLER_NAME:-opendaylight}
+      - SDN_SWITCH_ID=${SDN_SWITCH_ID:-}
+      - SDN_QUARANTINE_DURATION=${SDN_QUARANTINE_DURATION:-3600}
+      - OPENDLIGHT_HOST=${OPENDLIGHT_HOST:-}
+      - OPENDLIGHT_PORT=${OPENDLIGHT_PORT:-8181}
+      - OPENDLIGHT_USERNAME=${OPENDLIGHT_USERNAME:-admin}
+      - OPENDLIGHT_PASSWORD=${OPENDLIGHT_PASSWORD:-admin}
+      - ONOS_HOST=${ONOS_HOST:-}
+      - ONOS_PORT=${ONOS_PORT:-8181}
+      - ONOS_USERNAME=${ONOS_USERNAME:-onos}
+      - ONOS_PASSWORD=${ONOS_PASSWORD:-rocks}
+      - RYU_HOST=${RYU_HOST:-}
+      - RYU_PORT=${RYU_PORT:-8080}
     # Privileged access for firewall management and packet capture
     privileged: true
     cap_add:

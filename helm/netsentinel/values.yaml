@@ -1,0 +1,230 @@
+# NetSentinel Helm Chart Values
+
+# Global settings
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+
+# Namespace override
+namespaceOverride: ""
+
+# Image settings
+images:
+  netsentinel:
+    repository: netsentinel-honeypot
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  eventProcessor:
+    repository: netsentinel-event-processor
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  zookeeper:
+    repository: confluentinc/cp-zookeeper
+    tag: "7.4.0"
+    pullPolicy: IfNotPresent
+  kafka:
+    repository: confluentinc/cp-kafka
+    tag: "7.4.0"
+    pullPolicy: IfNotPresent
+  valkey:
+    repository: valkey/valkey
+    tag: "7.2-alpine"
+    pullPolicy: IfNotPresent
+  elasticsearch:
+    repository: docker.elastic.co/elasticsearch/elasticsearch
+    tag: "8.11.0"
+    pullPolicy: IfNotPresent
+  influxdb:
+    repository: influxdb
+    tag: "2.7"
+    pullPolicy: IfNotPresent
+  prometheus:
+    repository: prom/prometheus
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  grafana:
+    repository: grafana/grafana
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  kafkaUi:
+    repository: provectuslabs/kafka-ui
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+# NetSentinel Honeypot Configuration
+netsentinel:
+  enabled: true
+  replicaCount: 1
+
+  config:
+    device:
+      node_id: "netsentinel-honeypot"
+    ftp:
+      enabled: true
+      port: 21
+    ssh:
+      enabled: true
+      port: 22
+    telnet:
+      enabled: true
+      port: 23
+    http:
+      enabled: true
+      port: 80
+    https:
+      enabled: true
+      port: 443
+    mysql:
+      enabled: true
+      port: 3307
+    logger:
+      kafka:
+        enabled: true
+        hosts: "kafka:29092"
+        topic: "netsentinel-events"
+      redis:
+        enabled: true
+        host: "valkey"
+        port: 6379
+        password: "hybrid-detection-2024"
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+# Event Processor Configuration
+eventProcessor:
+  enabled: true
+  replicaCount: 1
+
+  env:
+    firewallBlockThreshold: "7.0"
+    enterpriseDbEnabled: true
+    alertingEnabled: true
+    packetAnalysisEnabled: true
+    threatIntelEnabled: true
+    packetAnalysisInterface: "any"
+    smtpServer: "smtp.gmail.com"
+    smtpPort: "587"
+    alertFromEmail: "alerts@netsentinel.local"
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+
+# Infrastructure Components
+zookeeper:
+  enabled: true
+  replicaCount: 1
+  storage:
+    size: "8Gi"
+    className: ""
+
+kafka:
+  enabled: true
+  replicaCount: 1
+  storage:
+    size: "16Gi"
+    className: ""
+
+valkey:
+  enabled: true
+  replicaCount: 1
+  password: "hybrid-detection-2024"
+  storage:
+    size: "4Gi"
+    className: ""
+
+# Database Components
+elasticsearch:
+  enabled: true
+  replicaCount: 1
+  storage:
+    size: "16Gi"
+    className: ""
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+
+influxdb:
+  enabled: true
+  replicaCount: 1
+  adminUser: "admin"
+  adminPassword: "netsentinel2024!"
+  org: "netsentinel"
+  bucket: "netsentinel-metrics"
+  token: "netsentinel-token-2024"
+  storage:
+    size: "8Gi"
+    className: ""
+
+# Monitoring Components
+prometheus:
+  enabled: true
+  replicaCount: 1
+  storage:
+    size: "8Gi"
+    className: ""
+
+grafana:
+  enabled: true
+  replicaCount: 1
+  adminPassword: "hybrid-admin-2024"
+  storage:
+    size: "4Gi"
+    className: ""
+
+kafkaUi:
+  enabled: true
+  replicaCount: 1
+
+# Ingress Configuration
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: netsentinel.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Persistence Configuration
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+
+# Service Account Configuration
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Pod Security Context
+podSecurityContext: {}
+
+# Security Context
+securityContext: {}
+
+# Node Selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}

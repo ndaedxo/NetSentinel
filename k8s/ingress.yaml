@@ -1,0 +1,97 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: netsentinel-ingress
+  namespace: netsentinel
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  rules:
+  - host: netsentinel.local
+    http:
+      paths:
+      - path: /grafana
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 3000
+      - path: /prometheus
+        pathType: Prefix
+        backend:
+          service:
+            name: prometheus
+            port:
+              number: 9090
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: netsentinel-event-processor
+            port:
+              number: 8082
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: netsentinel-event-processor
+            port:
+              number: 8082
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-ui
+  namespace: netsentinel
+  labels:
+    app: kafka-ui
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: web
+  selector:
+    app: kafka-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-ui
+  namespace: netsentinel
+  labels:
+    app: kafka-ui
+    component: management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-ui
+  template:
+    metadata:
+      labels:
+        app: kafka-ui
+    spec:
+      containers:
+      - name: kafka-ui
+        image: provectuslabs/kafka-ui:latest
+        ports:
+        - containerPort: 8080
+          name: web
+        env:
+        - name: KAFKA_CLUSTERS_0_NAME
+          value: netsentinel-cluster
+        - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+          value: kafka:29092
+        - name: KAFKA_CLUSTERS_0_ZOOKEEPER
+          value: zookeeper:2181
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30

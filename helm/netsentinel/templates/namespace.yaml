@@ -1,0 +1,17 @@
+{{- if .Values.namespaceOverride }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespaceOverride }}
+  labels:
+    name: {{ .Values.namespaceOverride }}
+    app: netsentinel-system
+{{- else }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Release.Namespace }}
+  labels:
+    name: {{ .Release.Namespace }}
+    app: netsentinel-system
+{{- end }}

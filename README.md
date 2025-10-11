@@ -64,8 +64,10 @@ NetSentinel → Kafka → Enhanced Event Processor → Valkey
    - Combined hybrid threat scoring
 5. **Automated Response**: High-threat IPs automatically blocked via firewall
 6. **Enterprise Storage**: Events and metrics stored in Elasticsearch and InfluxDB for analytics
-7. **Cache Layer**: Valkey provides high-speed caching for real-time operations
-8. **Monitoring**: Metrics collected by Prometheus, visualized in Grafana
+7. **SIEM Forwarding**: High-threat events automatically forwarded to enterprise SIEM systems
+8. **SDN Quarantine**: Critical threats isolated at network layer via SDN controllers
+9. **Cache Layer**: Valkey provides high-speed caching for real-time operations
+10. **Monitoring**: Metrics collected by Prometheus, visualized in Grafana
 
 ## 🔧 Development & Local Testing
 
@@ -198,6 +200,68 @@ curl http://localhost:8082/alerts/rules
 
 # Run alerting system integration tests
 python scripts/test_alerting.py
+
+# Test SIEM integration status
+curl http://localhost:8082/siem/status
+
+# View SIEM connectors
+curl http://localhost:8082/siem/connectors
+
+# Send test event to SIEM systems
+curl -X POST http://localhost:8082/siem/test \
+  -H "Content-Type: application/json" \
+  -d '{"threat_score": 8.0}'
+
+# Enable/disable SIEM connector
+curl -X POST http://localhost:8082/siem/connectors/splunk_default/enable \
+  -H "Content-Type: application/json" \
+  -d '{"enable": true}'
+
+# Set SIEM filtering rules
+curl -X POST http://localhost:8082/siem/filters/webhook_default \
+  -H "Content-Type: application/json" \
+  -d '{"event_types": ["4002", "4000"], "severities": ["high", "critical"], "min_score": 7.0}'
+
+# Run SIEM integration tests
+python scripts/test_siem_integration.py
+
+# Test SDN integration status
+curl http://localhost:8082/sdn/status
+
+# View SDN controllers
+curl http://localhost:8082/sdn/controllers
+
+# Quarantine an IP address
+curl -X POST http://localhost:8082/sdn/quarantine \
+  -H "Content-Type: application/json" \
+  -d '{"ip_address": "192.168.1.100", "switch_id": "openflow:1", "duration": 3600}'
+
+# Release a quarantine
+curl -X DELETE http://localhost:8082/sdn/quarantine/quarantine_192.168.1.100_1234567890
+
+# View quarantine policies
+curl http://localhost:8082/sdn/quarantine/policies
+
+# View active SDN flows
+curl http://localhost:8082/sdn/flows
+
+# Redirect traffic to monitoring port
+curl -X POST http://localhost:8082/sdn/traffic/redirect \
+  -H "Content-Type: application/json" \
+  -d '{"ip_address": "192.168.1.200", "switch_id": "openflow:1", "destination_port": "2"}'
+
+# Mirror traffic for analysis
+curl -X POST http://localhost:8082/sdn/traffic/mirror \
+  -H "Content-Type: application/json" \
+  -d '{"ip_address": "192.168.1.201", "switch_id": "openflow:1", "mirror_port": "3"}'
+
+# Test SDN connectivity
+curl -X POST http://localhost:8082/sdn/test \
+  -H "Content-Type: application/json" \
+  -d '{"controller": "opendaylight"}'
+
+# Run SDN integration tests
+python scripts/test_sdn_integration.py
 ```
 
 ## ⚙️ Configuration
@@ -265,6 +329,20 @@ Key configuration via environment variables:
 - `GET /alerts/rules` - Get alert rules configuration
 - `GET /alerts/templates` - Get alert templates
 - `POST /alerts/test` - Generate a test alert
+- `GET /siem/status` - SIEM integration status and statistics
+- `GET /siem/connectors` - Get available SIEM connectors
+- `POST /siem/connectors/<name>/enable` - Enable/disable SIEM connectors
+- `POST /siem/test` - Send test event to SIEM systems
+- `POST /siem/filters/<name>` - Set filtering rules for SIEM connectors
+- `GET /sdn/status` - SDN integration status and statistics
+- `GET /sdn/controllers` - Get configured SDN controllers
+- `POST /sdn/quarantine` - Quarantine IP addresses via SDN
+- `DELETE /sdn/quarantine/<policy>` - Release quarantined IPs
+- `GET /sdn/quarantine/policies` - Get quarantine policies
+- `GET /sdn/flows` - Get active SDN flows
+- `POST /sdn/traffic/redirect` - Redirect traffic to monitoring ports
+- `POST /sdn/traffic/mirror` - Mirror traffic for analysis
+- `POST /sdn/test` - Test SDN connectivity
 
 ### Log Integration
 Events are automatically sent to:
@@ -326,6 +404,22 @@ docker-compose down -v        # Stop and remove volumes
 - **Alert Deduplication**: Prevents alert fatigue with throttling
 - **Interactive Management**: Acknowledge, resolve, and track alerts via API
 - **Customizable Templates**: Flexible alert formatting and content
+
+### SIEM Integration
+- **Multi-Platform Support**: Splunk HEC, ELK Stack, Syslog (TCP/UDP), Webhook APIs
+- **Enterprise Forwarding**: Automatic event forwarding to security operations platforms
+- **Smart Event Filtering**: Configurable rules based on event type, severity, and threat score
+- **Batch Transmission**: Efficient bulk event processing for high-throughput environments
+- **Native Format Support**: Proper event formatting for each SIEM system's requirements
+- **Real-time Integration**: Events forwarded immediately upon detection
+
+### SDN Integration
+- **Dynamic Network Control**: Real-time traffic quarantine and isolation via SDN controllers
+- **Multi-Controller Support**: OpenDaylight, ONOS, Ryu, and Floodlight compatibility
+- **Automated Response**: High-threat IPs automatically quarantined at network layer
+- **Traffic Manipulation**: Redirect and mirror suspicious traffic for deep analysis
+- **Policy Management**: Time-based quarantine policies with automatic expiration
+- **Flow Rule Automation**: Programmatic OpenFlow rule management and monitoring
 
 ### Automated Response
 - **Automatic IP Blocking**: High-threat IPs blocked via iptables/ufw/firewalld

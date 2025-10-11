@@ -1,0 +1,18 @@
+apiVersion: v2
+name: netsentinel
+description: NetSentinel Hybrid Detection & Mitigation System
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - honeypot
+  - security
+  - threat-detection
+  - cybersecurity
+  - monitoring
+home: https://github.com/your-org/netsentinel
+sources:
+  - https://github.com/your-org/netsentinel
+maintainers:
+  - name: NetSentinel Team
+    email: team@netsentinel.local

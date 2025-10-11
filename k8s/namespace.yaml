@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: netsentinel
+  labels:
+    name: netsentinel
+    app: netsentinel-system

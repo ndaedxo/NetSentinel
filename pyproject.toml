@@ -1,0 +1,250 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "netsentinel"
+version = "1.0.0"
+description = "NetSentinel - Advanced Network Anomaly Detection & Mitigation System"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Security",
+    "Topic :: System :: Networking :: Monitoring",
+]
+dependencies = [
+    "Twisted==24.11.0",
+    "pyasn1==0.4.5",
+    "cryptography==38.0.1",
+    "simplejson==3.16.0",
+    "requests==2.31.0",
+    "zope.interface==7.2",
+    "PyPDF2==1.26.0",
+    "fpdf==1.7.2",
+    "passlib==1.7.1",
+    "Jinja2==3.0.1",
+    "ntlmlib==0.72",
+    "bcrypt==3.1.7",
+    "urllib3==2.0.7",
+    "hpfeeds==3.0.0",
+    "pyOpenSSL==22.1.0",
+    "service-identity==21.1.0",
+    "kafka-python>=2.0.0",
+    "redis>=4.0.0",
+    "prometheus-client>=0.16.0",
+    "flask>=2.0.0",
+    "scapy>=2.4.0",
+    "pcapy-ng>=1.0.0",
+    "anomalib>=2.3.0",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "pytorch-lightning>=2.2.0",
+    "numpy>=1.21.0",
+    "opencv-python>=4.5.0",
+    "scikit-learn>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/your-org/netsentinel"
+Documentation = "https://netsentinel.readthedocs.io/"
+Repository = "https://github.com/your-org/netsentinel"
+Issues = "https://github.com/your-org/netsentinel/issues"
+
+[project.scripts]
+netsentinel = "netsentinel.cli:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py39', 'py310', 'py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | anomalib
+  | opencanary/modules
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+line_length = 88
+known_first_party = ["netsentinel"]
+skip = ["anomalib", "opencanary/modules"]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "E501", "W503"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "docs/conf.py",
+    "build",
+    "dist",
+    "anomalib",
+    "opencanary/modules",
+    ".tox",
+    ".eggs",
+    "*.egg",
+]
+max-complexity = 10
+min_python_version = "3.9.0"
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+show_error_codes = true
+ignore_missing_imports = true
+exclude = [
+    "anomalib/",
+    "opencanary/modules/",
+    "tests/",
+    "docs/",
+    "scripts/",
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "scapy.*",
+    "pcapy.*",
+    "twisted.*",
+    "prometheus_client.*",
+    "kafka.*",
+    "redis.*",
+    "elasticsearch.*",
+    "influxdb.*",
+]
+ignore_missing_imports = true
+
+[tool.bandit]
+exclude_dirs = ["tests", "docs", "scripts", "anomalib", "opencanary/modules"]
+skips = ["B101", "B601"]  # Skip assert checks and shell usage
+
+[tool.coverage.run]
+source = ["netsentinel"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "docs/*",
+    "scripts/*",
+    "anomalib/*",
+    "opencanary/modules/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\bProtocol\):",
+    "@(abc\.)?abstractmethod",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--disable-warnings",
+    "--tb=short",
+    "--cov=netsentinel",
+    "--cov-report=term-missing",
+    "--cov-report=html:htmlcov",
+    "--cov-report=xml:coverage.xml",
+    "--cov-fail-under=80",
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "e2e: End-to-end tests",
+    "slow: Slow running tests",
+    "playwright: Playwright browser tests",
+    "api: API tests",
+    "database: Database tests",
+    "ml: Machine learning tests",
+    "security: Security tests",
+    "performance: Performance tests",
+    "smoke: Smoke tests for CI/CD",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+    "ignore::UserWarning",
+    "error::RuntimeWarning",
+]
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py39, py310, py311, lint, typecheck, security
+
+[testenv]
+deps = -r requirements-dev.txt
+commands =
+    pytest {posargs}
+
+[testenv:lint]
+deps = -r requirements-dev.txt
+commands =
+    flake8 netsentinel/
+    black --check netsentinel/
+    isort --check-only netsentinel/
+
+[testenv:typecheck]
+deps = -r requirements-dev.txt
+commands = mypy netsentinel/
+
+[testenv:security]
+deps = -r requirements-dev.txt
+commands = bandit -r netsentinel/
+
+[testenv:format]
+deps = -r requirements-dev.txt
+commands =
+    black netsentinel/
+    isort netsentinel/
+
+[testenv:docs]
+deps = -r requirements-dev.txt
+commands = sphinx-build -b html docs/ docs/_build/html
+"""
