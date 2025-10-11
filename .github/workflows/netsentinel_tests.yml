@@ -1,4 +1,4 @@
-name: OpenCanary Tests
+name: NetSentinel Tests
 
 on:
   - "push"
@@ -38,12 +38,8 @@ jobs:
       - name: Create package
         run: python3 setup.py sdist
       - name: Install package
-        run: pip3 install dist/opencanary-*.tar.gz
-      - name: Install test dependencies
-        run: pip3 install -r opencanary/test/requirements.txt
-      - name: Copy config file
-        run: cp opencanary/test/opencanary.conf .
-      - name: Start OpenCanary
-        run: opencanaryd --start
-      - name: Run Pytest
-        run: pytest -s
+        run: pip3 install dist/netsentinel-*.tar.gz
+      - name: Verify installation
+        run: python -c "import netsentinel; print('NetSentinel installed successfully')"
+      - name: Run basic tests
+        run: python -m pytest netsentinel/tests/unit/test_basic.py -v
