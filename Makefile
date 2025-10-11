@@ -20,12 +20,12 @@ install-dev: ## Install development dependencies
 install-all: install-dev ## Install all dependencies (dev + runtime)
 
 # Testing
-test: test-unit test-integration ## Run all tests
+test: test-unit test-integration ## Run all NetSentinel tests
 
-test-unit: ## Run unit tests
+test-unit: ## Run NetSentinel unit tests
 	pytest netsentinel/tests/unit/ -v --cov=netsentinel --cov-report=term-missing --cov-report=html
 
-test-integration: ## Run integration tests
+test-integration: ## Run NetSentinel integration tests
 	pytest netsentinel/tests/integration/ -v --tb=short
 
 test-e2e: ## Run end-to-end tests

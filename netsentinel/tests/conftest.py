@@ -26,6 +26,7 @@ from netsentinel.sdn_integration import SDNManager, get_sdn_manager
 
 # Conditional import for event processor (requires kafka)
 try:
+    import kafka  # noqa: F401
     from netsentinel.event_processor import EventProcessor
     EVENT_PROCESSOR_AVAILABLE = True
 except ImportError:

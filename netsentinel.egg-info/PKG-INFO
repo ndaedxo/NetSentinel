@@ -1,0 +1,523 @@
+Metadata-Version: 2.4
+Name: netsentinel
+Version: 1.0.0
+Summary: NetSentinel - Advanced Network Anomaly Detection & Mitigation System
+License: Copyright (c) 2018, Thinkst Applied Research
+        All rights reserved.
+        
+        Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+        
+        1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+        
+        2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+        
+        3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+        
+        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+        
+Project-URL: Homepage, https://github.com/your-org/netsentinel
+Project-URL: Documentation, https://netsentinel.readthedocs.io/
+Project-URL: Repository, https://github.com/your-org/netsentinel
+Project-URL: Issues, https://github.com/your-org/netsentinel/issues
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: license-file
+
+# NetSentinel Hybrid Detection & Mitigation System
+
+A modern honeypot system with real-time threat detection and mitigation capabilities using Kafka, Valkey, Prometheus, and Grafana.
+
+## 🚀 Quick Start
+
+### 1. Prerequisites
+- Docker & Docker Compose
+- Python 3.11+ (for local development)
+
+### 2. Start the Hybrid System
+
+```bash
+# Clone and navigate to the project
+cd netsentinel
+
+# Start all services (NetSentinel, Kafka, Valkey, Prometheus, Grafana, etc.)
+docker-compose up -d
+
+# View logs
+docker-compose logs -f netsentinel-honeypot
+```
+
+### 3. Access Your System
+
+| Service | URL | Purpose |
+|---------|-----|---------|
+| **Grafana Dashboards** | http://localhost:3000 | Real-time monitoring & alerts |
+| **Kafka UI** | http://localhost:8080 | Kafka topic management |
+| **Redis Commander** | http://localhost:8081 | Valkey data management |
+| **Prometheus** | http://localhost:9090 | Metrics collection |
+| **NetSentinel API** | http://localhost:8082 | Threat analysis API |
+
+**Grafana Credentials:** `admin` / `hybrid-admin-2024`
+
+## 🏗️ Architecture
+
+### Core Components
+
+```
+NetSentinel → Kafka → Enhanced Event Processor → Valkey
+                    ↓           ↓
+              Prometheus ← Grafana ← ML Models (Anomalib)
+```
+
+- **NetSentinel** - Multi-protocol honeypot (FTP, SSH, Telnet, HTTP, HTTPS, MySQL)
+- **Kafka** - Real-time event streaming platform
+- **Enhanced Event Processor** - Hybrid threat detection (rule-based + ML)
+- **Anomalib ML Models** - FastFlow, EfficientAD, PaDiM for behavioral analysis
+- **Valkey** - High-performance caching and data storage
+- **Prometheus** - Metrics collection and alerting
+- **Grafana** - Real-time dashboards and visualization
+
+### Data Flow
+
+1. **Detection**: NetSentinel captures suspicious network activity
+2. **Packet Analysis**: Real-time network traffic monitoring and anomaly detection
+3. **Streaming**: Events sent to Kafka in real-time (honeypot + packet anomalies)
+4. **Hybrid Processing**:
+   - Rule-based scoring (traditional threat detection)
+   - ML-based anomaly detection (behavioral analysis)
+   - Packet-level anomaly detection (network scanning, unusual traffic)
+   - Threat intelligence enrichment (external feed correlation)
+   - Combined hybrid threat scoring
+5. **Automated Response**: High-threat IPs automatically blocked via firewall
+6. **Enterprise Storage**: Events and metrics stored in Elasticsearch and InfluxDB for analytics
+7. **SIEM Forwarding**: High-threat events automatically forwarded to enterprise SIEM systems
+8. **SDN Quarantine**: Critical threats isolated at network layer via SDN controllers
+9. **Cache Layer**: Valkey provides high-speed caching for real-time operations
+10. **Monitoring**: Metrics collected by Prometheus, visualized in Grafana
+
+## 🔧 Development & Local Testing
+
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Run OpenCanary Locally
+
+```bash
+# Run in development mode
+./bin/opencanaryd --dev
+
+# Or use Docker for isolated testing
+docker-compose up -d opencanary
+```
+
+### Test Integration
+
+```bash
+# Check Kafka topics
+docker exec netsentinel-kafka kafka-topics --list --bootstrap-server localhost:9092
+
+# View events in Kafka
+docker exec netsentinel-kafka kafka-console-consumer --topic netsentinel-events --bootstrap-server localhost:9092 --from-beginning --max-messages 5
+
+# Check Valkey data
+docker exec netsentinel-valkey valkey-cli -a hybrid-detection-2024 keys "netsentinel:*"
+
+# Test threat analysis API
+curl http://localhost:8082/threats
+
+# Test ML model information
+curl http://localhost:8082/ml/model-info
+
+# Train ML model on recent events
+curl -X POST http://localhost:8082/ml/train
+
+# Test firewall integration
+curl http://localhost:8082/firewall/status
+
+# Manually block an IP
+curl -X POST http://localhost:8082/firewall/block/192.168.1.100 \
+  -H "Content-Type: application/json" \
+  -d '{"reason": "manual_test"}'
+
+# Check if IP is blocked
+curl http://localhost:8082/firewall/check/192.168.1.100
+
+# List all blocked IPs
+curl http://localhost:8082/firewall/blocked
+
+# Run firewall integration tests
+python scripts/test_firewall.py
+
+# Test packet analysis status
+curl http://localhost:8082/packet/status
+
+# Get packet-level anomalies
+curl http://localhost:8082/packet/anomalies
+
+# View active network flows
+curl http://localhost:8082/packet/flows
+
+# Start packet capture
+curl -X POST http://localhost:8082/packet/start \
+  -H "Content-Type: application/json" \
+  -d '{"interface": "eth0"}'
+
+# Stop packet capture
+curl -X POST http://localhost:8082/packet/stop
+
+# Run packet analysis integration tests
+python scripts/test_packet_analysis.py
+
+# Test threat intelligence status
+curl http://localhost:8082/threat-intel/status
+
+# Check if an IP is a known threat
+curl http://localhost:8082/threat-intel/check/8.8.8.8
+
+# Get threat indicators
+curl "http://localhost:8082/threat-intel/indicators?type=ip&limit=10"
+
+# View threat feeds status
+curl http://localhost:8082/threat-intel/feeds
+
+# Manually update threat feeds
+curl -X POST http://localhost:8082/threat-intel/update
+
+# Run threat intelligence integration tests
+python scripts/test_threat_intelligence.py
+
+# Test enterprise database status
+curl http://localhost:8082/db/status
+
+# Search security events
+curl "http://localhost:8082/db/search/events?src_ip=192.168.1.100&size=10"
+
+# Get recent events (last 24 hours)
+curl http://localhost:8082/db/events/recent
+
+# Get time-series metrics
+curl "http://localhost:8082/db/metrics/opencanary_events?hours=24"
+
+# Run enterprise database integration tests
+python scripts/test_enterprise_database.py
+
+# Test alerting system status
+curl http://localhost:8082/alerts/status
+
+# Get active alerts
+curl "http://localhost:8082/alerts?limit=10&acknowledged=false"
+
+# Get alerts by severity
+curl "http://localhost:8082/alerts?severity=high"
+
+# Generate a test alert
+curl -X POST http://localhost:8082/alerts/test \
+  -H "Content-Type: application/json" \
+  -d '{"severity": "medium", "message": "Test alert from API"}'
+
+# Acknowledge an alert
+curl -X POST http://localhost:8082/alerts/1234567890_1234/acknowledge
+
+# View alert rules
+curl http://localhost:8082/alerts/rules
+
+# Run alerting system integration tests
+python scripts/test_alerting.py
+
+# Test SIEM integration status
+curl http://localhost:8082/siem/status
+
+# View SIEM connectors
+curl http://localhost:8082/siem/connectors
+
+# Send test event to SIEM systems
+curl -X POST http://localhost:8082/siem/test \
+  -H "Content-Type: application/json" \
+  -d '{"threat_score": 8.0}'
+
+# Enable/disable SIEM connector
+curl -X POST http://localhost:8082/siem/connectors/splunk_default/enable \
+  -H "Content-Type: application/json" \
+  -d '{"enable": true}'
+
+# Set SIEM filtering rules
+curl -X POST http://localhost:8082/siem/filters/webhook_default \
+  -H "Content-Type: application/json" \
+  -d '{"event_types": ["4002", "4000"], "severities": ["high", "critical"], "min_score": 7.0}'
+
+# Run SIEM integration tests
+python scripts/test_siem_integration.py
+
+# Test SDN integration status
+curl http://localhost:8082/sdn/status
+
+# View SDN controllers
+curl http://localhost:8082/sdn/controllers
+
+# Quarantine an IP address
+curl -X POST http://localhost:8082/sdn/quarantine \
+  -H "Content-Type: application/json" \
+  -d '{"ip_address": "192.168.1.100", "switch_id": "openflow:1", "duration": 3600}'
+
+# Release a quarantine
+curl -X DELETE http://localhost:8082/sdn/quarantine/quarantine_192.168.1.100_1234567890
+
+# View quarantine policies
+curl http://localhost:8082/sdn/quarantine/policies
+
+# View active SDN flows
+curl http://localhost:8082/sdn/flows
+
+# Redirect traffic to monitoring port
+curl -X POST http://localhost:8082/sdn/traffic/redirect \
+  -H "Content-Type: application/json" \
+  -d '{"ip_address": "192.168.1.200", "switch_id": "openflow:1", "destination_port": "2"}'
+
+# Mirror traffic for analysis
+curl -X POST http://localhost:8082/sdn/traffic/mirror \
+  -H "Content-Type: application/json" \
+  -d '{"ip_address": "192.168.1.201", "switch_id": "openflow:1", "mirror_port": "3"}'
+
+# Test SDN connectivity
+curl -X POST http://localhost:8082/sdn/test \
+  -H "Content-Type: application/json" \
+  -d '{"controller": "opendaylight"}'
+
+# Run SDN integration tests
+python scripts/test_sdn_integration.py
+```
+
+## ⚙️ Configuration
+
+### OpenCanary Services
+Edit `hybrid-data/opencanary/config/opencanary.conf` to enable/disable services:
+
+```json
+{
+  "ftp.enabled": true,
+  "ssh.enabled": true,
+  "http.enabled": true,
+  "mysql.enabled": true,
+  // ... other services
+}
+```
+
+### Environment Variables
+Key configuration via environment variables:
+
+- `KAFKA_BOOTSTRAP_SERVERS` - Kafka connection
+- `VALKEY_HOST`, `VALKEY_PORT`, `VALKEY_PASSWORD` - Valkey connection
+- `PROMETHEUS_MULTIPROC_DIR` - Metrics directory
+
+## 📊 Monitoring & Alerts
+
+### Real-Time Dashboards
+- **Grafana**: http://localhost:3000
+  - Threat overview dashboard
+  - Service status monitoring
+  - Event correlation views
+
+### Metrics & APIs
+- **Prometheus**: http://localhost:9090
+- **Event Processor API**:
+  - `GET /health` - System health
+  - `GET /metrics` - Prometheus metrics
+  - `GET /threats` - Current threats
+  - `GET /threats/{ip}` - Specific IP analysis
+- `GET /firewall/status` - Firewall status and blocked IPs
+- `POST /firewall/block/{ip}` - Manually block an IP
+- `POST /firewall/unblock/{ip}` - Manually unblock an IP
+- `GET /firewall/blocked` - List all blocked IPs
+- `GET /firewall/check/{ip}` - Check if IP is blocked
+- `GET /packet/status` - Packet analysis status and statistics
+- `GET /packet/anomalies` - Recent packet-level anomalies
+- `GET /packet/flows` - Active network flows
+- `POST /packet/start` - Start packet capture
+- `POST /packet/stop` - Stop packet capture
+- `GET /threat-intel/status` - Threat intelligence status and statistics
+- `GET /threat-intel/check/<indicator>` - Check if indicator is a threat
+- `GET /threat-intel/indicators` - Get threat indicators with filtering
+- `GET /threat-intel/feeds` - Get threat feed status
+- `POST /threat-intel/feeds/<feed>/enable` - Enable/disable threat feeds
+- `POST /threat-intel/update` - Manually update threat feeds
+- `GET /db/status` - Enterprise database status and statistics
+- `GET /db/search/events` - Search security events in Elasticsearch
+- `GET /db/metrics/<measurement>` - Get time-series metrics from InfluxDB
+- `GET /db/events/recent` - Get recent security events (24h)
+- `GET /db/anomalies/recent` - Get recent anomaly detections (24h)
+- `GET /alerts/status` - Alert system status and statistics
+- `GET /alerts` - Get alerts with filtering options
+- `POST /alerts/<id>/acknowledge` - Acknowledge an alert
+- `POST /alerts/<id>/resolve` - Resolve an alert
+- `GET /alerts/rules` - Get alert rules configuration
+- `GET /alerts/templates` - Get alert templates
+- `POST /alerts/test` - Generate a test alert
+- `GET /siem/status` - SIEM integration status and statistics
+- `GET /siem/connectors` - Get available SIEM connectors
+- `POST /siem/connectors/<name>/enable` - Enable/disable SIEM connectors
+- `POST /siem/test` - Send test event to SIEM systems
+- `POST /siem/filters/<name>` - Set filtering rules for SIEM connectors
+- `GET /sdn/status` - SDN integration status and statistics
+- `GET /sdn/controllers` - Get configured SDN controllers
+- `POST /sdn/quarantine` - Quarantine IP addresses via SDN
+- `DELETE /sdn/quarantine/<policy>` - Release quarantined IPs
+- `GET /sdn/quarantine/policies` - Get quarantine policies
+- `GET /sdn/flows` - Get active SDN flows
+- `POST /sdn/traffic/redirect` - Redirect traffic to monitoring ports
+- `POST /sdn/traffic/mirror` - Mirror traffic for analysis
+- `POST /sdn/test` - Test SDN connectivity
+
+### Log Integration
+Events are automatically sent to:
+- **Kafka**: `netsentinel-events` topic
+- **Valkey**: `threat:*` and `correlation:*` keys
+- **File**: `/var/log/netsentinel/netsentinel.log`
+
+## 🛠️ Management Commands
+
+```bash
+# System control
+docker-compose up -d          # Start all services
+docker-compose down           # Stop all services
+docker-compose logs -f        # View logs
+docker-compose restart        # Restart services
+
+# Development
+docker-compose build          # Rebuild containers
+docker-compose up -d --build  # Build and start
+docker-compose down -v        # Stop and remove volumes
+```
+
+## 🔐 Security Features
+
+### Active Detection
+- Multi-protocol honeypot simulation
+- Credential harvesting
+- Port scanning detection (honeypot + network-level)
+- Service fingerprinting
+
+### Real-Time Analysis
+- Threat scoring algorithm
+- Event correlation (honeypot + packet-level events)
+- IP-based threat tracking
+- Automated alert generation
+
+### Packet-Level Monitoring
+- **Real-time Network Traffic Analysis**: Capture and analyze all network packets
+- **Flow Tracking**: Monitor network flows and connection patterns
+- **Anomaly Detection**: Identify port scanning, unusual traffic patterns
+- **Protocol Analysis**: Deep packet inspection for TCP, UDP, ICMP
+
+### Threat Intelligence Integration
+- **External Feed Processing**: Automatic updates from multiple threat intelligence sources
+- **Indicator Enrichment**: IPs, domains, URLs checked against known threat databases
+- **Confidence Scoring**: Threat scores adjusted based on intelligence confidence levels
+- **Feed Management**: Enable/disable individual threat feeds and monitor feed health
+
+### Enterprise Database Storage
+- **Elasticsearch Integration**: Full-text search and analytics for security events
+- **InfluxDB Time-Series**: High-performance metrics storage and querying
+- **Long-term Retention**: Historical data storage beyond cache limits
+- **Advanced Analytics**: Complex queries and aggregations for threat hunting
+- **Scalable Architecture**: Distributed storage ready for high-volume deployments
+
+### Comprehensive Alerting System
+- **Multi-Channel Notifications**: Email, Slack, Teams, and webhook support
+- **Intelligent Alert Routing**: Severity-based routing and escalation
+- **Alert Deduplication**: Prevents alert fatigue with throttling
+- **Interactive Management**: Acknowledge, resolve, and track alerts via API
+- **Customizable Templates**: Flexible alert formatting and content
+
+### SIEM Integration
+- **Multi-Platform Support**: Splunk HEC, ELK Stack, Syslog (TCP/UDP), Webhook APIs
+- **Enterprise Forwarding**: Automatic event forwarding to security operations platforms
+- **Smart Event Filtering**: Configurable rules based on event type, severity, and threat score
+- **Batch Transmission**: Efficient bulk event processing for high-throughput environments
+- **Native Format Support**: Proper event formatting for each SIEM system's requirements
+- **Real-time Integration**: Events forwarded immediately upon detection
+
+### SDN Integration
+- **Dynamic Network Control**: Real-time traffic quarantine and isolation via SDN controllers
+- **Multi-Controller Support**: OpenDaylight, ONOS, Ryu, and Floodlight compatibility
+- **Automated Response**: High-threat IPs automatically quarantined at network layer
+- **Traffic Manipulation**: Redirect and mirror suspicious traffic for deep analysis
+- **Policy Management**: Time-based quarantine policies with automatic expiration
+- **Flow Rule Automation**: Programmatic OpenFlow rule management and monitoring
+
+### Automated Response
+- **Automatic IP Blocking**: High-threat IPs blocked via iptables/ufw/firewalld
+- **Firewall Integration**: Native support for Linux firewalls
+- **Threat Score Threshold**: Configurable blocking threshold (default: 7.0/10)
+- **Manual Firewall Management**: API endpoints for manual block/unblock operations
+
+### Data Protection
+- Secure Valkey authentication
+- Encrypted Kafka communication
+- Container isolation
+- Configurable access controls
+
+## 📁 Project Structure
+
+```
+netsentinel/
+├── opencanary/                 # Core NetSentinel code
+│   ├── logger.py               # Enhanced logging with Kafka/Valkey handlers
+│   ├── event_processor.py      # Real-time threat analysis
+│   └── modules/                # Honeypot service modules
+├── hybrid-data/                # Configuration and data
+│   └── opencanary/config/      # NetSentinel configuration
+├── bin/                        # Executable scripts
+├── Dockerfile                  # NetSentinel container
+├── Dockerfile.event-processor  # Event processor container
+├── docker-compose.yml          # Hybrid system orchestration
+└── requirements.txt            # Python dependencies
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Test your changes with the Docker setup
+4. Submit a pull request
+
+## 📄 License
+
+BSD License - see LICENSE file for details.
+
+## 🆘 Troubleshooting
+
+### Common Issues
+
+**NetSentinel not starting:**
+```bash
+# Check logs
+docker-compose logs netsentinel-honeypot
+
+# Restart container
+docker-compose restart netsentinel
+```
+
+**No events in Kafka:**
+```bash
+# Verify Kafka is healthy
+docker-compose ps kafka
+
+# Check topic creation
+docker exec netsentinel-kafka kafka-topics --describe --topic netsentinel-events --bootstrap-server localhost:9092
+```
+
+**Grafana not accessible:**
+- Ensure port 3000 is available
+- Check Grafana logs: `docker-compose logs grafana`
+
+### Support
+
+- **Documentation**: Check the `docs/` directory
+- **Issues**: Open a GitHub issue
+- **Community**: Join our discussions
+
+---
+**⚠️ Security Notice**: This is a research and detection tool. Use responsibly and only on networks you own or have permission to monitor.

@@ -5,8 +5,15 @@ Unit tests for NetSentinel firewall manager
 import pytest
 import subprocess
 import time
+import platform
 from unittest.mock import Mock, patch, MagicMock
 from netsentinel.firewall_manager import FirewallManager, get_firewall_manager
+
+# Skip all firewall tests on Windows (no iptables/ufw/firewalld support)
+pytestmark = pytest.mark.skipif(
+    platform.system() == "Windows",
+    reason="Firewall tests require Linux with iptables/ufw/firewalld"
+)
 
 
 class TestFirewallManager:

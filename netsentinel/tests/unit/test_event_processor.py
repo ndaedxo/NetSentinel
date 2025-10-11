@@ -6,6 +6,10 @@ import pytest
 import json
 import time
 from unittest.mock import Mock, patch, MagicMock
+
+# Skip all tests in this file if kafka is not available
+kafka = pytest.importorskip("kafka")
+
 from netsentinel.event_processor import EventProcessor
 
 

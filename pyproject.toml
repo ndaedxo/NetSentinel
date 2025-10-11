@@ -9,6 +9,13 @@ description = "NetSentinel - Advanced Network Anomaly Detection & Mitigation Sys
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.9"
+
+[tool.setuptools.packages.find]
+include = ["netsentinel*"]
+exclude = ["tests*", "docs*", "scripts*", "build_scripts*", "k8s*", "helm*", "hybrid-data*", "anomalib*"]
+
+[tool.setuptools.package-data]
+netsentinel = ["data/*", "modules/*", "templates/*"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Information Technology",
@@ -173,8 +180,8 @@ exclude_lines = [
     "raise NotImplementedError",
     "if 0:",
     "if __name__ == .__main__.:",
-    "class .*\bProtocol\):",
-    "@(abc\.)?abstractmethod",
+    "class .*\\bProtocol\\):",
+    "@\\(abc\\.\\)\\?abstractmethod",
 ]
 
 [tool.pytest.ini_options]
