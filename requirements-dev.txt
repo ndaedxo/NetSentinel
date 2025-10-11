@@ -41,7 +41,7 @@ tox>=3.24.0
 pip-tools>=6.6.0
 
 # Performance Testing
-locust>=2.8.0
+locust>=2.15.0,<2.30.0
 
 # Container Testing
 docker>=5.0.0

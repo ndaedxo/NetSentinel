@@ -22,7 +22,7 @@ scapy>=2.4.0
 pcapy-ng>=1.0.0
 
 # Anomalib ML Dependencies
-anomalib>=2.3.0
+anomalib>=1.0.0
 torch>=2.0.0
 torchvision>=0.15.0
 pytorch-lightning>=2.2.0
