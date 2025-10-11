@@ -9,7 +9,8 @@ exclude: |
   ^\.mypy_cache/|
   ^\.coverage$|
   ^coverage\.xml$|
-  ^\.DS_Store$
+  ^\.DS_Store$|
+  ^anomalib/
 fail_fast: false
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
