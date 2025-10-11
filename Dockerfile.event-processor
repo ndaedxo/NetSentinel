@@ -4,19 +4,49 @@ FROM python:3.11-slim
 RUN apt-get update && apt-get install -y \
     curl \
     wget \
+    build-essential \
+    libopenblas-dev \
+    liblapack-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-RUN pip install --no-cache-dir kafka-python redis prometheus-client flask
+# Install system dependencies for firewall management and packet analysis
+RUN apt-get update && apt-get install -y \
+    iptables \
+    ufw \
+    firewalld \
+    sudo \
+    net-tools \
+    iproute2 \
+    tcpdump \
+    libpcap-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies including ML libraries and enterprise databases
+RUN pip install --no-cache-dir \
+    kafka-python \
+    redis \
+    prometheus-client \
+    flask \
+    torch \
+    torchvision \
+    numpy \
+    scikit-learn \
+    opencv-python \
+    elasticsearch>=8.0.0 \
+    influxdb-client>=1.30.0
 
 # Set working directory
 WORKDIR /app
 
-# Copy event processor
-COPY opencanary/event_processor.py ./event_processor.py
+# Copy OpenCanary and Anomalib modules
+COPY opencanary/ ./opencanary/
+COPY anomalib/ ./anomalib/
+
+# Set Python path
+ENV PYTHONPATH="/app"
 
 # Expose port
 EXPOSE 8082
 
-# Run the event processor
-CMD ["python", "event_processor.py"]
+# Run the enhanced event processor
+CMD ["python", "-m", "opencanary.event_processor"]
