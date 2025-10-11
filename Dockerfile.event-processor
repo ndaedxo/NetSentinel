@@ -38,8 +38,8 @@ RUN pip install --no-cache-dir \
 # Set working directory
 WORKDIR /app
 
-# Copy OpenCanary and Anomalib modules
-COPY opencanary/ ./opencanary/
+# Copy NetSentinel and Anomalib modules
+COPY netsentinel/ ./netsentinel/
 COPY anomalib/ ./anomalib/
 
 # Set Python path

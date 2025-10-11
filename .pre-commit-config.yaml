@@ -1,17 +1,15 @@
-exclude: >
-  (?x)^(
-      dist/|
-      .devcontainer/devcontainer.json|
-      htmlcov/|
-      .tox/|
-      .eggs/|
-      *.egg|
-      .pytest_cache/|
-      .mypy_cache/|
-      .coverage|
-      coverage.xml|
-      .DS_Store
-  )
+exclude: |
+  ^dist/|
+  \.devcontainer/devcontainer\.json$|
+  ^htmlcov/|
+  ^\.tox/|
+  ^\.eggs/|
+  .*\.egg$|
+  ^\.pytest_cache/|
+  ^\.mypy_cache/|
+  ^\.coverage$|
+  ^coverage\.xml$|
+  ^\.DS_Store$
 fail_fast: false
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks

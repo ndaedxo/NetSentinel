@@ -59,10 +59,10 @@ testcontainers>=3.7.0
 
 # Security Testing
 sqlmap>=1.6.0
-nikto>=2.1.6
+# nikto>=2.1.6  # Not available on PyPI
 
 # Load Testing
-artillery>=2.0.0
+# artillery>=2.0.0  # Artillery is typically installed via npm, not pip
 
 # Monitoring & Observability Testing
 prometheus-client>=0.16.0
