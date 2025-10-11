@@ -19,7 +19,7 @@ Project-URL: Homepage, https://github.com/your-org/netsentinel
 Project-URL: Documentation, https://netsentinel.readthedocs.io/
 Project-URL: Repository, https://github.com/your-org/netsentinel
 Project-URL: Issues, https://github.com/your-org/netsentinel/issues
-Requires-Python: >=3.9
+Requires-Python: >=3.10
 Description-Content-Type: text/markdown
 License-File: LICENSE
 Dynamic: license-file

@@ -1,6 +1,7 @@
 LICENSE
 README.md
 pyproject.toml
+setup.py
 netsentinel/__init__.py
 netsentinel/alert_manager.py
 netsentinel/config.py
