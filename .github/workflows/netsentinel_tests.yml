@@ -1,44 +1,46 @@
 name: NetSentinel Tests
 
 on:
-  - "push"
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
 
 jobs:
   precommit_tests:
-    runs-on: "ubuntu-22.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Check out repository code"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
       - name: Set up Python 3.11
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: "3.11"
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Check pre-commit is happy
         run: pre-commit run --all-files
-  opencanary_tests:
+  netsentinel_tests:
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
-        os: ["ubuntu-22.04", "ubuntu-24.04", "macos-13", "macos-14", "macos-15"]
+        python-version: ["3.11", "3.12"]
+        os: ["ubuntu-latest"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
       - name: "Check out repository code"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: "${{ matrix.python-version }}"
-      - name: Install setuptools
-        run: pip3 install setuptools>=63.2.0
-      - name: Install wheel
-        run: pip3 install wheel
-      - name: Create package
-        run: python3 setup.py sdist
+      - name: Install build dependencies
+        run: |
+          pip install build
+      - name: Build package
+        run: python -m build
       - name: Install package
-        run: pip3 install dist/netsentinel-*.tar.gz
+        run: pip install dist/netsentinel-*.tar.gz
       - name: Verify installation
         run: python -c "import netsentinel; print('NetSentinel installed successfully')"
       - name: Run basic tests

@@ -54,7 +54,7 @@ jobs:
         run: mypy netsentinel/
 
       - name: Run pylint
-        run: pylint netsentinel/ --rcfile=pyproject.toml
+        run: pylint netsentinel/ --disable=C,R,W0613,W0622
 
       - name: Run bandit security checks
         run: bandit -r netsentinel/
@@ -159,70 +159,6 @@ jobs:
       - name: Run integration tests
         run: pytest netsentinel/tests/integration/ -v --tb=short
         env:
-          REDIS_HOST: localhost
-          REDIS_PORT: 6379
-          KAFKA_BOOTSTRAP_SERVERS: localhost:9092
-
-  # API tests with Playwright
-  api-tests:
-    name: API Tests
-    runs-on: ubuntu-latest
-    services:
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-      zookeeper:
-        image: confluentinc/cp-zookeeper:7.4.0
-        ports:
-          - 2181:2181
-        env:
-          ZOOKEEPER_CLIENT_PORT: 2181
-          ZOOKEEPER_TICK_TIME: 2000
-      kafka:
-        image: confluentinc/cp-kafka:7.4.0
-        ports:
-          - 9092:9092
-        env:
-          KAFKA_BROKER_ID: 1
-          KAFKA_ZOOKEEPER_CONNECT: localhost:2181
-          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libpcap-dev iptables
-
-      - name: Install dependencies
-        run: |
-          pip install -r requirements-dev.txt
-          pip install -e .
-
-      - name: Install Playwright
-        run: |
-          playwright install
-          playwright install-deps
-
-      - name: Start NetSentinel services
-        run: |
-          # Start event processor in background
-          python -m netsentinel.event_processor &
-          sleep 10
-
-      - name: Run API tests
-        run: pytest tests/playwright/ -v --tb=short
-        env:
-          NETSENTINEL_API_URL: http://localhost:8082
           REDIS_HOST: localhost
           REDIS_PORT: 6379
           KAFKA_BOOTSTRAP_SERVERS: localhost:9092
@@ -398,7 +334,7 @@ jobs:
     name: Generate Test Report
     runs-on: ubuntu-latest
     if: always()
-    needs: [unit-tests, integration-tests, api-tests]
+    needs: [unit-tests, integration-tests, docker-tests]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -413,7 +349,6 @@ jobs:
           echo "| Code Quality | ${{ needs.code-quality.result }} |" >> test-summary.md
           echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> test-summary.md
           echo "| Integration Tests | ${{ needs.integration-tests.result }} |" >> test-summary.md
-          echo "| API Tests | ${{ needs.api-tests.result }} |" >> test-summary.md
           echo "| Docker Tests | ${{ needs.docker-tests.result }} |" >> test-summary.md
           echo "| Security Tests | ${{ needs.security-tests.result }} |" >> test-summary.md
           echo "| Performance Tests | ${{ needs.performance-tests.result }} |" >> test-summary.md

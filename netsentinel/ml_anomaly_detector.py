@@ -249,11 +249,12 @@ class NetworkEventAnomalyDetector:
             score = 0.0
             
             # 1. Event type frequency analysis
+            recent_events = list(self.event_history)[-100:]  # Last 100 events
             event_counts = {}
-            for event in list(self.event_history)[-100:]:  # Last 100 events
+            for event in recent_events:
                 event_counts[event.event_type] = event_counts.get(event.event_type, 0) + 1
-            
-            current_event_freq = event_counts.get(features.event_type, 0) / max(len(self.event_history), 1)
+
+            current_event_freq = event_counts.get(features.event_type, 0) / max(len(recent_events), 1)
             if current_event_freq > 0.5:  # High frequency might indicate scanning
                 score += 0.3
             
