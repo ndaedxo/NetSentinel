@@ -1,0 +1,41 @@
+# =============================================================================
+# NetSentinel Test Requirements - Testing Dependencies
+# =============================================================================
+# This file contains only testing dependencies for CI/CD and testing environments.
+# Install with: pip install -r requirements-test.txt
+# =============================================================================
+
+# Include core requirements
+-r requirements-core.txt
+
+# Testing Framework
+pytest>=7.4.0
+pytest-cov>=3.0.0
+pytest-xdist>=2.5.0
+pytest-mock>=3.11.0
+pytest-asyncio>=0.21.0
+pytest-html>=3.1.0
+
+# Test Data & Fixtures
+faker>=13.0.0
+factory-boy>=3.2.0
+
+# Code Coverage
+coverage>=6.3.0
+
+# Performance Testing
+locust>=2.15.0,<2.30.0
+
+# API Testing
+requests-mock>=1.9.0
+responses>=0.20.0
+httpx>=0.23.0
+
+# Database Testing
+testcontainers>=3.7.0
+
+# Web Framework Testing
+flask-testing>=0.8.1
+
+# Time Testing
+freezegun>=1.1.0

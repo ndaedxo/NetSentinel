@@ -1,0 +1,81 @@
+# =============================================================================
+# NetSentinel Core Requirements - Production Dependencies
+# =============================================================================
+# This file contains only the core dependencies required for production
+# NetSentinel functionality. These are the minimum dependencies needed
+# to run NetSentinel in production environments.
+# =============================================================================
+
+# Core Framework & Networking
+Twisted>=24.11.0
+zope.interface>=7.2
+requests>=2.31.0
+urllib3>=2.0.7
+simplejson>=3.16.0
+
+# Security & Cryptography
+cryptography>=41.0.0
+pyasn1>=0.4.5
+pyOpenSSL>=22.1.0
+service-identity>=21.1.0
+bcrypt>=4.0.0
+
+# Authentication & Authorization
+passlib>=1.7.1
+
+# Data Processing & Serialization
+Jinja2>=3.0.1
+PyPDF2>=1.26.0
+fpdf>=1.7.2
+PyYAML>=6.0.0,<7.0.0
+
+# Protocol Libraries
+ntlmlib>=0.72
+hpfeeds>=3.0.0
+
+# Web Framework (Core)
+flask>=2.3.0
+
+# Message Queue & Caching
+kafka-python>=2.0.2
+redis>=4.6.0
+
+# Networking & Packet Analysis
+scapy>=2.5.0
+pcapy-ng>=1.0.0
+
+# API Server (REST API functionality)
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+
+# Machine Learning & Anomaly Detection (Optional but commonly used)
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+lightning>=2.0.0
+anomalib>=1.1.0
+numpy>=1.21.0
+opencv-python>=4.5.0
+pillow>=10.0.0
+scikit-learn>=1.0.0
+
+# Enterprise Database Integration
+elasticsearch>=8.0.0
+influxdb-client>=1.36.0
+
+# Monitoring & Observability
+prometheus-client>=0.17.0
+psutil>=5.9.0
+
+# Enhanced Networking & Async I/O
+aiohttp>=3.8.0
+
+# Data Models & Validation
+pydantic>=2.0.0
+dataclasses-json>=0.6.0
+
+# MQTT Support
+asyncio-mqtt>=0.13.0
+
+# JWT Authentication
+PyJWT>=2.8.0

@@ -1,19 +1,14 @@
 # =============================================================================
-# NetSentinel Requirements - All Dependencies
+# NetSentinel Development Requirements - Development Dependencies
 # =============================================================================
-# This file contains ALL dependencies for NetSentinel (core + development).
-# 
-# For different use cases, use these specific files:
-# - Production: pip install -r requirements-core.txt
-# - Development: pip install -r requirements-dev.txt  
-# - Testing only: pip install -r requirements-test.txt
-# - Everything: pip install -r requirements.txt
+# This file contains development, testing, and CI/CD dependencies.
+# Install with: pip install -r requirements-dev.txt
 # =============================================================================
 
-# Include all core dependencies
+# Include core requirements
 -r requirements-core.txt
 
-# Development & Testing Dependencies
+# Testing Framework
 pytest>=7.4.0
 pytest-cov>=3.0.0
 pytest-xdist>=2.5.0
