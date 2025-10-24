@@ -23,14 +23,14 @@ WORKDIR /app
 # Copy application code
 COPY . .
 
-# Install OpenCanary using setup.py
+# Install NetSentinel using setup.py
 RUN pip install --no-cache-dir .
 
 # Fix line endings in bash scripts (Windows -> Unix)
 RUN find /app/bin -name "*.sh" -o -name "*" -type f -executable | xargs -I {} dos2unix {} 2>/dev/null || true
 
-# Fix twistd path in opencanaryd script
-RUN sed -i 's|${DIR}/twistd|/usr/local/bin/twistd|g' /app/bin/opencanaryd
+# Fix twistd path in netsentinel script
+RUN sed -i 's|${DIR}/twistd|/usr/local/bin/twistd|g' /app/bin/netsentinel
 
 # Install additional packages for hybrid functionality
 RUN pip install --no-cache-dir kafka-python redis prometheus-client flask scapy pcapy-ng
@@ -39,7 +39,7 @@ RUN pip install --no-cache-dir kafka-python redis prometheus-client flask scapy 
 ENV PYTHONPATH="/app"
 
 # Set the default application
-ENTRYPOINT ["bash", "/app/bin/opencanaryd"]
+ENTRYPOINT ["bash", "/app/bin/netsentinel"]
 
 # Set default arguments
 CMD ["--dev", "--uid=nobody", "--gid=nogroup"]

@@ -61,8 +61,8 @@ kubectl wait --for=condition=ready pod -l app=kafka -n netsentinel --timeout=300
 ### Step 3: Deploy Databases
 
 ```bash
-# Valkey cache
-kubectl apply -f k8s/valkey.yaml
+# Redis cache
+kubectl apply -f k8s/redis.yaml
 
 # Elasticsearch
 kubectl apply -f k8s/elasticsearch.yaml
@@ -302,7 +302,7 @@ Use Kubernetes secrets for sensitive data:
 
 ```bash
 kubectl create secret generic netsentinel-secrets \
-  --from-literal=valkey-password=your-password \
+  --from-literal=redis-password=your-password \
   --from-literal=influxdb-token=your-token \
   -n netsentinel
 ```

@@ -30,11 +30,11 @@ spec:
         env:
         - name: KAFKA_BOOTSTRAP_SERVERS
           value: "kafka:29092"
-        - name: VALKEY_HOST
-          value: "valkey"
-        - name: VALKEY_PORT
+        - name: REDIS_HOST
+          value: "redis"
+        - name: REDIS_PORT
           value: "6379"
-        - name: VALKEY_PASSWORD
+        - name: REDIS_PASSWORD
           value: "hybrid-detection-2024"
         - name: FIREWALL_BLOCK_THRESHOLD
           value: "7.0"

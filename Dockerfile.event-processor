@@ -29,19 +29,29 @@ RUN pip install --no-cache-dir \
     flask \
     torch \
     torchvision \
+    torchaudio \
     numpy \
     scikit-learn \
     opencv-python \
+    pillow \
     anomalib>=1.0.0 \
     elasticsearch>=8.0.0 \
-    influxdb-client>=1.30.0
+    influxdb-client>=1.30.0 \
+    scapy \
+    cryptography \
+    bcrypt \
+    requests \
+    aiohttp \
+    fastapi \
+    uvicorn
 
 # Set working directory
 WORKDIR /app
 
-# Copy NetSentinel and Anomalib modules
+# Copy NetSentinel, Anomalib modules, and scripts
 COPY netsentinel/ ./netsentinel/
 COPY anomalib/ ./anomalib/
+COPY scripts/ ./scripts/
 
 # Set Python path
 ENV PYTHONPATH="/app"
@@ -49,5 +59,8 @@ ENV PYTHONPATH="/app"
 # Expose port
 EXPOSE 8082
 
-# Run the enhanced event processor
-CMD ["python", "-m", "opencanary.event_processor"]
+# Make startup script executable
+RUN chmod +x /app/scripts/start_event_processor.py
+
+# Run the refactored event processor
+CMD ["python", "/app/scripts/start_event_processor.py"]

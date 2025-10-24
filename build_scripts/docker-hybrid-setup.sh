@@ -37,10 +37,10 @@ echo -e "${GREEN}✅ Docker and Docker Compose are available${NC}"
 # Create directory structure
 echo -e "${YELLOW}📁 Creating directory structure...${NC}"
 
-mkdir -p ./hybrid-data/{kafka,zookeeper,valkey,opencanary,logs,config}
+mkdir -p ./hybrid-data/{kafka,zookeeper,redis,opencanary,logs,config}
 mkdir -p ./hybrid-data/kafka/{data,logs}
 mkdir -p ./hybrid-data/zookeeper/{data,logs,conf}
-mkdir -p ./hybrid-data/valkey/{data,logs}
+mkdir -p ./hybrid-data/redis/{data,logs}
 mkdir -p ./hybrid-data/opencanary/{logs,config}
 
 # Set permissions
@@ -193,9 +193,9 @@ cat > ./hybrid-data/opencanary/config/opencanary.conf << 'EOF'
                     "topic": "opencanary-events",
                     "formatter": "json"
                 },
-                "valkey": {
-                    "class": "opencanary.logger.ValkeyHandler",
-                    "host": "valkey",
+                "redis": {
+                    "class": "opencanary.logger.RedisHandler",
+                    "host": "redis",
                     "port": 6379,
                     "db": 0,
                     "channel": "opencanary:alerts",
@@ -204,7 +204,7 @@ cat > ./hybrid-data/opencanary/config/opencanary.conf << 'EOF'
             },
             "root": {
                 "level": "INFO",
-                "handlers": ["console", "file", "kafka", "valkey"]
+                "handlers": ["console", "file", "kafka", "redis"]
             }
         }
     }
@@ -261,10 +261,10 @@ EOF
 echo -e "${GREEN}✅ Zookeeper configuration created${NC}"
 
 # Create Valkey configuration
-echo -e "${YELLOW}⚙️  Creating Valkey configuration...${NC}"
+echo -e "${YELLOW}⚙️  Creating Redis configuration...${NC}"
 
-cat > ./hybrid-data/valkey/valkey.conf << 'EOF'
-# Valkey configuration for hybrid detection system
+cat > ./hybrid-data/redis/redis.conf << 'EOF'
+# Redis configuration for hybrid detection system
 port 6379
 bind 0.0.0.0
 protected-mode no
@@ -276,7 +276,7 @@ save 60 10000
 
 # Logging
 loglevel notice
-logfile /var/log/valkey/valkey.log
+logfile /var/log/redis/redis.log
 
 # Memory management
 maxmemory 512mb
@@ -333,18 +333,18 @@ volumes:
       type: none
       o: bind
       device: ./hybrid-data/zookeeper/logs
-  valkey-data:
+  redis-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./hybrid-data/valkey/data
-  valkey-logs:
+      device: ./hybrid-data/redis/data
+  redis-logs:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./hybrid-data/valkey/logs
+      device: ./hybrid-data/redis/logs
   opencanary-logs:
     driver: local
     driver_opts:
@@ -413,11 +413,11 @@ services:
       timeout: 5s
       retries: 5
 
-  # Valkey for caching and fast lookups
-  valkey:
-    image: valkey/valkey:7.2-alpine
-    hostname: valkey
-    container_name: hybrid-valkey
+  # Redis for caching and fast lookups
+  redis:
+    image: redis:7.2-alpine
+    hostname: redis
+    container_name: hybrid-redis
     restart: unless-stopped
     networks:
       hybrid-network:
@@ -425,12 +425,12 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - valkey-data:/data
-      - valkey-logs:/var/log/valkey
-      - ./hybrid-data/valkey/valkey.conf:/usr/local/etc/valkey/valkey.conf
-    command: valkey-server /usr/local/etc/valkey/valkey.conf
+      - redis-data:/data
+      - redis-logs:/var/log/redis
+      - ./hybrid-data/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
     healthcheck:
-      test: ["CMD", "valkey-cli", "ping"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -446,7 +446,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-      valkey:
+      redis:
         condition: service_healthy
     networks:
       hybrid-network:
@@ -459,7 +459,7 @@ services:
       - "80:80"    # HTTP
       - "443:443"  # HTTPS
       - "3306:3306" # MySQL
-      - "6379:6379" # Redis (proxy to valkey)
+      - "6379:6379" # Redis
       # Additional services
       - "69:69"    # TFTP
       - "123:123"  # NTP
@@ -477,9 +477,9 @@ services:
       - ./hybrid-data/opencanary/logs:/var/tmp/opencanary
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-      - VALKEY_HOST=valkey
-      - VALKEY_PORT=6379
-      - VALKEY_PASSWORD=hybrid-detection-2024
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=hybrid-detection-2024
       - OPENCANARY_MODE=hybrid
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "21"]
@@ -515,8 +515,8 @@ services:
     image: rediscommander/redis-commander:latest
     container_name: hybrid-redis-commander
     restart: unless-stopped
-    depends_on:
-      valkey:
+      depends_on:
+      redis:
         condition: service_healthy
     networks:
       hybrid-network:
@@ -524,7 +524,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      REDIS_HOSTS: valkey:valkey:6379:0:hybrid-detection-2024
+      REDIS_HOSTS: redis:redis:6379:0:hybrid-detection-2024
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/health"]
       interval: 30s
@@ -542,7 +542,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-      valkey:
+      redis:
         condition: service_healthy
     networks:
       hybrid-network:
@@ -551,9 +551,9 @@ services:
       - "8082:8082"
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-      - VALKEY_HOST=valkey
-      - VALKEY_PORT=6379
-      - VALKEY_PASSWORD=hybrid-detection-2024
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=hybrid-detection-2024
       - PROCESSOR_MODE=hybrid
     volumes:
       - opencanary-logs:/var/log/opencanary
@@ -727,10 +727,10 @@ THREAT_SCORE = Counter('threat_score_total', 'Threat score accumulated', ['sourc
 class EventProcessor:
     def __init__(self):
         self.kafka_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'kafka:29092').split(',')
-        self.valkey_host = os.getenv('VALKEY_HOST', 'valkey')
-        self.valkey_port = int(os.getenv('VALKEY_PORT', 6379))
-        self.valkey_password = os.getenv('VALKEY_PASSWORD', 'hybrid-detection-2024')
-        
+        self.redis_host = os.getenv('REDIS_HOST', 'redis')
+        self.redis_port = int(os.getenv('REDIS_PORT', 6379))
+        self.redis_password = os.getenv('REDIS_PASSWORD', 'hybrid-detection-2024')
+
         # Kafka consumer
         self.consumer = kafka.KafkaConsumer(
             'opencanary-events',
@@ -738,12 +738,12 @@ class EventProcessor:
             value_deserializer=lambda m: json.loads(m.decode('utf-8')),
             group_id='hybrid-processor'
         )
-        
-        # Valkey client
-        self.valkey = redis.Redis(
-            host=self.valkey_host,
-            port=self.valkey_port,
-            password=self.valkey_password,
+
+        # Redis client
+        self.redis = redis.Redis(
+            host=self.redis_host,
+            port=self.redis_port,
+            password=self.redis_password,
             decode_responses=True
         )
         
@@ -787,7 +787,7 @@ class EventProcessor:
                 
                 # Store in Valkey for real-time queries
                 threat_key = f"threat:{source_ip}"
-                self.valkey.setex(threat_key, 3600, json.dumps({
+                self.redis.setex(threat_key, 3600, json.dumps({
                     'score': threat_score,
                     'timestamp': time.time(),
                     'event': event_data
@@ -835,22 +835,22 @@ class EventProcessor:
         
         # Store recent events for correlation
         correlation_key = f"correlation:{source_ip}"
-        self.valkey.lpush(correlation_key, json.dumps(event_data))
-        self.valkey.ltrim(correlation_key, 0, 99)  # Keep last 100 events
-        self.valkey.expire(correlation_key, 3600)  # Expire in 1 hour
+        self.redis.lpush(correlation_key, json.dumps(event_data))
+        self.redis.ltrim(correlation_key, 0, 99)  # Keep last 100 events
+        self.redis.expire(correlation_key, 3600)  # Expire in 1 hour
     
     def get_threat_analysis(self, source_ip=None):
         """Get threat analysis for specific IP or all IPs"""
         if source_ip:
             threat_key = f"threat:{source_ip}"
-            threat_data = self.valkey.get(threat_key)
+            threat_data = self.redis.get(threat_key)
             return json.loads(threat_data) if threat_data else None
         else:
             # Get all threats
             threats = {}
-            for key in self.valkey.scan_iter(match="threat:*"):
+            for key in self.redis.scan_iter(match="threat:*"):
                 ip = key.split(':')[1]
-                threat_data = self.valkey.get(key)
+                threat_data = self.redis.get(key)
                 if threat_data:
                     threats[ip] = json.loads(threat_data)
             return threats
@@ -1115,9 +1115,9 @@ echo -e "${YELLOW}🔧 Final setup...${NC}"
 cat > .env.hybrid << 'EOF'
 # OpenCanary Hybrid Environment Variables
 KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-VALKEY_HOST=valkey
-VALKEY_PORT=6379
-VALKEY_PASSWORD=hybrid-detection-2024
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_PASSWORD=hybrid-detection-2024
 OPENCANARY_MODE=hybrid
 PROCESSOR_MODE=hybrid
 EOF

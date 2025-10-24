@@ -24,9 +24,9 @@ data:
       "logger.kafka.hosts": "kafka:29092",
       "logger.kafka.topic": "netsentinel-events",
       "logger.redis.enabled": true,
-      "logger.redis.host": "valkey",
+      "logger.redis.host": "redis",
       "logger.redis.port": 6379,
-      "logger.redis.password": "hybrid-detection-2024"
+      "logger.redis.password": "netsentinel-ai-2024"
     }
 ---
 apiVersion: apps/v1
@@ -76,11 +76,11 @@ spec:
         env:
         - name: KAFKA_BOOTSTRAP_SERVERS
           value: "kafka:29092"
-        - name: VALKEY_HOST
-          value: "valkey"
-        - name: VALKEY_PORT
+        - name: REDIS_HOST
+          value: "redis"
+        - name: REDIS_PORT
           value: "6379"
-        - name: VALKEY_PASSWORD
+        - name: REDIS_PASSWORD
           value: "hybrid-detection-2024"
         readinessProbe:
           httpGet:

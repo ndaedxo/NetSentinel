@@ -91,7 +91,7 @@ helm install netsentinel ./helm/netsentinel -f my-values.yaml
 |-----------|-------------|---------|
 | `elasticsearch.enabled` | Enable Elasticsearch | `true` |
 | `influxdb.enabled` | Enable InfluxDB | `true` |
-| `valkey.enabled` | Enable Valkey cache | `true` |
+| `redis.enabled` | Enable Redis cache | `true` |
 
 ### Monitoring Parameters
 
@@ -266,7 +266,7 @@ Use Kubernetes secrets for sensitive data:
 
 ```bash
 kubectl create secret generic netsentinel-secrets \
-  --from-literal=valkey-password=your-secure-password \
+  --from-literal=redis-password=your-secure-password \
   --from-literal=influxdb-token=your-secure-token \
   -n netsentinel
 ```

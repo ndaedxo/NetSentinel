@@ -1,6 +1,6 @@
-# NetSentinel Hybrid Detection & Mitigation System
+# NetSentinel AI-Powered Detection & Mitigation System
 
-A modern honeypot system with real-time threat detection and mitigation capabilities using Kafka, Valkey, Prometheus, and Grafana.
+An enterprise-grade AI-powered honeypot system with real-time threat detection, ML-based anomaly detection, and comprehensive enterprise integrations using Kafka, Redis, Elasticsearch, InfluxDB, SIEM, SDN, and advanced monitoring.
 
 ## 🚀 Quick Start
 
@@ -8,17 +8,48 @@ A modern honeypot system with real-time threat detection and mitigation capabili
 - Docker & Docker Compose
 - Python 3.11+ (for local development)
 
+#### Dependencies
+
+NetSentinel uses a consolidated `requirements.txt` file that includes all dependencies organized by category:
+
+- **Core Dependencies**: Required for basic NetSentinel functionality
+- **Optional Dependencies**: Enable additional features (API server, ML, enterprise databases, etc.)
+- **Development Dependencies**: For development, testing, and CI/CD
+
+```bash
+# Install all dependencies (recommended for full functionality)
+pip install -r requirements.txt
+
+# For minimal installation (core functionality only), you can selectively install
+# core dependencies, but the consolidated file includes everything needed
+```
+
+The consolidated requirements enable:
+- REST API server (`fastapi`, `uvicorn`)
+- ML-based anomaly detection (`torch`, `anomalib`, `lightning`)
+- Enterprise databases (`elasticsearch`, `influxdb-client`)
+- SIEM integrations (`splunk-sdk`, `logstash`)
+- SDN integration (`ryu`, `mininet`)
+- Threat intelligence (`misp`, `stix`)
+- Security features (`cryptography`, `jwt`)
+- Development tools (`pytest`, `black`, `mypy`, etc.)
+
+#### Platform Compatibility
+- **Linux**: Full functionality (iptables, ufw, firewalld)
+- **Windows**: Core functionality (firewall blocking simulated)
+- **macOS**: Core functionality (firewall blocking simulated)
+
 ### 2. Start the Hybrid System
 
 ```bash
 # Clone and navigate to the project
 cd netsentinel
 
-# Start all services (NetSentinel, Kafka, Valkey, Prometheus, Grafana, etc.)
+# Start all services (NetSentinel, Kafka, Redis, Elasticsearch, InfluxDB, Prometheus, Grafana, etc.)
 docker-compose up -d
 
 # View logs
-docker-compose logs -f netsentinel-honeypot
+docker-compose logs -f netsentinel
 ```
 
 ### 3. Access Your System
@@ -27,27 +58,36 @@ docker-compose logs -f netsentinel-honeypot
 |---------|-----|---------|
 | **Grafana Dashboards** | http://localhost:3000 | Real-time monitoring & alerts |
 | **Kafka UI** | http://localhost:8080 | Kafka topic management |
-| **Redis Commander** | http://localhost:8081 | Valkey data management |
+| **Redis Commander** | http://localhost:8081 | Redis data management |
+| **Elasticsearch** | http://localhost:9200 | Log storage and search |
+| **InfluxDB** | http://localhost:8086 | Time-series metrics |
 | **Prometheus** | http://localhost:9090 | Metrics collection |
 | **NetSentinel API** | http://localhost:8082 | Threat analysis API |
 
-**Grafana Credentials:** `admin` / `hybrid-admin-2024`
+**Grafana Credentials:** `admin` / `netsentinel-admin-2024`
 
 ## 🏗️ Architecture
 
 ### Core Components
 
 ```
-NetSentinel → Kafka → Enhanced Event Processor → Valkey
+NetSentinel → Kafka → ML Analyzer → Redis
                     ↓           ↓
-              Prometheus ← Grafana ← ML Models (Anomalib)
+              SIEM ← SDN ← Threat Intel
+                    ↓
+              Prometheus ← Grafana
 ```
 
-- **NetSentinel** - Multi-protocol honeypot (FTP, SSH, Telnet, HTTP, HTTPS, MySQL)
+- **NetSentinel** - Multi-protocol honeypot (FTP, SSH, Telnet, HTTP, HTTPS, MySQL, RDP, VNC, Redis, Git)
 - **Kafka** - Real-time event streaming platform
-- **Enhanced Event Processor** - Hybrid threat detection (rule-based + ML)
+- **ML Analyzer** - AI-powered threat detection using Anomalib models
 - **Anomalib ML Models** - FastFlow, EfficientAD, PaDiM for behavioral analysis
-- **Valkey** - High-performance caching and data storage
+- **Redis** - High-performance caching and data storage
+- **Elasticsearch** - Enterprise log storage and search
+- **InfluxDB** - Time-series metrics and performance data
+- **SIEM Integration** - Splunk, ELK Stack, Syslog forwarding
+- **SDN Integration** - OpenFlow controllers for dynamic network policies
+- **Threat Intelligence** - MISP, STIX/TAXII feeds with reputation scoring
 - **Prometheus** - Metrics collection and alerting
 - **Grafana** - Real-time dashboards and visualization
 
@@ -96,8 +136,8 @@ docker exec netsentinel-kafka kafka-topics --list --bootstrap-server localhost:9
 # View events in Kafka
 docker exec netsentinel-kafka kafka-console-consumer --topic netsentinel-events --bootstrap-server localhost:9092 --from-beginning --max-messages 5
 
-# Check Valkey data
-docker exec netsentinel-valkey valkey-cli -a hybrid-detection-2024 keys "netsentinel:*"
+# Check Redis data
+docker exec netsentinel-redis redis-cli -a hybrid-detection-2024 keys "netsentinel:*"
 
 # Test threat analysis API
 curl http://localhost:8082/threats

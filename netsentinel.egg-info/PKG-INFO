@@ -19,7 +19,7 @@ Project-URL: Homepage, https://github.com/your-org/netsentinel
 Project-URL: Documentation, https://netsentinel.readthedocs.io/
 Project-URL: Repository, https://github.com/your-org/netsentinel
 Project-URL: Issues, https://github.com/your-org/netsentinel/issues
-Requires-Python: >=3.10
+Requires-Python: >=3.11
 Description-Content-Type: text/markdown
 License-File: LICENSE
 Dynamic: license-file
@@ -33,6 +33,34 @@ A modern honeypot system with real-time threat detection and mitigation capabili
 ### 1. Prerequisites
 - Docker & Docker Compose
 - Python 3.11+ (for local development)
+
+#### Dependencies
+
+NetSentinel uses a consolidated `requirements.txt` file that includes all dependencies organized by category:
+
+- **Core Dependencies**: Required for basic NetSentinel functionality
+- **Optional Dependencies**: Enable additional features (API server, ML, enterprise databases, etc.)
+- **Development Dependencies**: For development, testing, and CI/CD
+
+```bash
+# Install all dependencies (recommended for full functionality)
+pip install -r requirements.txt
+
+# For minimal installation (core functionality only), you can selectively install
+# core dependencies, but the consolidated file includes everything needed
+```
+
+The consolidated requirements enable:
+- REST API server (`fastapi`, `uvicorn`)
+- ML-based anomaly detection (`torch`, `anomalib`)
+- Enhanced networking features (`scapy`, `cryptography`)
+- SIEM integrations (`elasticsearch`, `influxdb-client`)
+- Development tools (`pytest`, `black`, `mypy`, etc.)
+
+#### Platform Compatibility
+- **Linux**: Full functionality (iptables, ufw, firewalld)
+- **Windows**: Core functionality (firewall blocking simulated)
+- **macOS**: Core functionality (firewall blocking simulated)
 
 ### 2. Start the Hybrid System
 
@@ -122,8 +150,8 @@ docker exec netsentinel-kafka kafka-topics --list --bootstrap-server localhost:9
 # View events in Kafka
 docker exec netsentinel-kafka kafka-console-consumer --topic netsentinel-events --bootstrap-server localhost:9092 --from-beginning --max-messages 5
 
-# Check Valkey data
-docker exec netsentinel-valkey valkey-cli -a hybrid-detection-2024 keys "netsentinel:*"
+# Check Redis data
+docker exec netsentinel-redis redis-cli -a hybrid-detection-2024 keys "netsentinel:*"
 
 # Test threat analysis API
 curl http://localhost:8082/threats

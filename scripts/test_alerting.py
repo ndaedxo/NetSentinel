@@ -13,7 +13,7 @@ import os
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from netsentinel.alert_manager import get_alert_manager
+from netsentinel.alerts.alert_store import AlertStore
 
 EVENT_PROCESSOR_URL = "http://localhost:8082"
 

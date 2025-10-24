@@ -1,3 +1,7 @@
+# NetSentinel Docker Compose Configuration (Refactored Architecture)
+# Updated to use new NETSENTINEL_ prefixed environment variables
+# and refactored event processor with improved architecture
+
 services:
   # Core infrastructure
   zookeeper:
@@ -44,17 +48,17 @@ services:
       timeout: 5s
       retries: 5
 
-  valkey:
-    image: valkey/valkey:7.2-alpine
-    container_name: netsentinel-valkey
+  redis:
+    image: redis:7.2-alpine
+    container_name: netsentinel-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
-    command: valkey-server --requirepass hybrid-detection-2024
+    command: redis-server --requirepass hybrid-detection-2024
     volumes:
-      - valkey-data:/data
+      - redis-data:/data
     healthcheck:
-      test: ["CMD", "valkey-cli", "--no-auth-warning", "-a", "hybrid-detection-2024", "ping"]
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "hybrid-detection-2024", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -69,7 +73,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-      valkey:
+      redis:
         condition: service_healthy
     ports:
       - "21:21"    # FTP
@@ -79,66 +83,75 @@ services:
       - "443:443"  # HTTPS
       - "3307:3306" # MySQL (mapped to 3307 to avoid conflict)
     volumes:
-      - ./hybrid-data/opencanary/config/opencanary.conf:/root/.opencanary.conf
-      - opencanary-logs:/var/log/opencanary
+      - ./src/data/opencanary/config/opencanary.conf:/root/.netsentinel.conf
+      - netsentinel-logs:/var/log/netsentinel
     environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-      - VALKEY_HOST=valkey
-      - VALKEY_PORT=6379
-      - VALKEY_PASSWORD=hybrid-detection-2024
+      - NETSENTINEL_KAFKA_SERVERS=kafka:29092
+      - NETSENTINEL_REDIS_HOST=redis
+      - NETSENTINEL_REDIS_PORT=6379
+      - NETSENTINEL_REDIS_PASSWORD=hybrid-detection-2024
 
-  # Event processor
+  # Refactored Event Processor (using new architecture)
   event-processor:
     build:
       context: .
       dockerfile: Dockerfile.event-processor
-    container_name: netsentinel-event-processor
+    container_name: netsentinel-refactored-processor
     restart: unless-stopped
     depends_on:
       kafka:
         condition: service_healthy
-      valkey:
+      redis:
         condition: service_healthy
     ports:
       - "8082:8082"
     environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-      - VALKEY_HOST=valkey
-      - VALKEY_PORT=6379
-      - VALKEY_PASSWORD=hybrid-detection-2024
-      - FIREWALL_BLOCK_THRESHOLD=7.0
-      - ENTERPRISE_DB_ENABLED=true
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - INFLUXDB_URL=http://influxdb:8086
-      - INFLUXDB_TOKEN=netsentinel-token-2024
-      - INFLUXDB_ORG=netsentinel
-      - INFLUXDB_BUCKET=netsentinel-metrics
-      - ALERTING_ENABLED=true
-      - SMTP_SERVER=smtp.gmail.com
-      - SMTP_PORT=587
-      - ALERT_FROM_EMAIL=alerts@netsentinel.local
-      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
-      - ALERT_WEBHOOK_URL=${ALERT_WEBHOOK_URL:-}
-      - SIEM_ENABLED=true
-      - SPLUNK_HEC_URL=${SPLUNK_HEC_URL:-}
-      - SPLUNK_HEC_TOKEN=${SPLUNK_HEC_TOKEN:-}
-      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL:-http://elasticsearch:9200}
-      - SYSLOG_HOST=${SYSLOG_HOST:-}
-      - SIEM_WEBHOOK_URL=${SIEM_WEBHOOK_URL:-}
-      - SDN_ENABLED=${SDN_ENABLED:-false}
-      - SDN_CONTROLLER_NAME=${SDN_CONTROLLER_NAME:-opendaylight}
-      - SDN_SWITCH_ID=${SDN_SWITCH_ID:-}
-      - SDN_QUARANTINE_DURATION=${SDN_QUARANTINE_DURATION:-3600}
-      - OPENDLIGHT_HOST=${OPENDLIGHT_HOST:-}
-      - OPENDLIGHT_PORT=${OPENDLIGHT_PORT:-8181}
-      - OPENDLIGHT_USERNAME=${OPENDLIGHT_USERNAME:-admin}
-      - OPENDLIGHT_PASSWORD=${OPENDLIGHT_PASSWORD:-admin}
-      - ONOS_HOST=${ONOS_HOST:-}
-      - ONOS_PORT=${ONOS_PORT:-8181}
-      - ONOS_USERNAME=${ONOS_USERNAME:-onos}
-      - ONOS_PASSWORD=${ONOS_PASSWORD:-rocks}
-      - RYU_HOST=${RYU_HOST:-}
-      - RYU_PORT=${RYU_PORT:-8080}
+      - NETSENTINEL_KAFKA_SERVERS=localhost:9092
+      - NETSENTINEL_KAFKA_TOPIC=netsentinel-events
+      - NETSENTINEL_CONSUMER_GROUP=netsentinel-processor
+      - NETSENTINEL_REDIS_HOST=localhost
+      - NETSENTINEL_REDIS_PORT=6379
+      - NETSENTINEL_REDIS_PASSWORD=hybrid-detection-2024
+      - NETSENTINEL_ML_ENABLED=true
+      - NETSENTINEL_ALERTING_ENABLED=true
+      - NETSENTINEL_SIEM_ENABLED=true
+      - NETSENTINEL_FIREWALL_ENABLED=true
+      - NETSENTINEL_THREAT_STORAGE_ENABLED=true
+      - NETSENTINEL_FIREWALL_MANAGER_ENABLED=true
+      - NETSENTINEL_ENTERPRISE_DB_ENABLED=true
+      - NETSENTINEL_ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - NETSENTINEL_INFLUXDB_URL=http://influxdb:8086
+      - NETSENTINEL_INFLUXDB_TOKEN=netsentinel-token-2024
+      - NETSENTINEL_INFLUXDB_ORG=netsentinel
+      - NETSENTINEL_INFLUXDB_BUCKET=netsentinel-metrics
+      - NETSENTINEL_SMTP_SERVER=smtp.gmail.com
+      - NETSENTINEL_SMTP_PORT=587
+      - NETSENTINEL_ALERT_FROM_EMAIL=alerts@netsentinel.local
+      - NETSENTINEL_SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
+      - NETSENTINEL_ALERT_WEBHOOK_URL=${ALERT_WEBHOOK_URL:-}
+      - NETSENTINEL_SPLUNK_HEC_URL=${SPLUNK_HEC_URL:-}
+      - NETSENTINEL_SPLUNK_HEC_TOKEN=${SPLUNK_HEC_TOKEN:-}
+      - NETSENTINEL_ELASTICSEARCH_URL=${ELASTICSEARCH_URL:-http://elasticsearch:9200}
+      - NETSENTINEL_SYSLOG_HOST=${SYSLOG_HOST:-}
+      - NETSENTINEL_SIEM_WEBHOOK_URL=${SIEM_WEBHOOK_URL:-}
+      - NETSENTINEL_SDN_ENABLED=${SDN_ENABLED:-false}
+      - NETSENTINEL_SDN_CONTROLLER_NAME=${SDN_CONTROLLER_NAME:-opendaylight}
+      - NETSENTINEL_SDN_SWITCH_ID=${SDN_SWITCH_ID:-}
+      - NETSENTINEL_SDN_QUARANTINE_DURATION=${SDN_QUARANTINE_DURATION:-3600}
+      - NETSENTINEL_OPENDLIGHT_HOST=${OPENDLIGHT_HOST:-}
+      - NETSENTINEL_OPENDLIGHT_PORT=${OPENDLIGHT_PORT:-8181}
+      - NETSENTINEL_OPENDLIGHT_USERNAME=${OPENDLIGHT_USERNAME:-admin}
+      - NETSENTINEL_OPENDLIGHT_PASSWORD=${OPENDLIGHT_PASSWORD:-admin}
+      - NETSENTINEL_ONOS_HOST=${ONOS_HOST:-}
+      - NETSENTINEL_ONOS_PORT=${ONOS_PORT:-8181}
+      - NETSENTINEL_ONOS_USERNAME=${ONOS_USERNAME:-onos}
+      - NETSENTINEL_ONOS_PASSWORD=${ONOS_PASSWORD:-rocks}
+      - NETSENTINEL_RYU_HOST=${RYU_HOST:-}
+      - NETSENTINEL_RYU_PORT=${RYU_PORT:-8080}
+      # Additional refactored architecture settings
+      - NETSENTINEL_PROCESSOR_MAX_WORKERS=3
+      - NETSENTINEL_PROCESSOR_QUEUE_SIZE=1000
+      - NETSENTINEL_THREAT_INTELLIGENCE_ENABLED=true
     # Privileged access for firewall management and packet capture
     privileged: true
     cap_add:
@@ -171,12 +184,12 @@ services:
     container_name: netsentinel-redis-commander
     restart: unless-stopped
     depends_on:
-      valkey:
+      redis:
         condition: service_healthy
     ports:
       - "8081:8081"
     environment:
-      REDIS_HOSTS: valkey:valkey:6379:0:hybrid-detection-2024
+      REDIS_HOSTS: redis:redis:6379:0:hybrid-detection-2024
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
@@ -224,7 +237,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./hybrid-data/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./src/data/config/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -247,12 +260,14 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./src/data/config/grafana/provisioning:/etc/grafana/provisioning
+      - ./src/data/config/grafana/dashboards:/var/lib/grafana/dashboards
 
 volumes:
   zookeeper-data:
   kafka-data:
-  valkey-data:
-  opencanary-logs:
+  redis-data:
+  netsentinel-logs:
   prometheus-data:
   grafana-data:
   elasticsearch-data:

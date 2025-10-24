@@ -1,4 +1,4 @@
-# Makefile for Sphinx documentation
+# Makefile for NetSentinel AI-Powered Security Platform documentation
 #
 
 # You can set these variables from the command line.

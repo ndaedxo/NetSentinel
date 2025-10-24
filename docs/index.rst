@@ -1,19 +1,31 @@
-OpenCanary
-===========
+NetSentinel AI-Powered Security Platform
+========================================
 
-Welcome to the OpenCanary guide.
+Welcome to the NetSentinel AI-Powered Security Platform documentation.
 
-Please note we have a wiki on Github with FAQ and Samba Setup help over `here <https://github.com/thinkst/opencanary/wiki>`_.
+NetSentinel is an enterprise-grade AI-powered network security monitoring and anomaly detection system that combines honeypot services with advanced machine learning, real-time threat intelligence, and comprehensive enterprise integrations.
 
-OpenCanary is a daemon that runs canary services, which trigger alerts
-when (ab) is used. The alerts can be sent to a variety of sources,
-including Syslog, emails, and a companion daemon opencanary-correlator.
+## Key Features
 
-This project is maintained by `Thinkst Canary <https://canary.tools>`_.
+- **AI-Powered Detection**: ML-based anomaly detection using Anomalib models
+- **Enterprise Integrations**: SIEM, SDN, Threat Intelligence, Database systems
+- **Real-Time Processing**: Kafka streaming with Redis caching
+- **Advanced Monitoring**: Prometheus, Grafana, Elasticsearch, InfluxDB
+- **Security Features**: Authentication, encryption, compliance reporting
+- **Scalability**: Multi-node clusters with auto-scaling capabilities
 
-The Correlator coalesces multiple related events (eg. individual
-brute-force login attempts) into a single alert sent via email or
-SMS.
+## Architecture
+
+NetSentinel provides a comprehensive security platform with:
+- Multi-protocol honeypot services (FTP, SSH, HTTP, RDP, VNC, etc.)
+- Real-time ML-based threat analysis
+- Enterprise database integration (Elasticsearch, InfluxDB)
+- SIEM integration (Splunk, ELK Stack, Syslog)
+- SDN integration (OpenFlow controllers)
+- Threat intelligence feeds (MISP, STIX/TAXII)
+- Advanced monitoring and alerting
+
+This project is maintained by the NetSentinel development team.
 
 
 .. _getting-started:
@@ -21,20 +33,20 @@ SMS.
 Getting Started
 ---------------
 
-The first section will get you quickly up and running with canary
-services sending alerts.
+The first section will get you quickly up and running with NetSentinel
+AI-powered security platform.
 
 .. toctree::
    :maxdepth: 1
 
-   starting/opencanary
+   starting/netsentinel
    starting/configuration
    starting/correlator
 
 Services
 ---------
 
-Try these out in the OpenCanary configs for more typical server personalities.
+Try these out in the NetSentinel configs for more typical server personalities.
 
 .. toctree::
    :maxdepth: 1
@@ -70,17 +82,42 @@ Start by activating your virtual environment (`env` in the below example) that h
    $ . env/bin/activate
 
 
-Inside the virtualenv, you can upgrade your OpenCanary by,
+Inside the virtualenv, you can upgrade your NetSentinel by,
 
 .. code-block:: sh
 
-  $ pip install opencanary --upgrade
+  $ pip install netsentinel --upgrade
 
-Please note that this will not wipe your existing OpenCanary config file. If you would like a new one (with the new settings), please regenerate the config file using,
+Please note that this will not wipe your existing NetSentinel config file. If you would like a new one (with the new settings), please regenerate the config file using,
 
 .. code-block:: sh
 
-  $ opencanaryd --copyconfig
+  $ netsentinel --copyconfig
+
+AI-Powered Features
+-------------------
+
+NetSentinel includes comprehensive AI-powered threat detection capabilities.
+
+.. toctree::
+   :maxdepth: 1
+
+   ai-features-overview
+   ml-setup-guide
+   ml-usage-guide
+
+Enterprise Integrations
+------------------------
+
+NetSentinel provides extensive enterprise integrations for production environments.
+
+.. toctree::
+   :maxdepth: 1
+
+   siem-integration
+   sdn-integration
+   project-overview
+   implementation-status
 
 
 

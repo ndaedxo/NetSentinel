@@ -1,7 +1,7 @@
 Email Alerts
 ============
 
-To have an OpenCanary daemon directly send email alerts to edit the logger section of the *~/.opencanary.conf*. The file format is JSON.
+NetSentinel provides comprehensive email alerting capabilities with AI-powered threat detection. To configure email alerts, edit the logger section of the *~/.netsentinel.conf*. The file format is JSON.
 
 In the configurations below, set these configuration variables:
 

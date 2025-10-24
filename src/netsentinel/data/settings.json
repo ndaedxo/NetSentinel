@@ -1,0 +1,209 @@
+{
+    "device": {
+        "name": "netsentinel-honeypot",
+        "desc": "NetSentinel Honeypot System",
+        "enabled": true
+    },
+    "ssh": {
+        "enabled": true,
+        "port": 2222,
+        "version": "SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.2",
+        "banner": "SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.2"
+    },
+    "http": {
+        "enabled": true,
+        "port": 80,
+        "banner": "Apache/2.4.41 (Ubuntu)"
+    },
+    "https": {
+        "enabled": true,
+        "port": 443,
+        "banner": "Apache/2.4.41 (Ubuntu)"
+    },
+    "ftp": {
+        "enabled": true,
+        "port": 21,
+        "banner": "220 (vsFTPd 3.0.3)"
+    },
+    "telnet": {
+        "enabled": true,
+        "port": 23,
+        "banner": "Ubuntu 20.04.3 LTS"
+    },
+    "mysql": {
+        "enabled": true,
+        "port": 3306,
+        "banner": "5.7.35-0ubuntu0.20.04.1"
+    },
+    "mssql": {
+        "enabled": true,
+        "port": 1433,
+        "banner": "Microsoft SQL Server 2019"
+    },
+    "redis": {
+        "enabled": true,
+        "port": 6379,
+        "banner": "Redis server v=6.2.6"
+    },
+    "rdp": {
+        "enabled": true,
+        "port": 3389,
+        "banner": "Microsoft Terminal Services"
+    },
+    "vnc": {
+        "enabled": true,
+        "port": 5900,
+        "banner": "RFB 003.008"
+    },
+    "snmp": {
+        "enabled": true,
+        "port": 161,
+        "banner": "SNMPv2c"
+    },
+    "ntp": {
+        "enabled": true,
+        "port": 123,
+        "banner": "NTP v4"
+    },
+    "tftp": {
+        "enabled": true,
+        "port": 69,
+        "banner": "TFTP"
+    },
+    "sip": {
+        "enabled": true,
+        "port": 5060,
+        "banner": "SIP/2.0"
+    },
+    "samba": {
+        "enabled": true,
+        "port": 445,
+        "banner": "Samba 4.13.17"
+    },
+    "git": {
+        "enabled": true,
+        "port": 9418,
+        "banner": "git-upload-pack"
+    },
+    "httpproxy": {
+        "enabled": true,
+        "port": 8080,
+        "banner": "Squid/4.10"
+    },
+    "llmnr": {
+        "enabled": true,
+        "port": 5355,
+        "banner": "LLMNR"
+    },
+    "tcpbanner": {
+        "enabled": true,
+        "port": 10001,
+        "banner": "Welcome to NetSentinel"
+    },
+    "portscan": {
+        "enabled": true,
+        "logfile": "/var/log/kern.log",
+        "nmaposrate": 1,
+        "nmaposrate_window": 60
+    },
+    "logging": {
+        "level": "INFO",
+        "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        "file": "/var/log/netsentinel.log",
+        "max_size": "10MB",
+        "backup_count": 5
+    },
+    "alerts": {
+        "email": {
+            "enabled": false,
+            "smtp_server": "localhost",
+            "smtp_port": 587,
+            "username": "",
+            "password": "",
+            "from_addr": "netsentinel@localhost",
+            "to_addrs": ["admin@localhost"]
+        },
+        "webhook": {
+            "enabled": false,
+            "url": "http://localhost:8080/webhook",
+            "timeout": 30
+        },
+        "hpfeeds": {
+            "enabled": false,
+            "host": "localhost",
+            "port": 10000,
+            "ident": "netsentinel",
+            "secret": "secret",
+            "channel": "netsentinel.events"
+        }
+    },
+    "database": {
+        "type": "sqlite",
+        "path": "/var/lib/netsentinel/netsentinel.db",
+        "backup_interval": 3600,
+        "max_size": "100MB"
+    },
+    "monitoring": {
+        "metrics": {
+            "enabled": true,
+            "port": 9090,
+            "path": "/metrics"
+        },
+        "health_check": {
+            "enabled": true,
+            "port": 8081,
+            "path": "/health"
+        }
+    },
+    "ml": {
+        "enabled": true,
+        "model_path": "/var/lib/netsentinel/models",
+        "retrain_interval": 86400,
+        "anomaly_threshold": 0.7
+    },
+    "sdn": {
+        "enabled": false,
+        "controller_url": "http://localhost:8181",
+        "username": "admin",
+        "password": "admin",
+        "timeout": 30
+    },
+    "siem": {
+        "enabled": false,
+        "syslog": {
+            "enabled": false,
+            "host": "localhost",
+            "port": 514,
+            "protocol": "udp"
+        },
+        "elasticsearch": {
+            "enabled": false,
+            "host": "localhost",
+            "port": 9200,
+            "index": "netsentinel-events"
+        }
+    },
+    "threat_intelligence": {
+        "enabled": true,
+        "feeds": [
+            "https://feeds.feedburner.com/Threatpost",
+            "https://www.us-cert.gov/ncas/alerts.xml"
+        ],
+        "update_interval": 3600,
+        "cache_ttl": 86400
+    },
+    "firewall": {
+        "enabled": true,
+        "type": "iptables",
+        "block_duration": 3600,
+        "auto_block": true,
+        "whitelist": ["127.0.0.1", "::1"]
+    },
+    "api": {
+        "enabled": true,
+        "host": "0.0.0.0",
+        "port": 8082,
+        "cors_origins": ["*"],
+        "rate_limit": "100/minute"
+    }
+}

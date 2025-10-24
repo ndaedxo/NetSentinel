@@ -26,8 +26,8 @@ images:
     repository: confluentinc/cp-kafka
     tag: "7.4.0"
     pullPolicy: IfNotPresent
-  valkey:
-    repository: valkey/valkey
+  redis:
+    repository: redis
     tag: "7.2-alpine"
     pullPolicy: IfNotPresent
   elasticsearch:
@@ -84,7 +84,7 @@ netsentinel:
         topic: "netsentinel-events"
       redis:
         enabled: true
-        host: "valkey"
+        host: "redis"
         port: 6379
         password: "hybrid-detection-2024"
 
@@ -135,7 +135,7 @@ kafka:
     size: "16Gi"
     className: ""
 
-valkey:
+redis:
   enabled: true
   replicaCount: 1
   password: "hybrid-detection-2024"
