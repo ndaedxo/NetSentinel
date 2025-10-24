@@ -134,9 +134,11 @@ Desktop.ini
 *.sqlite
 *.sqlite3
 
-# Logs
+# Logs (but keep important log files if needed)
 logs/
 *.log
+# Keep important log files if needed:
+# !logs/important.log
 
 # Security files
 secrets/
