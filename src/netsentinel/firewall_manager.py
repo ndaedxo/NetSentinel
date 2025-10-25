@@ -67,6 +67,7 @@ class FirewallManager(BaseComponent):
         self.blocked_ips = {}  # ip -> block_time mapping
         self.chain_name = "NETSENTINEL_BLOCK"
         self._ip_lock = threading.RLock()  # Thread-safe access to blocked_ips
+        self._cleanup_lock = threading.RLock()  # Separate lock for cleanup operations
 
         if self.backend:
             logger.info(f"Initialized firewall manager with {self.backend} backend")
@@ -309,19 +310,24 @@ class FirewallManager(BaseComponent):
 
     def _cleanup_expired_blocks(self):
         """Remove expired IP blocks"""
-        current_time = time.time()
-        expired_ips = []
+        with self._cleanup_lock:
+            current_time = time.time()
+            expired_ips = []
 
-        for ip, block_info in self.blocked_ips.items():
-            if current_time - block_info["block_time"] > self.block_duration:
-                expired_ips.append(ip)
+            # Create a copy to avoid modifying dict during iteration
+            with self._ip_lock:
+                blocked_ips_copy = dict(self.blocked_ips)
 
-        for ip in expired_ips:
-            try:
-                self.unblock_ip(ip)
-                logger.info(f"Auto-unblocked expired IP: {ip}")
-            except Exception as e:
-                logger.error(f"Failed to auto-unblock expired IP {ip}: {e}")
+            for ip, block_info in blocked_ips_copy.items():
+                if current_time - block_info["block_time"] > self.block_duration:
+                    expired_ips.append(ip)
+
+            for ip in expired_ips:
+                try:
+                    self.unblock_ip(ip)
+                    logger.info(f"Auto-unblocked expired IP: {ip}")
+                except Exception as e:
+                    logger.error(f"Failed to auto-unblock expired IP {ip}: {e}")
 
     def get_blocked_ips(self) -> Dict[str, Dict]:
         """

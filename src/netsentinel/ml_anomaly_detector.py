@@ -88,6 +88,7 @@ class NetworkEventAnomalyDetector(BaseComponent):
         self._cleanup_interval = 3600  # Clean up every hour
         self._last_cleanup = time.time()
         self._max_profiles = 1000  # Limit number of IP profiles
+        self._max_history_age = 86400  # 24 hours in seconds
 
         # Thread lock for concurrent access
         self.lock = threading.Lock()
@@ -518,14 +519,18 @@ class NetworkEventAnomalyDetector(BaseComponent):
         """Clean up old data to prevent memory leaks"""
         try:
             current_time = time.time()
+            cleaned_ips = 0
+            cleaned_events = 0
+
             # Clean up old IP behavior profiles
             old_ips = []
             for ip, profile in self.ip_behavior_profiles.items():
-                if current_time - profile.get("last_seen", 0) > 86400:  # 24 hours
+                if current_time - profile.get("last_seen", 0) > self._max_history_age:
                     old_ips.append(ip)
 
             for ip in old_ips:
                 del self.ip_behavior_profiles[ip]
+                cleaned_ips += 1
 
             # If we still have too many profiles, remove oldest ones
             if len(self.ip_behavior_profiles) > self._max_profiles:
@@ -537,21 +542,34 @@ class NetworkEventAnomalyDetector(BaseComponent):
                 excess_count = len(self.ip_behavior_profiles) - self._max_profiles
                 for ip, _ in sorted_profiles[:excess_count]:
                     del self.ip_behavior_profiles[ip]
+                    cleaned_ips += 1
 
-            # Clean up old event history to prevent memory leaks
-            if len(self.event_history) > 2000:
-                # Keep only recent 1000 events
-                self.event_history = deque(
-                    list(self.event_history)[-1000:], maxlen=1000
-                )
+            # Clean up old event history
+            if self.event_history:
+                # Remove events older than max_history_age
+                current_events = list(self.event_history)
+                filtered_events = [
+                    event
+                    for event in current_events
+                    if current_time - event.timestamp <= self._max_history_age
+                ]
+
+                if len(filtered_events) != len(current_events):
+                    self.event_history = deque(filtered_events, maxlen=1000)
+                    cleaned_events = len(current_events) - len(filtered_events)
 
             # Clean up old feature stats if they get too large
             if hasattr(self, "feature_stats") and self.feature_stats:
                 # Reset feature stats if they become too large
-                if len(str(self.feature_stats)) > 1000000:  # 1MB limit
+                stats_size = len(str(self.feature_stats))
+                if stats_size > 1000000:  # 1MB limit
                     self.feature_stats = {}
+                    logger.warning("Feature stats reset due to size limit")
 
-            logger.debug(f"Cleaned up {len(old_ips)} old IP behavior profiles")
+            if cleaned_ips > 0 or cleaned_events > 0:
+                logger.debug(
+                    f"Cleaned up {cleaned_ips} old IP profiles and {cleaned_events} old events"
+                )
 
         except Exception as e:
             logger.error(f"Error during cleanup: {e}")

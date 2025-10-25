@@ -5,9 +5,8 @@ import itertools
 import string
 import re
 from os.path import expanduser
-from typing import Any, List, Dict
+from typing import Any, List, Dict, Optional
 from pathlib import Path
-
 import importlib.resources
 
 
@@ -54,91 +53,127 @@ class Config:
     """Configuration manager for NetSentinel."""
 
     def __init__(self, configfile: str = SETTINGS) -> None:
-        self.__config = None
+        self.__config: Optional[Dict[str, Any]] = None
         self.__configfile = configfile
+        self._logger = None
 
         files = [
-            "/etc/netsentinel/%s" % configfile,
-            "%s/.%s" % (expanduser("~"), configfile),
+            f"/etc/netsentinel/{configfile}",
+            f"{expanduser('~')}/.{configfile}",
             configfile,
         ]
+
+        self._load_config_from_files(files)
+
+    def _load_config_from_files(self, files: List[str]) -> None:
+        """Load configuration from files with proper error handling"""
         import logging
 
-        logger = logging.getLogger(__name__)
-        logger.info(
+        if self._logger is None:
+            self._logger = logging.getLogger(__name__)
+
+        self._logger.info(
             "Welcome to NetSentinel - AI-Powered Network Security Monitoring System"
         )
+
         for fname in files:
             try:
-                with open(fname, "r") as f:
-                    logger.info("Using config file: %s" % fname)
+                with open(fname, "r", encoding="utf-8") as f:
+                    self._logger.info(f"Using config file: {fname}")
                     self.__config = json.load(f)
                     self.__config = expand_vars(self.__config)
-                if fname == configfile:
-                    logger.warning(
+
+                if fname == self.__configfile:
+                    self._logger.warning(
                         "Warning, making use of the configuration file in the immediate "
-                        "directory is not recommended! Suggested locations: %s",
-                        ", ".join(files[:2]),
+                        f"directory is not recommended! Suggested locations: {', '.join(files[:2])}"
                     )
                 return
+
             except IOError as e:
-                logger.error("Failed to open %s for reading (%s)" % (fname, e))
+                self._logger.error(f"Failed to open {fname} for reading ({e})")
             except ValueError as e:
-                logger.error("Failed to decode json from %s (%s)" % (fname, e))
+                self._logger.error(f"Failed to decode json from {fname} ({e})")
             except Exception as e:
-                logger.error("An error occurred loading %s (%s)" % (fname, e))
+                self._logger.error(f"An error occurred loading {fname} ({e})")
+
         if self.__config is None:
-            logger.error(
+            self._logger.error(
                 'No config file found. Please create one with "netsentinel --copyconfig"'
             )
-            # Use minimal default config for testing/development
-            self.__config = {
-                "device": {"name": "netsentinel", "desc": "NetSentinel System"},
-                "ssh": {"enabled": True, "port": 2222},
-                "http": {"enabled": True, "port": 8080},
-                "https": {"enabled": True, "port": 8443},
-            }
-            logger.warning("Using minimal default configuration")
+            self._load_default_config()
+
+    def _load_default_config(self) -> None:
+        """Load minimal default configuration for testing/development"""
+        self.__config = {
+            "device": {"name": "netsentinel", "desc": "NetSentinel System"},
+            "ssh": {"enabled": True, "port": 2222},
+            "http": {"enabled": True, "port": 8080},
+            "https": {"enabled": True, "port": 8443},
+        }
+        if self._logger:
+            self._logger.warning("Using minimal default configuration")
 
     def moduleEnabled(self, module_name: str) -> bool:
         """Check if a module is enabled."""
-        k = "%s.enabled" % module_name.lower()
-        if k in self.__config:
-            return bool(self.__config[k])
-        return False
+        if self.__config is None:
+            return False
+
+        k = f"{module_name.lower()}.enabled"
+        return bool(self.__config.get(k, False))
 
     def getVal(self, key: str, default: Any = None) -> Any:
         """Get configuration value by key."""
+        if self.__config is None:
+            return default
+
         try:
             return self.__config[key]
-        except KeyError as e:
+        except KeyError:
             if default is not None:
                 return default
-            raise e
+            raise KeyError(f"Configuration key '{key}' not found")
 
-    def checkValues(self) -> List["ConfigException"]:  # noqa: C901
-        """Set all the valid values in params and return a list of errors for invalid"""
-        params = self.__config
-        # test options indpenedently for validity
+    def checkValues(self) -> List["ConfigException"]:
+        """Validate all configuration values and return a list of errors for invalid ones"""
+        if self.__config is None:
+            return []
+
         errors = []
-        for key, value in params.items():
+
+        # Test options independently for validity
+        for key, value in self.__config.items():
             try:
                 self.is_valid(key, value)
             except ConfigException as e:
                 errors.append(e)
 
         # Test that no ports overlap
-        ports = {k: int(v) for k, v in params.items() if k.endswith(".port")}
-        ports = [(port, setting) for setting, port in ports.items()]
-        ports.sort()
+        port_conflicts = self._check_port_conflicts()
+        errors.extend(port_conflicts)
 
-        for port, settings in itertools.groupby(ports, lambda x: x[0]):
-            settings = list(settings)
-            if len(settings) > 1:
-                services = ", ".join([s[1].split(".")[0] for s in settings])
-                errmsg = "More than one service uses this port (%s)" % services
-                for port, setting in settings:
-                    errors.append(ConfigException(setting, errmsg))
+        return errors
+
+    def _check_port_conflicts(self) -> List["ConfigException"]:
+        """Check for port conflicts between services"""
+        if self.__config is None:
+            return []
+
+        errors = []
+        ports = {}
+
+        for key, value in self.__config.items():
+            if key.endswith(".port") and isinstance(value, (int, str)):
+                try:
+                    port = int(value)
+                    if port in ports:
+                        services = [ports[port], key.split(".")[0]]
+                        errmsg = f"More than one service uses port {port} ({', '.join(services)})"
+                        errors.append(ConfigException(key, errmsg))
+                    else:
+                        ports[port] = key.split(".")[0]
+                except ValueError:
+                    errors.append(ConfigException(key, f"Invalid port number: {value}"))
 
         return errors
 
@@ -303,7 +338,7 @@ class ConfigException(Exception):
 
 
 # Global config instance - lazy initialization
-_config_instance = None
+_config_instance: Optional[Config] = None
 
 
 def get_config() -> Config:
@@ -318,9 +353,11 @@ def get_config() -> Config:
 
                 logger = logging.getLogger(__name__)
                 for error in errors:
-                    logger.error(error)
+                    logger.error(str(error))
                 # Use standard exception to avoid circular imports
-                raise ValueError(f"Configuration validation failed: {errors}")
+                raise ValueError(
+                    f"Configuration validation failed: {len(errors)} errors"
+                )
         except Exception as e:
             # If config loading fails, create a minimal config for testing
             import logging
@@ -335,29 +372,19 @@ def get_config() -> Config:
     return _config_instance
 
 
-# Backward compatibility - only initialize if not in test mode
-def _initialize_config():
-    """Initialize config only when needed"""
-    _initialize_config_safe()
+def _is_test_mode() -> bool:
+    """Check if running in test mode"""
+    return any("pytest" in arg for arg in sys.argv) or any(
+        "test" in arg for arg in sys.argv
+    )
 
 
 # Initialize config only if not in test mode
-config = None
+config: Optional[Config] = None
 
-
-def _initialize_config_safe():
-    """Safely initialize config with proper error handling"""
-    global config
-    if config is None:
-        try:
-            config = get_config()
-        except Exception:
-            # If initialization fails, leave config as None
-            pass
-
-
-# Initialize config only if not in test mode
-if not any("pytest" in arg for arg in sys.argv) and not any(
-    "test" in arg for arg in sys.argv
-):
-    _initialize_config_safe()
+if not _is_test_mode():
+    try:
+        config = get_config()
+    except Exception:
+        # If initialization fails, leave config as None
+        config = None

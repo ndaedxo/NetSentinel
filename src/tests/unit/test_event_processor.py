@@ -15,6 +15,7 @@ try:
         RefactoredEventProcessor,
         ProcessorConfig,
     )
+
     FASTAPI_AVAILABLE = True
 except ImportError as e:
     FASTAPI_AVAILABLE = False

@@ -22,17 +22,80 @@ import logging
 # This eliminates the circular dependency issue
 
 
-# Local implementations to avoid circular imports
-def handle_errors_simple(
-    error: Exception, context: str = "", log_level: str = "ERROR"
-) -> None:
-    """Simple error handling without circular dependencies"""
-    logger.error(f"Error in {context}: {str(error)}")
+# Import consolidated utilities to avoid duplication
+try:
+    from .consolidated_error_handler import (
+        handle_errors as consolidated_handle_errors,
+        create_error_context as consolidated_create_error_context,
+        get_error_handler,
+    )
+    from .consolidated_validation import (
+        validate_ip_address,
+        validate_domain,
+        validate_email,
+        validate_url,
+        validate_port,
+        validate_severity,
+        get_validator,
+    )
+except ImportError:
+    # Fallback implementations if consolidated modules are not available
+    def consolidated_handle_errors(
+        error: Exception, context: str = "", log_level: str = "ERROR"
+    ) -> None:
+        """Fallback error handling"""
+        logger.error(f"Error in {context}: {str(error)}")
+
+    def consolidated_create_error_context(operation: str, module: str = "") -> str:
+        """Fallback error context creation"""
+        return f"{module}:{operation}"
+
+    def get_error_handler():
+        """Fallback error handler"""
+        return None
+
+    def validate_ip_address(ip: str) -> bool:
+        """Fallback IP validation"""
+        import ipaddress
+
+        try:
+            ipaddress.ip_address(ip)
+            return True
+        except ValueError:
+            return False
+
+    def validate_domain(domain: str) -> bool:
+        """Fallback domain validation"""
+        return bool(domain and len(domain) <= 253)
+
+    def validate_email(email: str) -> bool:
+        """Fallback email validation"""
+        return bool(email and len(email) <= 254)
+
+    def validate_url(url: str) -> bool:
+        """Fallback URL validation"""
+        return bool(url and len(url) <= 2048)
+
+    def validate_port(port: Union[int, str]) -> bool:
+        """Fallback port validation"""
+        try:
+            p = int(port)
+            return 1 <= p <= 65535
+        except (ValueError, TypeError):
+            return False
+
+    def validate_severity(severity: str) -> bool:
+        """Fallback severity validation"""
+        return severity.lower() in ["low", "medium", "high", "critical"]
+
+    def get_validator():
+        """Fallback validator"""
+        return None
 
 
-def create_error_context_simple(operation: str, module: str = "") -> str:
-    """Simple error context creation"""
-    return f"{module}:{operation}"
+# Use consolidated implementations
+handle_errors_simple = consolidated_handle_errors
+create_error_context_simple = consolidated_create_error_context
 
 
 def create_logger(name: str, level: str = "INFO") -> logging.Logger:

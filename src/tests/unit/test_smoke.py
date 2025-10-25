@@ -56,6 +56,7 @@ def test_core_class_instantiation():
         # Skip firewall manager on Windows
         if platform.system() != "Windows":
             from netsentinel.firewall_manager import FirewallManager
+
             firewall = FirewallManager()
 
         assert True
@@ -104,6 +105,7 @@ def test_basic_functionality():
 
         # Test SDN manager creation (safe)
         from netsentinel.sdn_integration import SDNManager
+
         sdn = SDNManager()
         status = sdn.get_status()
         assert isinstance(status, dict)
@@ -113,13 +115,26 @@ def test_basic_functionality():
         if platform.system() != "Windows":
             # Test firewall manager detection
             from netsentinel.firewall_manager import FirewallManager
+
             firewall = FirewallManager()
-            if hasattr(firewall, '_detect_firewall_type'):
+            if hasattr(firewall, "_detect_firewall_type"):
                 firewall_type = firewall._detect_firewall_type()
-                assert firewall_type in ["iptables", "ufw", "firewalld", "nftables", None]
-            elif hasattr(firewall, '_detect_backend'):
+                assert firewall_type in [
+                    "iptables",
+                    "ufw",
+                    "firewalld",
+                    "nftables",
+                    None,
+                ]
+            elif hasattr(firewall, "_detect_backend"):
                 firewall_type = firewall._detect_backend()
-                assert firewall_type in ["iptables", "ufw", "firewalld", "nftables", None]
+                assert firewall_type in [
+                    "iptables",
+                    "ufw",
+                    "firewalld",
+                    "nftables",
+                    None,
+                ]
             else:
                 # For mock manager, just verify it exists
                 assert firewall is not None
@@ -183,7 +198,7 @@ def test_data_structures():
         )
         assert policy.name == "test_policy"
         assert policy.target_ip == "192.168.1.100"
-        if hasattr(policy, 'is_expired'):
+        if hasattr(policy, "is_expired"):
             assert not policy.is_expired()
     except ImportError as e:
         pytest.fail(f"Import failed: {e}")

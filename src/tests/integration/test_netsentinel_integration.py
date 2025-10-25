@@ -13,10 +13,14 @@ import tempfile
 
 # Import EventProcessor for backward compatibility
 try:
-    from netsentinel.processors.refactored_event_processor import RefactoredEventProcessor as EventProcessor
+    from netsentinel.processors.refactored_event_processor import (
+        RefactoredEventProcessor as EventProcessor,
+    )
 except ImportError:
     # Fallback if the module doesn't exist
-    from src.netsentinel.processors.refactored_event_processor import RefactoredEventProcessor as EventProcessor
+    from src.netsentinel.processors.refactored_event_processor import (
+        RefactoredEventProcessor as EventProcessor,
+    )
 
 
 class TestNetSentinelFullIntegration:
@@ -24,7 +28,10 @@ class TestNetSentinelFullIntegration:
 
     def _create_processor(self, config=None):
         """Helper method to create EventProcessor with proper config"""
-        from src.netsentinel.processors.refactored_event_processor import ProcessorConfig
+        from src.netsentinel.processors.refactored_event_processor import (
+            ProcessorConfig,
+        )
+
         if config is None:
             processor_config = ProcessorConfig(
                 kafka_servers=["localhost:9092"],
@@ -144,7 +151,10 @@ class TestNetSentinelFullIntegration:
         config = integration_setup
 
         # Create components
-        from src.netsentinel.processors.refactored_event_processor import ProcessorConfig
+        from src.netsentinel.processors.refactored_event_processor import (
+            ProcessorConfig,
+        )
+
         processor_config = ProcessorConfig(
             kafka_servers=["localhost:9092"],
             kafka_topic="test-events",
@@ -174,7 +184,7 @@ class TestNetSentinelFullIntegration:
 
             # Process event
             result = await processor._process_single_event(high_threat_event)
-            
+
             # Verify event was processed
             assert result is not None
             assert "status" in result
@@ -209,6 +219,7 @@ class TestNetSentinelFullIntegration:
             def process_event(event):
                 try:
                     import asyncio
+
                     result = asyncio.run(processor._process_single_event(event))
                     results.append(result)
                 except Exception as e:
@@ -229,6 +240,7 @@ class TestNetSentinelFullIntegration:
 
         finally:
             import asyncio
+
             asyncio.run(processor.cleanup())
 
     @pytest.mark.integration
@@ -239,7 +251,10 @@ class TestNetSentinelFullIntegration:
 
         config = integration_setup
 
-        from src.netsentinel.processors.refactored_event_processor import ProcessorConfig
+        from src.netsentinel.processors.refactored_event_processor import (
+            ProcessorConfig,
+        )
+
         processor_config = ProcessorConfig(
             kafka_servers=["localhost:9092"],
             kafka_topic="test-events",
@@ -262,11 +277,11 @@ class TestNetSentinelFullIntegration:
 
             # Process critical event
             result = await processor._process_single_event(critical_event)
-            
+
             # Verify event was processed
             assert result is not None
             assert "status" in result
-            
+
             # Test firewall manager directly
             with patch.object(
                 firewall_manager, "block_ip", return_value=True
@@ -286,6 +301,7 @@ class TestNetSentinelFullIntegration:
 
         processor = self._create_processor(config)
         from src.netsentinel.siem_integration import SiemManager
+
         siem_manager = SiemManager()
 
         # Add test SIEM connector
@@ -304,11 +320,11 @@ class TestNetSentinelFullIntegration:
 
             # Process event
             result = await processor._process_single_event(siem_event)
-            
+
             # Verify event was processed
             assert result is not None
             assert "status" in result
-            
+
             # Test SIEM manager directly
             with patch.object(
                 siem_manager.connectors["webhook_test_integration"],
@@ -347,6 +363,7 @@ class TestNetSentinelFullIntegration:
 
                 try:
                     import asyncio
+
                     result = asyncio.run(processor._process_single_event(event))
                     if result is not None:
                         events_processed += 1
@@ -376,6 +393,7 @@ class TestNetSentinelFullIntegration:
 
         finally:
             import asyncio
+
             asyncio.run(processor.cleanup())
 
     @pytest.mark.integration
@@ -385,7 +403,10 @@ class TestNetSentinelFullIntegration:
         config = integration_setup
 
         # Create processor with specific configuration
-        from src.netsentinel.processors.refactored_event_processor import ProcessorConfig
+        from src.netsentinel.processors.refactored_event_processor import (
+            ProcessorConfig,
+        )
+
         processor_config = ProcessorConfig(
             kafka_servers=["localhost:9092"],
             kafka_topic="test-events",
@@ -452,6 +473,7 @@ class TestNetSentinelFullIntegration:
                     "timestamp": time.time(),
                 }
                 import asyncio
+
                 asyncio.run(processor._process_single_event(event))
 
             final_memory = 0  # Would need psutil for real memory monitoring
@@ -463,6 +485,7 @@ class TestNetSentinelFullIntegration:
 
         finally:
             import asyncio
+
             asyncio.run(processor.cleanup())
 
     @pytest.mark.integration
@@ -523,6 +546,7 @@ class TestNetSentinelFullIntegration:
 
             # Process event
             import asyncio
+
             asyncio.run(processor._process_single_event(original_data))
 
             # Verify data integrity was maintained
@@ -544,11 +568,13 @@ class TestNetSentinelFullIntegration:
 
             # Should handle complex data structures
             import asyncio
+
             result = asyncio.run(processor._process_single_event(complex_event))
             assert result is not None
 
         finally:
             import asyncio
+
             asyncio.run(processor.cleanup())
 
     @pytest.mark.integration
@@ -578,6 +604,7 @@ class TestNetSentinelFullIntegration:
 
                 try:
                     import asyncio
+
                     asyncio.run(processor._process_single_event(event))
                     events_processed += 1
                 except Exception as e:
@@ -596,4 +623,5 @@ class TestNetSentinelFullIntegration:
 
         finally:
             import asyncio
+
             asyncio.run(processor.cleanup())

@@ -75,7 +75,9 @@ class TestBaseComponent:
         # Create dependency
         dependency = Mock(spec=BaseComponent)
         dependency.name = "test_dependency"  # Add name attribute
-        dependency.state = ComponentState.STOPPED  # Set to STOPPED so it will be started
+        dependency.state = (
+            ComponentState.STOPPED
+        )  # Set to STOPPED so it will be started
         dependency.start = AsyncMock(return_value=True)
 
         # Add dependency
@@ -387,6 +389,7 @@ class TestErrorHandler:
 
         # Use the custom ConnectionError from NetSentinel
         from netsentinel.core.exceptions import ConnectionError
+
         error = ConnectionError("Test connection error")
         result = await error_handler.handle_error(error, context)
 
@@ -476,7 +479,7 @@ class TestComponentIntegration:
 
         # Process items
         await processor.queue_item("test_item")
-        
+
         # Wait for processing with multiple attempts
         for _ in range(10):  # Try up to 10 times
             await asyncio.sleep(0.1)

@@ -257,7 +257,8 @@ class APIGateway:
 
             # Rate limiting
             client_id = self._get_client_id()
-            if not asyncio.run(self.rate_limiter.is_allowed(client_id)):
+            # Use synchronous rate limiting check
+            if not self._check_rate_limit_sync(client_id):
                 raise TooManyRequests("Rate limit exceeded")
 
             # Authentication
@@ -413,7 +414,36 @@ class APIGateway:
     def _get_client_id(self) -> str:
         """Get client ID for rate limiting"""
         # Use IP address as client ID
-        return request.remote_addr
+        return request.remote_addr or "unknown"
+
+    def _check_rate_limit_sync(self, client_id: str) -> bool:
+        """Synchronous rate limiting check"""
+        now = time.time()
+        bucket = self.rate_limiter.buckets.get(
+            client_id,
+            {
+                "tokens": self.rate_limiter.config.requests_per_minute,
+                "last_refill": now,
+            },
+        )
+
+        # Refill tokens
+        time_passed = now - bucket["last_refill"]
+        tokens_to_add = time_passed * (
+            self.rate_limiter.config.requests_per_minute / 60
+        )
+        bucket["tokens"] = min(
+            self.rate_limiter.config.requests_per_minute,
+            bucket["tokens"] + tokens_to_add,
+        )
+        bucket["last_refill"] = now
+
+        # Check if request is allowed
+        if bucket["tokens"] >= 1:
+            bucket["tokens"] -= 1
+            self.rate_limiter.buckets[client_id] = bucket
+            return True
+        return False
 
     def _authenticate_request(self) -> bool:
         """Authenticate request"""

@@ -50,7 +50,7 @@ class TestSiemEvent:
             event_type="test",
             severity="low",
             message="test message",
-            raw_data={"test": "data"}
+            raw_data={"test": "data"},
         )
 
         assert event.tags == []
@@ -91,7 +91,7 @@ class TestSiemEvent:
             severity="high",
             message="SSH login attempt",
             host="netsentinel-01",
-            raw_data={"logtype": "4002", "message": "SSH login attempt"}
+            raw_data={"logtype": "4002", "message": "SSH login attempt"},
         )
 
         syslog_msg = event.to_syslog()
@@ -255,7 +255,7 @@ class TestElkConnector:
 
     def test_send_to_elasticsearch(self, elk_connector):
         """Test sending event to Elasticsearch"""
-        with patch.object(elk_connector, 'session') as mock_session:
+        with patch.object(elk_connector, "session") as mock_session:
             mock_session.post.return_value = Mock(status_code=201)
 
             event = SiemEvent(
@@ -276,7 +276,7 @@ class TestElkConnector:
 
     def test_send_to_logstash(self, elk_connector):
         """Test sending event to Logstash"""
-        with patch.object(elk_connector, 'session') as mock_session:
+        with patch.object(elk_connector, "session") as mock_session:
             elk_connector.logstash_url = "http://logstash:8080"
             mock_session.post.return_value = Mock(status_code=200)
 
@@ -310,7 +310,7 @@ class TestSyslogConnector:
         with patch("netsentinel.siem_integration.socket.socket") as mock_socket_class:
             mock_socket = Mock()
             mock_socket_class.return_value = mock_socket
-            
+
             # Replace the connector's socket with the mock
             syslog_connector.sock = mock_socket
 
@@ -558,7 +558,7 @@ class TestSiemManager:
     def test_buffer_flushing(self, mock_post, siem_manager):
         """Test buffer flushing functionality"""
         mock_post.return_value = Mock(status_code=200, text="Success")
-        
+
         siem_manager.add_splunk_connector(
             "test_splunk", "https://splunk.example.com:8088", "test-token", batch_size=2
         )
@@ -587,7 +587,7 @@ class TestSiemManagerIntegration:
     def test_full_siem_pipeline(self, mock_request, siem_manager):
         """Test complete SIEM pipeline"""
         mock_request.return_value = Mock(status_code=200)
-        
+
         # Setup multiple connectors
         siem_manager.add_webhook_connector("test_webhook", "https://httpbin.org/post")
         siem_manager.enable_system("webhook_test_webhook")

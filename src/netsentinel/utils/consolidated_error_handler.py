@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Centralized Error Handler for NetSentinel
-Provides standardized error handling across all components
+Consolidated error handling utilities for NetSentinel
+Eliminates code duplication and provides consistent error handling
 """
 
 import asyncio
@@ -12,120 +12,96 @@ import random
 from typing import Any, Dict, List, Optional, Type, Callable, Union
 from dataclasses import dataclass
 from enum import Enum
-
-logger = logging.getLogger(__name__)
-
-# Import consolidated error handler to avoid duplication
-try:
-    from ..utils.consolidated_error_handler import (
-        ConsolidatedErrorHandler,
-        ErrorContext,
-        ErrorSeverity,
-        RetryConfig,
-        RetryStrategy,
-        ErrorMetrics,
-    )
-
-    _CONSOLIDATED_AVAILABLE = True
-except ImportError:
-    _CONSOLIDATED_AVAILABLE = False
-
-# Use consolidated classes if available, otherwise define fallbacks
-if not _CONSOLIDATED_AVAILABLE:
-
-    class ErrorSeverity(Enum):
-        """Error severity levels"""
-
-        LOW = "low"
-        MEDIUM = "medium"
-        HIGH = "high"
-        CRITICAL = "critical"
-
-    class RetryStrategy(Enum):
-        """Retry strategies"""
-
-        FIXED = "fixed"
-        EXPONENTIAL = "exponential"
-        LINEAR = "linear"
-
-    @dataclass
-    class RetryConfig:
-        """Retry configuration"""
-
-        max_attempts: int = 3
-        base_delay: float = 1.0
-        max_delay: float = 60.0
-        strategy: RetryStrategy = RetryStrategy.EXPONENTIAL
-        backoff_multiplier: float = 2.0
-        jitter: bool = True
-        exceptions: tuple = (Exception,)
-
-    @dataclass
-    class ErrorContext:
-        """Error context information"""
-
-        component: str
-        operation: str
-        user_id: Optional[str] = None
-        request_id: Optional[str] = None
-        additional_data: Dict[str, Any] = None
-
-        def __post_init__(self):
-            if self.additional_data is None:
-                self.additional_data = {}
-
-    @dataclass
-    class ErrorMetrics:
-        """Error metrics tracking"""
-
-        total_errors: int = 0
-        errors_by_type: Dict[str, int] = None
-        errors_by_severity: Dict[str, int] = None
-        errors_by_component: Dict[str, int] = None
-        last_error_time: Optional[float] = None
-
-        def __post_init__(self):
-            if self.errors_by_type is None:
-                self.errors_by_type = {}
-            if self.errors_by_severity is None:
-                self.errors_by_severity = {}
-            if self.errors_by_component is None:
-                self.errors_by_component = {}
+import threading
+from contextlib import asynccontextmanager
 
 
-class NetSentinelErrorHandler:
+class ErrorSeverity(Enum):
+    """Error severity levels"""
+
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+
+class RetryStrategy(Enum):
+    """Retry strategies"""
+
+    FIXED = "fixed"
+    EXPONENTIAL = "exponential"
+    LINEAR = "linear"
+
+
+@dataclass
+class RetryConfig:
+    """Retry configuration"""
+
+    max_attempts: int = 3
+    base_delay: float = 1.0
+    max_delay: float = 60.0
+    strategy: RetryStrategy = RetryStrategy.EXPONENTIAL
+    backoff_multiplier: float = 2.0
+    jitter: bool = True
+    exceptions: tuple = (Exception,)
+
+
+@dataclass
+class ErrorContext:
+    """Error context information"""
+
+    component: str
+    operation: str
+    user_id: Optional[str] = None
+    request_id: Optional[str] = None
+    additional_data: Dict[str, Any] = None
+
+    def __post_init__(self):
+        if self.additional_data is None:
+            self.additional_data = {}
+
+
+@dataclass
+class ErrorMetrics:
+    """Error metrics tracking"""
+
+    total_errors: int = 0
+    errors_by_type: Dict[str, int] = None
+    errors_by_severity: Dict[str, int] = None
+    errors_by_component: Dict[str, int] = None
+    last_error_time: Optional[float] = None
+
+    def __post_init__(self):
+        if self.errors_by_type is None:
+            self.errors_by_type = {}
+        if self.errors_by_severity is None:
+            self.errors_by_severity = {}
+        if self.errors_by_component is None:
+            self.errors_by_component = {}
+
+
+class ConsolidatedErrorHandler:
     """
-    Centralized error handler for NetSentinel
+    Consolidated error handler for NetSentinel
     Provides standardized error processing, logging, and recovery
     """
 
     def __init__(self):
-        if _CONSOLIDATED_AVAILABLE:
-            # Use consolidated error handler
-            self._handler = ConsolidatedErrorHandler()
-            self.error_handlers = self._handler.error_handlers
-            self.recovery_strategies = self._handler.recovery_strategies
-            self.metrics = self._handler.metrics
-            self.logger = self._handler.logger
-        else:
-            # Fallback to local implementation
-            self.error_handlers: Dict[Type[Exception], Callable] = {}
-            self.recovery_strategies: Dict[Type[Exception], Callable] = {}
-            self.metrics = ErrorMetrics()
-            self.logger = logging.getLogger(f"{__name__}.NetSentinelErrorHandler")
-            self._setup_default_handlers()
+        self.error_handlers: Dict[Type[Exception], Callable] = {}
+        self.recovery_strategies: Dict[Type[Exception], Callable] = {}
+        self.metrics = ErrorMetrics()
+        self.logger = logging.getLogger(f"{__name__}.ConsolidatedErrorHandler")
+        self._lock = threading.RLock()
+
+        # Setup default handlers
+        self._setup_default_handlers()
 
     def _setup_default_handlers(self) -> None:
         """Setup default error handlers"""
-        # Import here to avoid circular imports
-        try:
-            from .exceptions import ConnectionError
-
-            # Connection errors
-            self.register_handler(ConnectionError, self._handle_connection_error)
-        except ImportError:
-            # Fallback if exceptions module is not available
-            pass
+        # Connection errors
+        self.register_handler(ConnectionError, self._handle_connection_error)
+        self.register_handler(OSError, self._handle_os_error)
+        self.register_handler(IOError, self._handle_io_error)
 
         # Generic exceptions - register last to catch all unhandled exceptions
         self.register_handler(Exception, self._handle_generic_error)
@@ -134,15 +110,19 @@ class NetSentinelErrorHandler:
         self, exception_type: Type[Exception], handler: Callable
     ) -> None:
         """Register error handler for specific exception type"""
-        self.error_handlers[exception_type] = handler
-        self.logger.debug(f"Registered handler for {exception_type.__name__}")
+        with self._lock:
+            self.error_handlers[exception_type] = handler
+            self.logger.debug(f"Registered handler for {exception_type.__name__}")
 
     def register_recovery_strategy(
         self, exception_type: Type[Exception], strategy: Callable
     ) -> None:
         """Register recovery strategy for specific exception type"""
-        self.recovery_strategies[exception_type] = strategy
-        self.logger.debug(f"Registered recovery strategy for {exception_type.__name__}")
+        with self._lock:
+            self.recovery_strategies[exception_type] = strategy
+            self.logger.debug(
+                f"Registered recovery strategy for {exception_type.__name__}"
+            )
 
     async def handle_error(
         self, error: Exception, context: ErrorContext
@@ -177,14 +157,15 @@ class NetSentinelErrorHandler:
 
     def _find_handler(self, error: Exception) -> Optional[Callable]:
         """Find appropriate handler for error"""
-        # Try exact type match first
-        if type(error) in self.error_handlers:
-            return self.error_handlers[type(error)]
+        with self._lock:
+            # Try exact type match first
+            if type(error) in self.error_handlers:
+                return self.error_handlers[type(error)]
 
-        # Try parent class matches
-        for exception_type, handler in self.error_handlers.items():
-            if isinstance(error, exception_type):
-                return handler
+            # Try parent class matches
+            for exception_type, handler in self.error_handlers.items():
+                if isinstance(error, exception_type):
+                    return handler
 
         return None
 
@@ -193,12 +174,16 @@ class NetSentinelErrorHandler:
     ) -> Optional[Dict[str, Any]]:
         """Attempt error recovery"""
         try:
-            # Find recovery strategy
-            strategy = None
-            for exception_type, recovery_strategy in self.recovery_strategies.items():
-                if isinstance(error, exception_type):
-                    strategy = recovery_strategy
-                    break
+            with self._lock:
+                # Find recovery strategy
+                strategy = None
+                for (
+                    exception_type,
+                    recovery_strategy,
+                ) in self.recovery_strategies.items():
+                    if isinstance(error, exception_type):
+                        strategy = recovery_strategy
+                        break
 
             if not strategy:
                 return None
@@ -217,41 +202,35 @@ class NetSentinelErrorHandler:
 
     def _update_metrics(self, error: Exception, context: ErrorContext) -> None:
         """Update error metrics"""
-        self.metrics.total_errors += 1
-        self.metrics.last_error_time = time.time()
+        with self._lock:
+            self.metrics.total_errors += 1
+            self.metrics.last_error_time = time.time()
 
-        # Update by type
-        error_type = type(error).__name__
-        self.metrics.errors_by_type[error_type] = (
-            self.metrics.errors_by_type.get(error_type, 0) + 1
-        )
+            # Update by type
+            error_type = type(error).__name__
+            self.metrics.errors_by_type[error_type] = (
+                self.metrics.errors_by_type.get(error_type, 0) + 1
+            )
 
-        # Update by component
-        self.metrics.errors_by_component[context.component] = (
-            self.metrics.errors_by_component.get(context.component, 0) + 1
-        )
+            # Update by component
+            self.metrics.errors_by_component[context.component] = (
+                self.metrics.errors_by_component.get(context.component, 0) + 1
+            )
 
-        # Update by severity
-        severity = self._determine_error_severity(error)
-        self.metrics.errors_by_severity[severity.value] = (
-            self.metrics.errors_by_severity.get(severity.value, 0) + 1
-        )
+            # Update by severity
+            severity = self._determine_error_severity(error)
+            self.metrics.errors_by_severity[severity.value] = (
+                self.metrics.errors_by_severity.get(severity.value, 0) + 1
+            )
 
     def _determine_error_severity(self, error: Exception) -> ErrorSeverity:
         """Determine error severity"""
-        # Import here to avoid circular imports
-        try:
-            from .exceptions import ConnectionError
-
-            if isinstance(error, ConnectionError):
-                return ErrorSeverity.MEDIUM
-        except ImportError:
-            pass
-
         if isinstance(error, (ValueError, TypeError)):
             return ErrorSeverity.LOW
         elif isinstance(error, (OSError, IOError)):
             return ErrorSeverity.HIGH
+        elif isinstance(error, ConnectionError):
+            return ErrorSeverity.MEDIUM
         else:
             return ErrorSeverity.MEDIUM
 
@@ -266,6 +245,32 @@ class NetSentinelErrorHandler:
             "component": context.component,
             "message": str(error),
             "severity": "medium",
+        }
+
+    async def _handle_os_error(
+        self, error: Exception, context: ErrorContext
+    ) -> Dict[str, Any]:
+        """Handle OS errors"""
+        self.logger.error(f"OS error in {context.component}: {error}")
+
+        return {
+            "status": "os_error",
+            "component": context.component,
+            "message": str(error),
+            "severity": "high",
+        }
+
+    async def _handle_io_error(
+        self, error: Exception, context: ErrorContext
+    ) -> Dict[str, Any]:
+        """Handle IO errors"""
+        self.logger.error(f"IO error in {context.component}: {error}")
+
+        return {
+            "status": "io_error",
+            "component": context.component,
+            "message": str(error),
+            "severity": "high",
         }
 
     async def _handle_generic_error(
@@ -284,13 +289,14 @@ class NetSentinelErrorHandler:
 
     def get_error_metrics(self) -> Dict[str, Any]:
         """Get error metrics"""
-        return {
-            "total_errors": self.metrics.total_errors,
-            "errors_by_type": self.metrics.errors_by_type,
-            "errors_by_severity": self.metrics.errors_by_severity,
-            "errors_by_component": self.metrics.errors_by_component,
-            "last_error_time": self.metrics.last_error_time,
-        }
+        with self._lock:
+            return {
+                "total_errors": self.metrics.total_errors,
+                "errors_by_type": self.metrics.errors_by_type.copy(),
+                "errors_by_severity": self.metrics.errors_by_severity.copy(),
+                "errors_by_component": self.metrics.errors_by_component.copy(),
+                "last_error_time": self.metrics.last_error_time,
+            }
 
     def retry_with_backoff(
         self,
@@ -317,7 +323,6 @@ class NetSentinelErrorHandler:
 
                         delay = min(base_delay * (exponential_base**attempt), max_delay)
                         if jitter:
-                            # Use random jitter instead of hash-based jitter for better distribution
                             delay *= 0.5 + 0.5 * random.random()
 
                         await asyncio.sleep(delay)
@@ -336,7 +341,6 @@ class NetSentinelErrorHandler:
 
                         delay = min(base_delay * (exponential_base**attempt), max_delay)
                         if jitter:
-                            # Use random jitter instead of hash-based jitter for better distribution
                             delay *= 0.5 + 0.5 * random.random()
 
                         time.sleep(delay)
@@ -348,37 +352,24 @@ class NetSentinelErrorHandler:
 
     def reset_metrics(self) -> None:
         """Reset error metrics"""
-        self.metrics = ErrorMetrics()
-        self.logger.info("Error metrics reset")
+        with self._lock:
+            self.metrics = ErrorMetrics()
+            self.logger.info("Error metrics reset")
 
 
 # Global error handler instance
-_error_handler: Optional[NetSentinelErrorHandler] = None
+_error_handler: Optional[ConsolidatedErrorHandler] = None
 
 
-def get_error_handler() -> NetSentinelErrorHandler:
+def get_error_handler() -> ConsolidatedErrorHandler:
     """Get the global error handler"""
     global _error_handler
     if _error_handler is None:
-        _error_handler = NetSentinelErrorHandler()
+        _error_handler = ConsolidatedErrorHandler()
     return _error_handler
 
 
 # Convenience functions for backward compatibility
-def retry_with_backoff(
-    max_attempts: int = 3,
-    base_delay: float = 1.0,
-    max_delay: float = 60.0,
-    exponential_base: float = 2.0,
-    jitter: bool = True,
-    exceptions: tuple = (Exception,),
-):
-    """Convenience function for retry with backoff"""
-    return get_error_handler().retry_with_backoff(
-        max_attempts, base_delay, max_delay, exponential_base, jitter, exceptions
-    )
-
-
 def handle_errors(
     error: Exception,
     context: Union[str, ErrorContext] = "",
@@ -394,6 +385,7 @@ def handle_errors(
             context_str = str(context)
 
         # Log the error with context
+        logger = logging.getLogger(__name__)
         if log_level.upper() == "ERROR":
             logger.error(f"Error in {context_str}: {str(error)}", exc_info=True)
         elif log_level.upper() == "WARNING":
@@ -421,3 +413,29 @@ def create_error_context(
         request_id=request_id,
         additional_data=additional_data or {},
     )
+
+
+def retry_with_backoff(
+    max_attempts: int = 3,
+    base_delay: float = 1.0,
+    max_delay: float = 60.0,
+    exponential_base: float = 2.0,
+    jitter: bool = True,
+    exceptions: tuple = (Exception,),
+):
+    """Convenience function for retry with backoff"""
+    return get_error_handler().retry_with_backoff(
+        max_attempts, base_delay, max_delay, exponential_base, jitter, exceptions
+    )
+
+
+@asynccontextmanager
+async def error_context(component: str, operation: str):
+    """Context manager for error handling"""
+    context = ErrorContext(component=component, operation=operation)
+    try:
+        yield context
+    except Exception as e:
+        handler = get_error_handler()
+        await handler.handle_error(e, context)
+        raise

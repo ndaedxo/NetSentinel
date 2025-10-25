@@ -96,6 +96,7 @@ class EventAnalyzer(BaseProcessor):
         self._max_profiles = 1000  # Limit number of IP profiles
         self._cleanup_interval = 3600  # Clean up every hour
         self._last_cleanup = time.time()
+        self._cleanup_lock = threading.RLock()  # Thread-safe cleanup
 
         # Analysis rules
         self.analysis_rules = self._initialize_analysis_rules()
@@ -440,24 +441,25 @@ class EventAnalyzer(BaseProcessor):
         try:
             current_time = time.time()
 
-            # Clean up old IP profiles
+            # Clean up old IP profiles - use thread-safe approach
             old_ips = []
-            for ip, profile in self.ip_behavior_profiles.items():
-                if current_time - profile.get("last_seen", 0) > 86400:  # 24 hours
-                    old_ips.append(ip)
+            with self._cleanup_lock:
+                for ip, profile in list(self.ip_behavior_profiles.items()):
+                    if current_time - profile.get("last_seen", 0) > 86400:  # 24 hours
+                        old_ips.append(ip)
 
-            for ip in old_ips:
-                del self.ip_behavior_profiles[ip]
+                for ip in old_ips:
+                    self.ip_behavior_profiles.pop(ip, None)
 
-            # If we still have too many profiles, remove oldest ones
-            if len(self.ip_behavior_profiles) > self._max_profiles:
-                sorted_profiles = sorted(
-                    self.ip_behavior_profiles.items(),
-                    key=lambda x: x[1].get("last_seen", 0),
-                )
-                excess_count = len(self.ip_behavior_profiles) - self._max_profiles
-                for ip, _ in sorted_profiles[:excess_count]:
-                    del self.ip_behavior_profiles[ip]
+                # If we still have too many profiles, remove oldest ones
+                if len(self.ip_behavior_profiles) > self._max_profiles:
+                    sorted_profiles = sorted(
+                        self.ip_behavior_profiles.items(),
+                        key=lambda x: x[1].get("last_seen", 0),
+                    )
+                    excess_count = len(self.ip_behavior_profiles) - self._max_profiles
+                    for ip, _ in sorted_profiles[:excess_count]:
+                        self.ip_behavior_profiles.pop(ip, None)
 
             self.logger.debug(f"Cleaned up {len(old_ips)} old IP profiles")
 

@@ -11,6 +11,7 @@ try:
     from netsentinel.siem_integration import SiemEvent
     from netsentinel.sdn_integration import FlowRule, QuarantinePolicy
     from netsentinel.firewall_manager import FirewallManager
+
     NETSENTINEL_AVAILABLE = True
 except ImportError:
     # Create mock classes for testing
@@ -18,25 +19,28 @@ except ImportError:
         def __init__(self, **kwargs):
             for key, value in kwargs.items():
                 setattr(self, key, value)
-    
+
     class MockFlowRule:
         def __init__(self, **kwargs):
-            self.switch_id = kwargs.get('switch_id', '')
-            self.priority = kwargs.get('priority', 0)
-            self.table_id = kwargs.get('table_id', 0)
-    
+            self.switch_id = kwargs.get("switch_id", "")
+            self.priority = kwargs.get("priority", 0)
+            self.table_id = kwargs.get("table_id", 0)
+
     class MockQuarantinePolicy:
         def __init__(self, **kwargs):
-            self.name = kwargs.get('name', '')
-            self.target_ip = kwargs.get('target_ip', '')
-            self.switch_id = kwargs.get('switch_id', '')
-            self.duration = kwargs.get('duration', 0)
-            self.active = kwargs.get('active', True)
-    
+            self.name = kwargs.get("name", "")
+            self.target_ip = kwargs.get("target_ip", "")
+            self.switch_id = kwargs.get("switch_id", "")
+            self.duration = kwargs.get("duration", 0)
+            self.active = kwargs.get("active", True)
+
     class MockFirewallManager:
-        def __init__(self): pass
-        def _detect_backend(self): return None
-    
+        def __init__(self):
+            pass
+
+        def _detect_backend(self):
+            return None
+
     SiemEvent = MockSiemEvent
     FlowRule = MockFlowRule
     QuarantinePolicy = MockQuarantinePolicy
@@ -99,7 +103,7 @@ def test_firewall_manager_creation():
     manager = FirewallManager()
 
     # Should be able to detect firewall backend (may return None if no firewall)
-    if hasattr(manager, '_detect_backend'):
+    if hasattr(manager, "_detect_backend"):
         firewall_backend = manager._detect_backend()
         assert firewall_backend in ["iptables", "ufw", "firewalld", "nftables", None]
     else:

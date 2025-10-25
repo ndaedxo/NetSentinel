@@ -40,20 +40,24 @@ class TestFirewallManager:
         """Test firewall backend detection"""
         # On Windows, backend should be "none"
         # On Linux, it should be a valid backend or "none" if no firewall tools available
-        assert firewall_manager.backend in ['iptables', 'ufw', 'firewalld', 'nftables', 'none']
+        assert firewall_manager.backend in [
+            "iptables",
+            "ufw",
+            "firewalld",
+            "nftables",
+            "none",
+        ]
 
         # Test that the backend detection works by checking the property
         # The actual detection happens in the constructor
-        assert hasattr(firewall_manager, 'backend')
+        assert hasattr(firewall_manager, "backend")
 
     def test_ip_blocking_iptables(self, firewall_manager):
         """Test IP blocking with iptables"""
         test_ip = "192.168.1.100"
 
         with (
-            patch.object(
-                firewall_manager, "_detect_backend", return_value="iptables"
-            ),
+            patch.object(firewall_manager, "_detect_backend", return_value="iptables"),
             patch("subprocess.run") as mock_run,
         ):
 
@@ -108,9 +112,7 @@ class TestFirewallManager:
         test_ip = "192.168.1.100"
 
         with (
-            patch.object(
-                firewall_manager, "_detect_backend", return_value="firewalld"
-            ),
+            patch.object(firewall_manager, "_detect_backend", return_value="firewalld"),
             patch("subprocess.run") as mock_run,
         ):
 
@@ -127,9 +129,7 @@ class TestFirewallManager:
         test_ip = "192.168.1.100"
 
         with (
-            patch.object(
-                firewall_manager, "_detect_backend", return_value="iptables"
-            ),
+            patch.object(firewall_manager, "_detect_backend", return_value="iptables"),
             patch("subprocess.run") as mock_run,
         ):
 
@@ -153,9 +153,7 @@ class TestFirewallManager:
         test_ip = "192.168.1.100"
 
         with (
-            patch.object(
-                firewall_manager, "_detect_backend", return_value="iptables"
-            ),
+            patch.object(firewall_manager, "_detect_backend", return_value="iptables"),
             patch("subprocess.run") as mock_run,
         ):
 
@@ -178,9 +176,7 @@ class TestFirewallManager:
     def test_get_blocked_ips(self, firewall_manager):
         """Test retrieving list of blocked IPs"""
         with (
-            patch.object(
-                firewall_manager, "_detect_backend", return_value="iptables"
-            ),
+            patch.object(firewall_manager, "_detect_backend", return_value="iptables"),
             patch("subprocess.run") as mock_run,
         ):
 
@@ -202,9 +198,7 @@ class TestFirewallManager:
     def test_firewall_status(self, firewall_manager):
         """Test firewall status retrieval"""
         with (
-            patch.object(
-                firewall_manager, "_detect_backend", return_value="iptables"
-            ),
+            patch.object(firewall_manager, "_detect_backend", return_value="iptables"),
             patch("subprocess.run") as mock_run,
         ):
 
@@ -250,9 +244,7 @@ class TestFirewallManager:
         ipv6_address = "2001:db8::1"
 
         with (
-            patch.object(
-                firewall_manager, "_detect_backend", return_value="iptables"
-            ),
+            patch.object(firewall_manager, "_detect_backend", return_value="iptables"),
             patch("subprocess.run") as mock_run,
         ):
 
@@ -272,9 +264,7 @@ class TestFirewallManager:
         test_ip = "192.168.1.200"
 
         with (
-            patch.object(
-                firewall_manager, "_detect_backend", return_value="iptables"
-            ),
+            patch.object(firewall_manager, "_detect_backend", return_value="iptables"),
             patch("subprocess.run") as mock_run,
         ):
 
@@ -325,9 +315,7 @@ class TestFirewallManager:
         test_ip = "192.168.1.150"
 
         with (
-            patch.object(
-                firewall_manager, "_detect_backend", return_value="iptables"
-            ),
+            patch.object(firewall_manager, "_detect_backend", return_value="iptables"),
             patch("subprocess.run") as mock_run,
         ):
 
@@ -395,9 +383,7 @@ class TestFirewallManagerIntegration:
         test_ips = [f"192.168.1.{i}" for i in range(200, 210)]  # 10 test IPs
 
         with (
-            patch.object(
-                firewall_manager, "_detect_backend", return_value="iptables"
-            ),
+            patch.object(firewall_manager, "_detect_backend", return_value="iptables"),
             patch("subprocess.run") as mock_run,
         ):
 

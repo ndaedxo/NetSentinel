@@ -87,3 +87,4 @@ freezegun>=1.1.0
 # API Documentation Testing
 drf-spectacular>=0.24.0
 openapi-spec-validator>=0.4.0
+

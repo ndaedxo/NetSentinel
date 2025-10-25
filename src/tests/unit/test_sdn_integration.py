@@ -405,7 +405,7 @@ class TestSDNManager:
             duration=3600,
         )
         sdn_manager.quarantine_policies["test_policy"] = policy
-        
+
         # Add a mock flow entry to simulate what would be created during quarantine
         sdn_manager.active_flows["openflow:1_test_flow"] = {
             "policy": "test_policy",

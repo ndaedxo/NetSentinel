@@ -14,6 +14,7 @@ from typing import Dict, Any, Generator, Optional
 # Conditional imports for optional dependencies
 try:
     import redis
+
     REDIS_AVAILABLE = True
 except ImportError:
     redis = None
@@ -24,47 +25,66 @@ try:
     from src.netsentinel.firewall_manager import FirewallManager, get_firewall_manager
     from src.netsentinel.siem_integration import SiemManager, get_siem_manager
     from src.netsentinel.sdn_integration import SDNManager, get_sdn_manager
+
     NETSENTINEL_AVAILABLE = True
 except ImportError as e:
     # Create mock classes for testing when NetSentinel is not available
     class MockFirewallManager:
-        def __init__(self): pass
-        def _detect_backend(self): return None
-        def cleanup_test_rules(self): pass
-    
+        def __init__(self):
+            pass
+
+        def _detect_backend(self):
+            return None
+
+        def cleanup_test_rules(self):
+            pass
+
     class MockSiemManager:
-        def __init__(self): 
+        def __init__(self):
             self.connectors = {}
             self.enabled_systems = {}
             self.event_filters = {}
             self.active_flows = {}
-        def get_statistics(self): return {"events_sent": 0}
-        def add_webhook_connector(self, name, url, **kwargs): 
+
+        def get_statistics(self):
+            return {"events_sent": 0}
+
+        def add_webhook_connector(self, name, url, **kwargs):
             self.connectors[name] = {"type": "webhook", "url": url, **kwargs}
-        def enable_system(self, name): 
+
+        def enable_system(self, name):
             self.enabled_systems[name] = True
-        def set_event_filter(self, system, **kwargs): 
+
+        def set_event_filter(self, system, **kwargs):
             self.event_filters[system] = kwargs
-        def send_event(self, event): 
+
+        def send_event(self, event):
             return True
-    
+
     class MockSDNManager:
-        def __init__(self): 
+        def __init__(self):
             self.controllers = {}
             self.quarantine_policies = {}
             self.active_flows = {}
-        def get_status(self): return {"controllers": []}
-        def add_controller(self, controller): 
+
+        def get_status(self):
+            return {"controllers": []}
+
+        def add_controller(self, controller):
             self.controllers[controller.name] = controller
-        def quarantine_ip(self, ip, **kwargs): 
+
+        def quarantine_ip(self, ip, **kwargs):
             return True
-        def release_quarantine(self, policy_name): 
+
+        def release_quarantine(self, policy_name):
             return True
-        def mirror_traffic(self, source_ip, **kwargs): 
+
+        def mirror_traffic(self, source_ip, **kwargs):
             return True
-        def redirect_traffic(self, source_ip, **kwargs): 
+
+        def redirect_traffic(self, source_ip, **kwargs):
             return True
-    
+
     FirewallManager = MockFirewallManager
     get_firewall_manager = lambda: MockFirewallManager()
     SiemManager = MockSiemManager
@@ -226,7 +246,7 @@ def firewall_manager():
     yield manager
     # Clean up any test rules
     try:
-        if hasattr(manager, 'cleanup_test_rules'):
+        if hasattr(manager, "cleanup_test_rules"):
             manager.cleanup_test_rules()
     except:
         pass
@@ -238,13 +258,13 @@ def siem_manager():
     manager = SiemManager()
     yield manager
     # Clean up
-    if hasattr(manager, 'connectors'):
+    if hasattr(manager, "connectors"):
         manager.connectors.clear()
-    if hasattr(manager, 'enabled_systems'):
+    if hasattr(manager, "enabled_systems"):
         manager.enabled_systems.clear()
-    if hasattr(manager, 'event_filters'):
+    if hasattr(manager, "event_filters"):
         manager.event_filters.clear()
-    if hasattr(manager, 'active_flows'):
+    if hasattr(manager, "active_flows"):
         manager.active_flows.clear()
 
 
@@ -254,11 +274,11 @@ def sdn_manager():
     manager = SDNManager()
     yield manager
     # Clean up
-    if hasattr(manager, 'controllers'):
+    if hasattr(manager, "controllers"):
         manager.controllers.clear()
-    if hasattr(manager, 'quarantine_policies'):
+    if hasattr(manager, "quarantine_policies"):
         manager.quarantine_policies.clear()
-    if hasattr(manager, 'active_flows'):
+    if hasattr(manager, "active_flows"):
         manager.active_flows.clear()
 
 
@@ -531,7 +551,8 @@ def cleanup_singletons():
     try:
         # Try to reset firewall manager singleton
         import netsentinel.firewall_manager as fm_module
-        if hasattr(fm_module, '_firewall_manager_instance'):
+
+        if hasattr(fm_module, "_firewall_manager_instance"):
             fm_module._firewall_manager_instance = None
     except:
         pass
@@ -539,7 +560,8 @@ def cleanup_singletons():
     try:
         # Try to reset SIEM manager singleton
         import netsentinel.siem_integration as siem_module
-        if hasattr(siem_module, '_siem_manager_instance'):
+
+        if hasattr(siem_module, "_siem_manager_instance"):
             siem_module._siem_manager_instance = None
     except:
         pass
@@ -547,7 +569,8 @@ def cleanup_singletons():
     try:
         # Try to reset SDN manager singleton
         import netsentinel.sdn_integration as sdn_module
-        if hasattr(sdn_module, '_sdn_manager_instance'):
+
+        if hasattr(sdn_module, "_sdn_manager_instance"):
             sdn_module._sdn_manager_instance = None
     except:
         pass
