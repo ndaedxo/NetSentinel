@@ -20,3 +20,28 @@ export * from './honeypot';
 
 // Dashboard-related types
 export * from './dashboard';
+
+// Filter-related types
+export * from './filter';
+
+// System health types
+export interface SystemHealthService {
+  id: string;
+  name: string;
+  status: 'healthy' | 'warning' | 'critical' | 'unknown';
+  uptime: number;
+  response_time: number;
+  last_checked: Date;
+  error_count: number;
+  description?: string;
+}
+
+// Dashboard metrics type
+export interface DashboardMetrics {
+  totalEvents: number;
+  activeThreats: number;
+  blockedIPs: number;
+  systemHealth: number;
+  responseTime: number;
+  uptime: number;
+}

@@ -19,7 +19,7 @@ test.describe('Authentication', () => {
     // Should redirect to dashboard
     await expect(page).toHaveURL('/');
     // Check for dashboard content (header shows "Netsentinel", navigation shows "Dashboard" as active)
-    await expect(page.locator('text=Netsentinel')).toBeVisible();
+    await expect(page.locator('h1:has-text("Netsentinel")')).toBeVisible();
     await expect(page.locator('[data-discover="true"]').filter({ hasText: 'Dashboard' })).toHaveClass(/bg-blue-500/);
   });
 
@@ -45,7 +45,7 @@ test.describe('Authentication', () => {
     // Should then redirect to dashboard
     await page.waitForURL('/');
     // Check for dashboard content
-    await expect(page.locator('text=Netsentinel')).toBeVisible();
+    await expect(page.locator('h1:has-text("Netsentinel")')).toBeVisible();
     await expect(page.locator('[data-discover="true"]').filter({ hasText: 'Dashboard' })).toHaveClass(/bg-blue-500/);
   });
 });

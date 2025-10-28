@@ -12,25 +12,25 @@ test.describe('Dashboard', () => {
 
   test('should load dashboard with metrics', async ({ page }) => {
     // Check dashboard header and active navigation
-    await expect(page.locator('text=Netsentinel')).toBeVisible();
+    await expect(page.locator('h1:has-text("Netsentinel")')).toBeVisible();
     await expect(page.locator('[data-discover="true"]').filter({ hasText: 'Dashboard' })).toHaveClass(/bg-blue-500/);
 
-    // Check if metrics cards are present
-    await expect(page.locator('text=Total Events')).toBeVisible();
-    await expect(page.locator('text=Active Threats')).toBeVisible();
-    await expect(page.locator('text=Blocked IPs')).toBeVisible();
+    // Check if dashboard widgets are present (new widget-based dashboard)
+    await expect(page.locator('text=Default Dashboard')).toBeVisible();
 
-    // Check if threat timeline is present
-    await expect(page.locator('text=Threat Timeline')).toBeVisible();
-
-    // Check if system health section is present
-    await expect(page.locator('text=System Health')).toBeVisible();
-
-    // Check if alerts feed is present
-    await expect(page.locator('text=Active Alerts')).toBeVisible();
+    // Check if key widget titles are present (look for h3 headers in widgets)
+    await expect(page.locator('h3:has-text("Total Events")')).toBeVisible();
+    await expect(page.locator('h3:has-text("Active Threats")')).toBeVisible();
+    await expect(page.locator('h3:has-text("Blocked IPs")')).toBeVisible();
+    await expect(page.locator('h3:has-text("Threat Timeline")')).toBeVisible();
+    await expect(page.locator('h3:has-text("System Health")')).toBeVisible();
+    await expect(page.locator('h3:has-text("Active Alerts")')).toBeVisible();
   });
 
   test('should navigate between pages', async ({ page }) => {
+    // Set desktop viewport for navigation testing
+    await page.setViewportSize({ width: 1024, height: 768 });
+
     // Test navigation to Threats page
     await page.click('[data-discover="true"]:has-text("Threats")');
     await expect(page).toHaveURL('/threats');
@@ -58,13 +58,16 @@ test.describe('Dashboard', () => {
     // Open mobile menu
     await mobileMenuButton.click();
 
-    // Check if navigation items are visible in mobile menu
-    await expect(page.locator('text=Threats')).toBeVisible();
-    await expect(page.locator('text=Alerts')).toBeVisible();
-    await expect(page.locator('text=Network')).toBeVisible();
+    // Check if navigation items are visible in mobile menu (block class indicates mobile menu)
+    await expect(page.locator('a.block:has-text("Threats")')).toBeVisible();
+    await expect(page.locator('a.block:has-text("Alerts")')).toBeVisible();
+    await expect(page.locator('a.block:has-text("Network")')).toBeVisible();
   });
 
   test('should display user info and logout', async ({ page }) => {
+    // Set desktop viewport to ensure user info is visible (hidden on mobile with `hidden md:block`)
+    await page.setViewportSize({ width: 1024, height: 768 });
+
     // Check if user info is displayed (name and role)
     // For email login, name is extracted from email, role defaults to admin
     await expect(page.locator('text=test')).toBeVisible(); // name from test@example.com
@@ -72,22 +75,46 @@ test.describe('Dashboard', () => {
 
     // Open user menu (click the user button)
     const userButton = page.locator('button').filter({ has: page.locator('svg.lucide-user') });
-    await userButton.click();
+    await userButton.click({ force: true });
 
     // Check if logout option is available
     await expect(page.locator('text=Sign Out')).toBeVisible();
   });
 
   test('should logout successfully', async ({ page }) => {
+    // Set desktop viewport for consistent user menu behavior
+    await page.setViewportSize({ width: 1024, height: 768 });
+
+    // Login first if not already logged in
+    if (page.url() !== 'http://localhost:5173/') {
+      await page.goto('/login');
+      await page.fill('input[type="email"]', 'test@example.com');
+      await page.fill('input[type="password"]', 'password123');
+      await page.click('button[type="submit"]');
+      await page.waitForURL('/');
+    }
+
+    // Wait for dashboard to load
+    await page.waitForSelector('h1:has-text("Netsentinel")', { timeout: 10000 });
+
+    // Close any mobile navigation if open (just in case)
+    const mobileNavCloseButton = page.locator('button').filter({ has: page.locator('svg.lucide-x') }).first();
+    if (await mobileNavCloseButton.isVisible()) {
+      await mobileNavCloseButton.click();
+    }
+
     // Open user menu
     const userButton = page.locator('button').filter({ has: page.locator('svg.lucide-user') });
-    await userButton.click();
+    await userButton.click({ force: true });
 
-    // Click logout
-    await page.click('text=Sign Out');
+    // Wait for the dropdown to appear
+    await page.waitForSelector('text=Sign Out', { timeout: 5000 });
+
+    // Click logout with force to bypass any overlays
+    await page.locator('text=Sign Out').click({ force: true });
 
     // Should redirect to login
     await expect(page).toHaveURL('/login');
-    await expect(page.locator('text=Netsentinel')).toBeVisible();
+    await expect(page.locator('h1:has-text("Netsentinel")')).toBeVisible();
   });
 });

@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/tracing';
 
 export function initSentry() {
   const dsn = import.meta.env.VITE_SENTRY_DSN;
@@ -15,11 +14,8 @@ export function initSentry() {
     dsn,
     environment,
     integrations: [
-      new BrowserTracing({
-        // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-        tracePropagationTargets: ['localhost', /^https:\/\/your-site\.com/],
-      }),
-      new Sentry.Replay({
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration({
         // Capture replays for 10% of all sessions
         maskAllText: true,
         blockAllMedia: true,
@@ -105,7 +101,7 @@ export function addBreadcrumb(message: string, category?: string, level?: Sentry
   });
 }
 
-// Performance monitoring helper
-export function startTransaction(name: string, op: string) {
-  return Sentry.startTransaction({ name, op });
-}
+// Performance monitoring helper (deprecated - use Sentry directly)
+// export function startTransaction(name: string, op: string) {
+//   return Sentry.startTransaction({ name, op });
+// }

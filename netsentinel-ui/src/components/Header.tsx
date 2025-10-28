@@ -1,14 +1,16 @@
 import { useAuth } from "@/hooks";
-import { Shield, LogOut, Bell, User, Menu, X } from "lucide-react";
+import { Shield, LogOut, Bell, User, Menu, X, Activity } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { HelpButton } from "./HelpGuide";
+import PerformanceMonitor from "./PerformanceMonitor";
 
 export default function Header() {
   const { user, logout, isPending } = useAuth();
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
+  const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -25,6 +27,7 @@ export default function Header() {
   ];
 
   return (
+    <>
     <header className="bg-slate-900/80 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-50">
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
@@ -78,6 +81,14 @@ export default function Header() {
             </button>
 
             <HelpButton />
+
+            <button
+              onClick={() => setShowPerformanceMonitor(true)}
+              className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+              title="Performance Monitor"
+            >
+              <Activity className="w-5 h-5 text-slate-400" />
+            </button>
 
           <div className="relative" data-tour="user-menu">
               <button
@@ -136,5 +147,12 @@ export default function Header() {
         )}
       </div>
     </header>
+
+    {/* Performance Monitor */}
+    <PerformanceMonitor
+      isOpen={showPerformanceMonitor}
+      onClose={() => setShowPerformanceMonitor(false)}
+    />
+  </>
   );
 }

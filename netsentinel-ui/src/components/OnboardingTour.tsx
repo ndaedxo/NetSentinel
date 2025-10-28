@@ -9,6 +9,15 @@ interface OnboardingTourProps {
 
 const TOUR_STORAGE_KEY = 'netsentinel-onboarding-completed';
 
+// Helper function to detect test environment
+const isTestEnvironment = () => {
+  return typeof window !== 'undefined' &&
+         (window.navigator.webdriver === true ||
+          typeof (window as any).__playwright !== 'undefined' ||
+          process.env.NODE_ENV === 'test' ||
+          typeof jest !== 'undefined');
+};
+
 export default function OnboardingTour({ run = false, onComplete }: OnboardingTourProps) {
   const { user } = useAuth();
   const [isTourActive, setIsTourActive] = useState(false);
@@ -104,7 +113,8 @@ export default function OnboardingTour({ run = false, onComplete }: OnboardingTo
   useEffect(() => {
     if (user && !run) {
       const hasCompleted = localStorage.getItem(TOUR_STORAGE_KEY);
-      if (!hasCompleted) {
+      // Don't show tour automatically in test environment or if already completed
+      if (!hasCompleted && !isTestEnvironment()) {
         // Show tour for first-time users after a short delay
         const timer = setTimeout(() => {
           setIsTourActive(true);

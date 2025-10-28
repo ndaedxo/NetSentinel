@@ -12,6 +12,9 @@ export { default as ThreatTable } from './ThreatTable';
 export { default as ThreatTimeline } from './ThreatTimeline';
 export { default as SystemHealth } from './SystemHealth';
 export { default as AlertFeed } from './AlertFeed';
+export { default as CustomDashboard } from './CustomDashboard';
+export { default as DashboardCustomizer } from './DashboardCustomizer';
+export { default as DashboardWidget } from './DashboardWidget';
 
 // Modal components
 export { default as ThreatDetailsModal } from './ThreatDetailsModal';
