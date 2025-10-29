@@ -10,7 +10,6 @@ export default defineConfig(({ mode }) => ({
   build: {
     chunkSizeWarningLimit: 5000,
     rollupOptions: {
-      external: ['react-is'],
       output: {
         manualChunks: {
           // Separate vendor chunks for better caching
