@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import * as services from "@/services";
 
 /**
@@ -12,7 +12,7 @@ export function useApi<T>(
   const [loading] = useState(!!endpointOrService);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async <U = T>(overrideEndpoint?: string): Promise<U> => {
+  const fetchData = useCallback(async <U = T>(overrideEndpoint?: string): Promise<U> => {
     const targetEndpoint = overrideEndpoint || (typeof endpointOrService === 'string' ? endpointOrService : null);
 
     if (!targetEndpoint && typeof endpointOrService !== 'function') return undefined as U;
@@ -42,7 +42,7 @@ export function useApi<T>(
       }
       throw err;
     }
-  };
+  }, [endpointOrService]);
 
   useEffect(() => {
     if (endpointOrService) {
@@ -53,9 +53,9 @@ export function useApi<T>(
         return () => clearInterval(interval);
       }
     }
-  }, [endpointOrService, refreshInterval]);
+  }, [endpointOrService, refreshInterval, fetchData]);
 
-  const postData = async (endpoint: string, body?: any) => {
+  const postData = async (endpoint: string, body?: unknown) => {
     // For backward compatibility - just return mock success
     console.log(`Mock POST to ${endpoint}`, body);
     await new Promise(resolve => setTimeout(resolve, 300));

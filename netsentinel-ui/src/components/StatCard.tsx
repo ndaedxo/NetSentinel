@@ -1,4 +1,4 @@
-// @ts-ignore - React import needed for tests but not used in component due to JSX transform
+// @ts-expect-error - React import needed for tests but not used in component due to JSX transform
 import React from "react";
 import { LucideIcon } from "lucide-react";
 

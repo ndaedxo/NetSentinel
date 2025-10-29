@@ -3,6 +3,8 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.js'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^recharts$': '<rootDir>/src/test/__mocks__/recharts.js',
+    '^@/utils/sentry$': '<rootDir>/src/test/__mocks__/sentry.js',
   },
   transform: {
     '^.+\\.(ts|tsx)$': 'babel-jest',

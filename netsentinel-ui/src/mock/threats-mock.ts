@@ -1,5 +1,11 @@
 import type { ThreatType } from '@/types';
 
+interface ThreatTimelineData {
+  timestamp: string;
+  threat_count: number;
+  blocked_count: number;
+}
+
 /**
  * Mock threat data
  */
@@ -53,7 +59,7 @@ export const mockRecentThreats: ThreatType[] = mockThreats.slice(0, 2);
 /**
  * Mock threat timeline data
  */
-export const mockThreatTimeline: any[] = [
+export const mockThreatTimeline: ThreatTimelineData[] = [
   {
     timestamp: "2025-10-27T10:30:00Z",
     threat_count: 15,

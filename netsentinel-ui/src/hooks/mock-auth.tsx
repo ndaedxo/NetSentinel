@@ -71,6 +71,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsPending(false);
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const login = async (email: string, _password: string): Promise<void> => {
     setIsPending(true);
 
@@ -127,6 +128,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     window.location.href = '/auth/callback?code=mock-auth-code';
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const exchangeCodeForSessionToken = async (_code: string): Promise<void> => {
     setIsPending(true);
 

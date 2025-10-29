@@ -4,14 +4,14 @@ import 'jspdf-autotable';
 // Extend jsPDF type for autoTable
 declare module 'jspdf' {
   interface jsPDF {
-    autoTable: (options: any) => jsPDF;
+    autoTable: (options: unknown) => jsPDF;
   }
 }
 
 export interface ExportColumn {
   key: string;
   label: string;
-  formatter?: (value: any) => string;
+  formatter?: (value: unknown) => string;
 }
 
 export interface ExportOptions {
@@ -146,7 +146,7 @@ function escapeCSVValue(value: string): string {
 }
 
 // Get nested object value by path
-function getNestedValue(obj: any, path: string): any {
+function getNestedValue<T = unknown>(obj: T, path: string): unknown {
   return path.split('.').reduce((current, key) => {
     return current && typeof current === 'object' ? current[key] : undefined;
   }, obj);

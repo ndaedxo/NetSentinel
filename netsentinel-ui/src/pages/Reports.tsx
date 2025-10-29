@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { ReportType } from "@/types";
+
+type ReportFilterStatus = "all" | "completed" | "generating" | "failed";
 import { useApi } from "@/hooks";
 import Header from "@/components/Header";
 import { 
@@ -21,7 +23,7 @@ import {
 export default function ReportsPage() {
   const [reports, setReports] = useState<ReportType[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'completed' | 'generating' | 'failed'>('all');
+  const [filter, setFilter] = useState<ReportFilterStatus>('all');
   const [newReport, setNewReport] = useState({
     title: '',
     report_type: 'security_summary',
@@ -176,10 +178,10 @@ export default function ReportsPage() {
 
           <div className="flex items-center space-x-3">
             <div className="flex bg-slate-800 rounded-lg p-1">
-              {['all', 'completed', 'generating', 'failed'].map((status) => (
+              {(['all', 'completed', 'generating', 'failed'] as const).map((status) => (
                 <button
                   key={status}
-                  onClick={() => setFilter(status as any)}
+                  onClick={() => setFilter(status)}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     filter === status
                       ? 'bg-emerald-500 text-white'

@@ -22,6 +22,7 @@ export async function getAllAlerts(): Promise<AlertType[]> {
 /**
  * Acknowledge an alert
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function acknowledgeAlert(_alertId: number): Promise<{ success: boolean }> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 300));
@@ -31,6 +32,7 @@ export async function acknowledgeAlert(_alertId: number): Promise<{ success: boo
 /**
  * Resolve an alert
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function resolveAlert(_alertId: number): Promise<{ success: boolean }> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 300));

@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
-  Plus,
-  Settings,
   Save,
   RotateCcw,
   Grid,
@@ -11,8 +9,7 @@ import {
   Network,
   FileText,
   TrendingUp,
-  X,
-  Edit3
+  X
 } from 'lucide-react';
 import { useDashboard } from '@/hooks/useDashboard';
 import type { WidgetType } from '@/types/dashboard';
@@ -26,7 +23,7 @@ const WIDGET_TYPES: Array<{
   type: WidgetType;
   name: string;
   description: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
   category: string;
 }> = [
   {

@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { IncidentType, IncidentTimelineType } from "@/types";
+
+type IncidentStatus = "open" | "investigating" | "contained" | "resolved" | "closed";
+type FilterStatus = "all" | "open" | "investigating" | "contained";
 import { getThreatColorClasses } from "@/utils";
 import { useApi } from "@/hooks";
 import Header from "@/components/Header";
@@ -21,7 +24,7 @@ export default function IncidentResponsePage() {
   const [selectedIncident, setSelectedIncident] = useState<IncidentType | null>(null);
   const [timeline, setTimeline] = useState<IncidentTimelineType[]>([]);
   
-  const [filter, setFilter] = useState<'all' | 'open' | 'investigating' | 'contained'>('all');
+  const [filter, setFilter] = useState<FilterStatus>('all');
   const { fetchData, postData } = useApi();
 
   useEffect(() => {
@@ -46,16 +49,16 @@ export default function IncidentResponsePage() {
     }
   };
 
-  const updateIncidentStatus = async (incidentId: number, status: string) => {
+  const updateIncidentStatus = async (incidentId: number, status: IncidentStatus) => {
     try {
       await postData(`/api/incidents/${incidentId}/status`, { status });
       setIncidents(prev => prev.map(incident => 
         incident.id === incidentId 
-          ? { ...incident, status: status as any, updated_at: new Date().toISOString() }
+          ? { ...incident, status, updated_at: new Date().toISOString() }
           : incident
       ));
       if (selectedIncident?.id === incidentId) {
-        setSelectedIncident(prev => prev ? { ...prev, status: status as any } : null);
+        setSelectedIncident(prev => prev ? { ...prev, status } : null);
       }
     } catch (error) {
       console.error("Failed to update incident status:", error);
@@ -120,10 +123,10 @@ export default function IncidentResponsePage() {
 
           <div className="flex items-center space-x-3">
             <div className="flex bg-slate-800 rounded-lg p-1">
-              {['all', 'open', 'investigating', 'contained'].map((status) => (
+              {(['all', 'open', 'investigating', 'contained'] as const).map((status) => (
                 <button
                   key={status}
-                  onClick={() => setFilter(status as any)}
+                  onClick={() => setFilter(status)}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     filter === status
                       ? 'bg-red-500 text-white'

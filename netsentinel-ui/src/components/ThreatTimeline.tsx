@@ -6,13 +6,19 @@ interface TimelineData {
   severity: string;
 }
 
+interface AggregatedTimelineData {
+  hour: string;
+  total: number;
+  [severity: string]: string | number; // Allow dynamic severity properties
+}
+
 interface ThreatTimelineProps {
   data: TimelineData[];
 }
 
 export default function ThreatTimeline({ data }: ThreatTimelineProps) {
   // Aggregate data by hour
-  const aggregatedData = data.reduce((acc: any[], item) => {
+  const aggregatedData = data.reduce((acc: AggregatedTimelineData[], item) => {
     const existing = acc.find(d => d.hour === item.hour);
     if (existing) {
       existing[item.severity] = (existing[item.severity] || 0) + item.count;

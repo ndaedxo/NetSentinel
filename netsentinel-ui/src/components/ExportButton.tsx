@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Download,
   FileText,
@@ -10,7 +10,7 @@ import {
 import { useExport, type ExportColumn, type ExportOptions } from '@/utils/export';
 
 interface ExportButtonProps {
-  data: any[];
+  data: unknown[];
   columns: ExportColumn[];
   filename?: string;
   title?: string;

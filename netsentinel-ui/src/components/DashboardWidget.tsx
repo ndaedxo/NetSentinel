@@ -1,10 +1,9 @@
 import React from 'react';
-import { GripVertical, Settings, X, RefreshCw } from 'lucide-react';
-import { useDashboard } from '@/hooks/useDashboard';
-import type { Widget } from '@/types/dashboard';
-import { mockThreats } from '@/mock/threats-mock';
-import { mockAlerts } from '@/mock/alerts-mock';
-import { mockSystemHealth } from '@/mock/dashboard-mock';
+import { GripVertical, Settings, X, RefreshCw, Activity, Shield, AlertTriangle, Users, Database, Network, TrendingUp, Clock, LucideIcon } from 'lucide-react';
+import { useDashboard, useThreatData, useAlertData, useSystemHealthData } from '@/hooks';
+import type { Widget, SystemHealthData } from '@/types/dashboard';
+import type { AlertType } from '@/types/alerts';
+import type { ThreatType } from '@/types/threats';
 
 // Import existing components
 import StatCard from './StatCard';
@@ -19,8 +18,16 @@ interface DashboardWidgetProps {
   isEditing?: boolean;
 }
 
+interface ChartConfig {
+  chartType?: string;
+  [key: string]: unknown;
+}
+
 export default function DashboardWidget({ widget, isEditing = false }: DashboardWidgetProps) {
   const { removeWidget, updateWidget } = useDashboard();
+  const threats = useThreatData();
+  const alerts = useAlertData();
+  const systemHealth = useSystemHealthData();
 
   const handleRemove = () => {
     removeWidget(widget.id);
@@ -38,11 +45,11 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
       case 'threat-timeline':
         return <ThreatTimeline {...getTimelineProps(widget)} />;
       case 'alert-feed':
-        return <AlertFeed {...getAlertFeedProps(widget)} />;
+        return <AlertFeed {...getAlertFeedProps(widget, alerts)} />;
       case 'system-health':
-        return <SystemHealth {...getSystemHealthProps(widget)} />;
+        return <SystemHealth {...getSystemHealthProps(widget, systemHealth)} />;
       case 'threat-table':
-        return <ThreatTable {...getThreatTableProps(widget)} />;
+        return <ThreatTable {...getThreatTableProps(widget, threats)} />;
       case 'network-graph':
         return <CustomChartWidget {...getCustomChartProps(widget)} />; // Placeholder for network graph
       case 'custom-chart':
@@ -92,6 +99,7 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
                 <button
                   className="p-1 text-slate-400 hover:text-slate-300 transition-colors cursor-grab active:cursor-grabbing"
                   title="Drag to move"
+                  aria-label="drag handle"
                 >
                   <GripVertical className="w-4 h-4" />
                 </button>
@@ -99,6 +107,7 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
                 <button
                   className="p-1 text-slate-400 hover:text-slate-300 transition-colors"
                   title="Configure"
+                  aria-label="settings"
                 >
                   <Settings className="w-4 h-4" />
                 </button>
@@ -107,6 +116,7 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
                   onClick={handleRemove}
                   className="p-1 text-slate-400 hover:text-red-400 transition-colors"
                   title="Remove widget"
+                  aria-label="remove widget"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -125,7 +135,7 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
 }
 
 // Custom chart component
-function CustomChartWidget({ config }: { config: any }) {
+function CustomChartWidget({ config }: { config: ChartConfig }) {
   // This would be a more sophisticated chart component
   return (
     <div className="flex items-center justify-center h-32 text-slate-400">
@@ -140,10 +150,24 @@ function CustomChartWidget({ config }: { config: any }) {
 
 // Helper functions to convert widget config to component props
 function getStatCardProps(widget: Widget) {
+  const iconMap: Record<string, LucideIcon> = {
+    Activity,
+    Shield,
+    AlertTriangle,
+    Users,
+    Database,
+    Network,
+    TrendingUp,
+    Clock
+  };
+
+  const iconName = widget.data?.icon || 'Activity';
+  const IconComponent = iconMap[iconName] || Activity;
+
   return {
     title: widget.title,
     value: widget.data?.value || 0,
-    icon: widget.data?.icon || 'Activity',
+    icon: IconComponent,
     trend: widget.data?.trend,
     color: widget.config.color || 'blue'
   };
@@ -157,35 +181,30 @@ function getTimelineProps(widget: Widget) {
   };
 }
 
-function getAlertFeedProps(widget: Widget) {
+function getAlertFeedProps(widget: Widget, alerts: AlertType[]) {
   return {
-    alerts: widget.data?.alerts || mockAlerts.slice(0, widget.config.maxItems || 5),
+    alerts: widget.data?.alerts || alerts.slice(0, widget.config.maxItems || 5),
     compact: widget.config.compact,
     maxItems: widget.config.maxItems || 5
   };
 }
 
-function getSystemHealthProps(widget: Widget) {
+function getSystemHealthProps(widget: Widget, systemHealth: SystemHealthData) {
   return {
-    services: widget.data?.services || mockSystemHealth.services,
+    services: widget.data?.services || systemHealth.services,
     compact: widget.config.compact
   };
 }
 
-function getThreatTableProps(widget: Widget) {
+function getThreatTableProps(widget: Widget, threats: ThreatType[]) {
   return {
-    threats: widget.data?.threats || mockThreats.slice(0, widget.config.pageSize || 10),
+    threats: widget.data?.threats || threats.slice(0, widget.config.pageSize || 10),
     compact: widget.config.compact,
     pageSize: widget.config.pageSize || 10,
     showFilters: false
   };
 }
 
-function getNetworkProps(widget: Widget) {
-  return {
-    compact: widget.config.compact
-  };
-}
 
 function getCustomChartProps(widget: Widget) {
   return {

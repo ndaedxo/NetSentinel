@@ -149,7 +149,7 @@ export function withErrorBoundary<P extends object>(
 
 // Hook for manual error reporting (for non-React errors)
 export function useErrorReporting() {
-  const reportError = (error: Error, context?: Record<string, any>) => {
+  const reportError = (error: Error, context?: Record<string, unknown>) => {
     console.error('Manual error report:', error, context);
 
     // Send to Sentry
@@ -161,7 +161,7 @@ export function useErrorReporting() {
     });
   };
 
-  const reportMessage = (message: string, level: 'info' | 'warning' | 'error' = 'error', context?: Record<string, any>) => {
+  const reportMessage = (message: string, level: 'info' | 'warning' | 'error' = 'error', context?: Record<string, unknown>) => {
     console.log(`Manual message report [${level}]:`, message, context);
 
     // Send to Sentry

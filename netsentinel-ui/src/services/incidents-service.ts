@@ -13,19 +13,16 @@ export async function getIncidents(): Promise<IncidentType[]> {
 /**
  * Get incident timeline for a specific incident
  */
-export async function getIncidentTimeline(_incidentId: number): Promise<IncidentTimelineType[]> {
+export async function getIncidentTimeline(incidentId: number): Promise<IncidentTimelineType[]> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 200));
-  return mockIncidentTimeline.filter(timeline => timeline.incident_id === _incidentId);
+  return mockIncidentTimeline.filter(timeline => timeline.incident_id === incidentId);
 }
 
 /**
  * Update incident status
  */
-export async function updateIncidentStatus(
-  _incidentId: number,
-  _status: IncidentType['status']
-): Promise<{ success: boolean }> {
+export async function updateIncidentStatus(): Promise<{ success: boolean }> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 300));
   return { success: true };

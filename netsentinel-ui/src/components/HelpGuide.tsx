@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { HelpCircle, Book, MessageCircle, ExternalLink, X, ChevronRight } from 'lucide-react';
-import { useOnboardingTour } from './OnboardingTour';
+import { useOnboardingTour } from '@/hooks';
 
 interface HelpGuideProps {
   isOpen: boolean;

@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Joyride, { CallBackProps, STATUS, EVENTS, Step } from 'react-joyride';
 import { useAuth } from '@/hooks';
+import { TOUR_STORAGE_KEY } from '@/hooks/useOnboardingTour';
 
 interface OnboardingTourProps {
   run?: boolean;
   onComplete?: () => void;
 }
 
-const TOUR_STORAGE_KEY = 'netsentinel-onboarding-completed';
 
 // Helper function to detect test environment
 const isTestEnvironment = () => {
   return typeof window !== 'undefined' &&
          (window.navigator.webdriver === true ||
-          typeof (window as any).__playwright !== 'undefined' ||
+          typeof (window as Window & { __playwright?: unknown }).__playwright !== 'undefined' ||
           process.env.NODE_ENV === 'test' ||
           typeof jest !== 'undefined');
 };
@@ -198,17 +198,3 @@ export default function OnboardingTour({ run = false, onComplete }: OnboardingTo
   );
 }
 
-// Hook for manually triggering the tour
-export function useOnboardingTour() {
-  const startTour = () => {
-    localStorage.removeItem(TOUR_STORAGE_KEY);
-    // Tour will automatically start on next page load
-    window.location.reload();
-  };
-
-  const resetTour = () => {
-    localStorage.removeItem(TOUR_STORAGE_KEY);
-  };
-
-  return { startTour, resetTour };
-}

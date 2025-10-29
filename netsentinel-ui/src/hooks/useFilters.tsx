@@ -4,12 +4,11 @@ import type {
   FilterGroup,
   FilterCondition,
   FilterField,
-  FilterOperator,
   FilterPreset
 } from '@/types/filter';
 
 // Filter evaluation functions
-function evaluateCondition(condition: FilterCondition, item: any): boolean {
+function evaluateCondition<T = unknown>(condition: FilterCondition, item: T): boolean {
   const { field, operator, value, value2 } = condition;
   const itemValue = getNestedValue(item, field);
 
@@ -49,7 +48,7 @@ function evaluateCondition(condition: FilterCondition, item: any): boolean {
   }
 }
 
-function evaluateGroup(group: FilterGroup, item: any): boolean {
+function evaluateGroup<T = unknown>(group: FilterGroup, item: T): boolean {
   const { logic, conditions, groups } = group;
 
   const conditionResults = conditions.map(condition => evaluateCondition(condition, item));
@@ -64,7 +63,7 @@ function evaluateGroup(group: FilterGroup, item: any): boolean {
   }
 }
 
-function getNestedValue(obj: any, path: string): any {
+function getNestedValue<T = unknown>(obj: T, path: string): unknown {
   return path.split('.').reduce((current, key) => current?.[key], obj);
 }
 
@@ -98,7 +97,7 @@ export function useFilters<T>(
     }
 
     return initialData.filter(item => evaluateGroup(rootGroup, item));
-  }, [initialData, filterState.rootGroup]);
+  }, [initialData, filterState]);
 
   const updateFilterState = useCallback((newState: FilterState) => {
     setFilterState(newState);

@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router";
 import { Suspense, lazy } from "react";
 import { AuthProvider, useAuth } from "@/hooks";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ErrorBoundary, LoadingSpinner } from "@/components";
 import OnboardingTour from "@/components/OnboardingTour";
 
 // Lazy load page components for code splitting
@@ -18,28 +18,14 @@ const ReportsPage = lazy(() => import("@/pages/Reports"));
 
 // Loading component for Suspense fallback
 function PageLoader() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-      <div className="flex flex-col items-center space-y-4">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-slate-400">Loading...</p>
-      </div>
-    </div>
-  );
+  return <LoadingSpinner message="Loading page..." />;
 }
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isPending } = useAuth();
 
   if (isPending) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-slate-400">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner message="Authenticating..." />;
   }
 
   if (!user) {

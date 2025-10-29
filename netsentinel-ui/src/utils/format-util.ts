@@ -62,9 +62,8 @@ export function snakeToTitleCase(str: string): string {
  */
 export function camelToTitleCase(str: string): string {
   return str
-    .replace(/([A-Z])/g, ' $1')
-    .replace(/^./, str => str.toUpperCase())
-    .trim();
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/^./, str => str.toUpperCase());
 }
 
 /**
@@ -78,7 +77,11 @@ export function formatSeverity(severity: 'low' | 'medium' | 'high' | 'critical')
  * Format a status for display
  */
 export function formatStatus(status: string): string {
-  return capitalizeFirst(status.replace('_', ' '));
+  return status
+    .replace('_', ' ')
+    .split(' ')
+    .map(word => capitalizeFirst(word))
+    .join(' ');
 }
 
 /**
@@ -130,8 +133,8 @@ export function formatDurationFromSeconds(seconds: number): string {
 
   const parts = [];
   if (hours > 0) parts.push(`${hours}h`);
-  if (minutes > 0) parts.push(`${minutes}m`);
-  if (remainingSeconds > 0 || parts.length === 0) parts.push(`${remainingSeconds}s`);
+  if (hours > 0 || minutes > 0) parts.push(`${minutes}m`);
+  if (hours > 0 || minutes > 0 || remainingSeconds > 0 || parts.length === 0) parts.push(`${remainingSeconds}s`);
 
   return parts.join(' ');
 }

@@ -7,7 +7,7 @@ import { mockReports } from '@/mock';
 export interface GenerateReportData {
   title: string;
   report_type: string;
-  parameters?: Record<string, any>;
+  parameters?: Record<string, unknown>;
   scheduled_for?: string;
 }
 
@@ -23,6 +23,7 @@ export async function getReports(): Promise<ReportType[]> {
 /**
  * Generate a new report
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function generateReport(_reportData: GenerateReportData): Promise<{ success: boolean; report_id?: number }> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 500));

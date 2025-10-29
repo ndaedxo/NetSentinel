@@ -1,8 +1,26 @@
 import * as Sentry from '@sentry/react';
 
+// Handle test environment where import.meta might not be available
+const getEnvVar = (key: string, defaultValue?: string) => {
+  // Check if we're in a test environment (Jest sets several environment variables)
+  if (typeof process !== 'undefined' &&
+      (process.env?.JEST_WORKER_ID || process.env?.NODE_ENV === 'test')) {
+    return defaultValue;
+  }
+
+  // Only access import.meta in non-test environments
+  try {
+    // Use eval to avoid TypeScript compilation issues with import.meta
+    const env = eval('import.meta?.env?.[key]') || defaultValue;
+    return env;
+  } catch {
+    return defaultValue;
+  }
+};
+
 export function initSentry() {
-  const dsn = import.meta.env.VITE_SENTRY_DSN;
-  const environment = import.meta.env.VITE_SENTRY_ENVIRONMENT || 'development';
+  const dsn = getEnvVar('VITE_SENTRY_DSN');
+  const environment = getEnvVar('VITE_SENTRY_ENVIRONMENT', 'development');
 
   // Only initialize Sentry if DSN is provided
   if (!dsn || dsn === 'https://your-sentry-dsn-here@sentry.io/project-id') {
@@ -28,7 +46,7 @@ export function initSentry() {
     replaysOnErrorSampleRate: 1.0, // 100% of sessions with an error
 
     // Release tracking
-    release: import.meta.env.VITE_APP_VERSION || '1.0.0',
+    release: getEnvVar('VITE_APP_VERSION', '1.0.0'),
 
     // Error filtering
     beforeSend(event, hint) {
@@ -50,7 +68,7 @@ export function initSentry() {
     initialScope: {
       tags: {
         app: 'netsentinel-ui',
-        version: import.meta.env.VITE_APP_VERSION || '1.0.0',
+        version: getEnvVar('VITE_APP_VERSION', '1.0.0'),
       },
     },
   });
@@ -71,7 +89,7 @@ export function clearUserContext() {
   Sentry.setUser(null);
 }
 
-export function captureException(error: Error, context?: Record<string, any>) {
+export function captureException(error: Error, context?: Record<string, unknown>) {
   Sentry.withScope((scope) => {
     if (context) {
       Object.keys(context).forEach((key) => {
@@ -82,7 +100,7 @@ export function captureException(error: Error, context?: Record<string, any>) {
   });
 }
 
-export function captureMessage(message: string, level: Sentry.SeverityLevel = 'info', context?: Record<string, any>) {
+export function captureMessage(message: string, level: Sentry.SeverityLevel = 'info', context?: Record<string, unknown>) {
   Sentry.withScope((scope) => {
     if (context) {
       Object.keys(context).forEach((key) => {

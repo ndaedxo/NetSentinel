@@ -18,3 +18,9 @@ export { default as DashboardWidget } from './DashboardWidget';
 
 // Modal components
 export { default as ThreatDetailsModal } from './ThreatDetailsModal';
+
+// Layout components
+export { default as PageLayout } from './PageLayout';
+
+// Loading components
+export { default as LoadingSpinner } from './LoadingSpinner';

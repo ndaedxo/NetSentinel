@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Edit3, Plus, Settings, Save, X } from 'lucide-react';
+import { useState } from 'react';
+import { Edit3, Plus, Settings } from 'lucide-react';
 import { useDashboard } from '@/hooks/useDashboard';
 import DashboardWidget from './DashboardWidget';
 import DashboardCustomizer from './DashboardCustomizer';

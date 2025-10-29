@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => ({
         drop_console: mode === 'production',
         drop_debugger: mode === 'production',
       },
-    } as any,
+    },
   },
   resolve: {
     alias: {

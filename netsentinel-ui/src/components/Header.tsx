@@ -1,3 +1,4 @@
+import React from "react";
 import { useAuth } from "@/hooks";
 import { Shield, LogOut, Bell, User, Menu, X, Activity } from "lucide-react";
 import { useState } from "react";

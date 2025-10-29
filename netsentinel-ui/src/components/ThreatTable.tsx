@@ -5,17 +5,16 @@ import { getThreatColorClasses } from "@/utils";
 import FilterBuilder from "./FilterBuilder";
 import ExportButton from "./ExportButton";
 import { useFilters } from "@/hooks/useFilters";
-import { THREAT_FILTER_FIELDS, createFilterPreset, type FilterField } from "@/types/filter";
+import { THREAT_FILTER_FIELDS, createFilterPreset } from "@/types/filter";
 import { THREAT_EXPORT_COLUMNS } from "@/utils/export";
 import { useState } from "react";
 
 interface ThreatTableProps {
   threats: ThreatType[];
   showFilters?: boolean;
-  compact?: boolean;
 }
 
-export default function ThreatTable({ threats, showFilters = true, compact = false }: ThreatTableProps) {
+export default function ThreatTable({ threats, showFilters = true }: ThreatTableProps) {
   const [showFilterBuilder, setShowFilterBuilder] = useState(false);
 
   // Default presets for threats

@@ -21,8 +21,8 @@ export interface FilterCondition {
   id: string;
   field: string;
   operator: FilterOperator;
-  value: any;
-  value2?: any; // For between operator
+  value: unknown;
+  value2?: unknown; // For between operator
 }
 
 export interface FilterGroup {
@@ -46,7 +46,7 @@ export interface FilterField {
   label: string;
   type: 'string' | 'number' | 'date' | 'boolean' | 'select' | 'multiselect';
   operators: FilterOperator[];
-  options?: Array<{ value: any; label: string }>; // For select/multiselect
+  options?: Array<{ value: unknown; label: string }>; // For select/multiselect
   placeholder?: string;
 }
 

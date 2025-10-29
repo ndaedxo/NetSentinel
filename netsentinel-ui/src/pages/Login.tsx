@@ -24,6 +24,7 @@ export default function Login() {
       await login(email, password);
       navigate("/");
     } catch (err) {
+      console.error('Login error:', err);
       setError("Invalid credentials. Try any email/password combination.");
     }
   };

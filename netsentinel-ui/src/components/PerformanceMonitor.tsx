@@ -10,6 +10,20 @@ import {
   CheckCircle,
   Monitor
 } from 'lucide-react';
+import { usePerformanceMonitor } from '@/hooks';
+import {
+  getPageLoadTime,
+  getDomContentLoadedTime,
+  getFirstPaintTime,
+  getLargestContentfulPaint,
+  getAverageApiResponseTime,
+  getNetworkRequestCount,
+  getFailedRequestCount,
+  getUsedMemory,
+  getTotalMemory,
+  getMemoryUsagePercent,
+  formatBytes
+} from '@/utils';
 
 interface PerformanceMetrics {
   // Page metrics
@@ -49,8 +63,7 @@ export default function PerformanceMonitor({
   const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const renderCountRef = useRef(0);
-  const renderTimeRef = useRef<number[]>([]);
+  const { getAverageRenderTime, getRenderCount } = usePerformanceMonitor();
 
   useEffect(() => {
     if (isOpen) {
@@ -60,6 +73,7 @@ export default function PerformanceMonitor({
     }
 
     return () => stopMonitoring();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const startMonitoring = () => {
@@ -99,7 +113,7 @@ export default function PerformanceMonitor({
       memoryUsagePercent: getMemoryUsagePercent(),
 
       // React metrics
-      componentRenderCount: renderCountRef.current,
+      componentRenderCount: getRenderCount(),
       averageRenderTime: getAverageRenderTime(),
 
       timestamp: Date.now()
@@ -108,17 +122,6 @@ export default function PerformanceMonitor({
     setMetrics(newMetrics);
   };
 
-  const recordRenderTime = (startTime: number) => {
-    const renderTime = performance.now() - startTime;
-    renderTimeRef.current.push(renderTime);
-
-    // Keep only last 100 render times
-    if (renderTimeRef.current.length > 100) {
-      renderTimeRef.current = renderTimeRef.current.slice(-100);
-    }
-
-    renderCountRef.current++;
-  };
 
   if (!isOpen || !metrics) return null;
 
@@ -128,16 +131,6 @@ export default function PerformanceMonitor({
     return 'good';
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'critical':
-        return <AlertTriangle className="w-4 h-4 text-red-400" />;
-      case 'warning':
-        return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
-      default:
-        return <CheckCircle className="w-4 h-4 text-green-400" />;
-    }
-  };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -391,7 +384,11 @@ function MetricItem({ label, value, status }: MetricItemProps) {
     <div className="flex items-center justify-between">
       <span className="text-slate-400 text-sm">{label}</span>
       <div className="flex items-center space-x-2">
-        {status !== 'neutral' && getStatusIcon(status)}
+        {status !== 'neutral' && (
+          status === 'critical' ? <AlertTriangle className="w-4 h-4 text-red-400" /> :
+          status === 'warning' ? <AlertTriangle className="w-4 h-4 text-yellow-400" /> :
+          <CheckCircle className="w-4 h-4 text-green-400" />
+        )}
         <span className={`font-medium ${
           status === 'critical' ? 'text-red-400' :
           status === 'warning' ? 'text-yellow-400' :
@@ -404,99 +401,3 @@ function MetricItem({ label, value, status }: MetricItemProps) {
   );
 }
 
-// Helper functions for performance metrics
-function getPageLoadTime(): number {
-  const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-  return navigation ? (navigation.loadEventEnd - navigation.fetchStart) / 1000 : 0;
-}
-
-function getDomContentLoadedTime(): number {
-  const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-  return navigation ? (navigation.domContentLoadedEventEnd - navigation.fetchStart) / 1000 : 0;
-}
-
-function getFirstPaintTime(): number {
-  const paint = performance.getEntriesByType('paint').find(entry => entry.name === 'first-paint');
-  return paint ? paint.startTime : 0;
-}
-
-function getLargestContentfulPaint(): number {
-  const lcp = performance.getEntriesByType('largest-contentful-paint')[0] as any;
-  return lcp ? lcp.startTime : 0;
-}
-
-function getAverageApiResponseTime(): number {
-  // This would need to be tracked separately in a real app
-  // For demo purposes, return a simulated value
-  return Math.random() * 500 + 200; // 200-700ms
-}
-
-function getNetworkRequestCount(): number {
-  return performance.getEntriesByType('resource').length;
-}
-
-function getFailedRequestCount(): number {
-  // This would need to track actual failed requests
-  return Math.floor(Math.random() * 3); // 0-2 for demo
-}
-
-function getUsedMemory(): number {
-  // @ts-ignore - performance.memory is not in types but available in Chrome
-  return performance.memory?.usedJSHeapSize || 0;
-}
-
-function getTotalMemory(): number {
-  // @ts-ignore
-  return performance.memory?.totalJSHeapSize || 0;
-}
-
-function getMemoryUsagePercent(): number {
-  const used = getUsedMemory();
-  const total = getTotalMemory();
-  return total > 0 ? (used / total) * 100 : 0;
-}
-
-function getAverageRenderTime(): number {
-  const renderTimes = renderTimeRef?.current || [];
-  if (renderTimes.length === 0) return 0;
-  return renderTimes.reduce((sum: number, time: number) => sum + time, 0) / renderTimes.length;
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${(bytes / Math.pow(k, i)).toFixed(1)} ${sizes[i]}`;
-}
-
-function getStatusIcon(status: string) {
-  switch (status) {
-    case 'critical':
-      return <AlertTriangle className="w-4 h-4 text-red-400" />;
-    case 'warning':
-      return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
-    default:
-      return <CheckCircle className="w-4 h-4 text-green-400" />;
-  }
-}
-
-// Performance monitoring hook
-export function usePerformanceMonitor() {
-  const recordRenderTime = (startTime: number) => {
-    const renderTime = performance.now() - startTime;
-    if (renderTimeRef.current) {
-      renderTimeRef.current.push(renderTime);
-
-      if (renderTimeRef.current.length > 100) {
-        renderTimeRef.current = renderTimeRef.current.slice(-100);
-      }
-
-      if (renderCountRef.current !== undefined) {
-        renderCountRef.current++;
-      }
-    }
-  };
-
-  return { recordRenderTime };
-}
