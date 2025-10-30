@@ -1,3 +1,4 @@
+import React from "react";
 import { ThreatType } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { Shield, MapPin, Filter } from "lucide-react";

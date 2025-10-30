@@ -5,11 +5,11 @@ type IncidentStatus = "open" | "investigating" | "contained" | "resolved" | "clo
 type FilterStatus = "all" | "open" | "investigating" | "contained";
 import { getThreatColorClasses } from "@/utils";
 import { useApi } from "@/hooks";
-import Header from "@/components/Header";
-import { 
-  AlertTriangle, 
-  Clock, 
-  User, 
+import { PageLayout } from "@/components";
+import {
+  AlertTriangle,
+  Clock,
+  User,
   CheckCircle,
   XCircle,
   Eye,
@@ -105,10 +105,8 @@ export default function IncidentResponsePage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <Header />
-      
-      <div className="px-6 py-8">
+    <PageLayout>
+      <div>
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <div className="relative">
@@ -367,6 +365,6 @@ export default function IncidentResponsePage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }

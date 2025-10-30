@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Bell, CheckCircle, Clock, AlertTriangle, Filter, Search } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import Header from "@/components/Header";
+import { PageLayout } from "@/components";
 import { useApi } from "@/hooks";
 import { AlertType } from "@/types";
 import { getThreatColorClasses } from "@/utils";
@@ -61,10 +61,8 @@ export default function AlertManagement() {
   }) || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <Header />
-      
-      <main className="p-6 space-y-6">
+    <PageLayout>
+      <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gradient flex items-center space-x-3">
             <Bell className="w-8 h-8 text-blue-400" />
@@ -218,7 +216,7 @@ export default function AlertManagement() {
             </div>
           ))}
         </div>
-      </main>
-    </div>
+      </div>
+    </PageLayout>
   );
 }

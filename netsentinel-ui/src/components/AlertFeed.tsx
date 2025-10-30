@@ -1,3 +1,4 @@
+import React from "react";
 import { AlertType } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { Bell, AlertTriangle } from "lucide-react";

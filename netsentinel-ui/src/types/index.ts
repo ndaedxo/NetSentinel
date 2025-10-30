@@ -24,6 +24,9 @@ export * from './dashboard';
 // Filter-related types
 export * from './filter';
 
+// ML Model-related types
+export * from './ml-models';
+
 // System health types
 export interface SystemHealthService {
   id: string;

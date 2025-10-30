@@ -15,6 +15,8 @@ const AlertManagementPage = lazy(() => import("@/pages/AlertManagement"));
 const NetworkAnalysisPage = lazy(() => import("@/pages/NetworkAnalysis"));
 const IncidentResponsePage = lazy(() => import("@/pages/IncidentResponse"));
 const ReportsPage = lazy(() => import("@/pages/Reports"));
+const ProfilePage = lazy(() => import("@/pages/Profile"));
+const NotificationsPage = lazy(() => import("@/pages/Notifications"));
 
 // Loading component for Suspense fallback
 function PageLoader() {
@@ -48,6 +50,8 @@ function AppRoutes() {
       <Route path="/network" element={<ProtectedRoute><NetworkAnalysisPage /></ProtectedRoute>} />
       <Route path="/incidents" element={<ProtectedRoute><IncidentResponsePage /></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+      <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
     </Routes>
   );
 }

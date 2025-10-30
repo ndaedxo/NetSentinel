@@ -3,12 +3,12 @@ import { ReportType } from "@/types";
 
 type ReportFilterStatus = "all" | "completed" | "generating" | "failed";
 import { useApi } from "@/hooks";
-import Header from "@/components/Header";
-import { 
-  FileText, 
-  Download, 
-  Calendar, 
-  Clock, 
+import { PageLayout } from "@/components";
+import {
+  FileText,
+  Download,
+  Calendar,
+  Clock,
   CheckCircle,
   XCircle,
   AlertCircle,
@@ -160,10 +160,8 @@ export default function ReportsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <Header />
-      
-      <div className="px-6 py-8">
+    <PageLayout>
+      <div>
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <div className="relative">
@@ -429,6 +427,6 @@ export default function ReportsPage() {
           </div>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 }

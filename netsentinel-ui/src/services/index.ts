@@ -23,3 +23,12 @@ export * from './honeypot-service';
 
 // Dashboard-related services
 export * from './dashboard-service';
+
+// ML Models-related services
+export * from './ml-models-service';
+
+// Profile-related services
+export * from './profile-service';
+
+// Notifications-related services
+export * from './notifications-service';

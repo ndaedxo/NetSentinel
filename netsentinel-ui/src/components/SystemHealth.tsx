@@ -1,3 +1,4 @@
+import React from "react";
 import { SystemHealthService } from "@/types";
 import { Activity, CheckCircle, AlertCircle, XCircle } from "lucide-react";
 

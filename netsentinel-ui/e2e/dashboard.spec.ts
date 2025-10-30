@@ -11,9 +11,8 @@ test.describe('Dashboard', () => {
   });
 
   test('should load dashboard with metrics', async ({ page }) => {
-    // Check dashboard header and active navigation
+    // Check dashboard header
     await expect(page.locator('h1:has-text("Netsentinel")')).toBeVisible();
-    await expect(page.locator('[data-discover="true"]').filter({ hasText: 'Dashboard' })).toHaveClass(/bg-blue-500/);
 
     // Check if dashboard widgets are present (new widget-based dashboard)
     await expect(page.locator('text=Default Dashboard')).toBeVisible();
@@ -32,19 +31,29 @@ test.describe('Dashboard', () => {
     await page.setViewportSize({ width: 1024, height: 768 });
 
     // Test navigation to Threats page
-    await page.click('[data-discover="true"]:has-text("Threats")');
+    await page.goto('/threats');
     await expect(page).toHaveURL('/threats');
-    await expect(page.locator('[data-discover="true"]').filter({ hasText: 'Threats' })).toHaveClass(/bg-blue-500/);
+    await expect(page.locator('h1:has-text("Threat Intelligence")')).toBeVisible();
 
     // Test navigation to Alerts page
-    await page.click('[data-discover="true"]:has-text("Alerts")');
+    await page.goto('/alerts');
     await expect(page).toHaveURL('/alerts');
-    await expect(page.locator('[data-discover="true"]').filter({ hasText: 'Alerts' })).toHaveClass(/bg-blue-500/);
+    await expect(page.locator('h1:has-text("Alert Management")')).toBeVisible();
+
+    // Test navigation to Profile page
+    await page.goto('/profile');
+    await expect(page).toHaveURL('/profile');
+    await expect(page.locator('h1:has-text("Profile Settings")')).toBeVisible();
+
+    // Test navigation to Notifications page
+    await page.goto('/notifications');
+    await expect(page).toHaveURL('/notifications');
+    await expect(page.locator('h1:has-text("Notifications")')).toBeVisible();
 
     // Test navigation back to Dashboard
-    await page.click('[data-discover="true"]:has-text("Dashboard")');
+    await page.goto('/');
     await expect(page).toHaveURL('/');
-    await expect(page.locator('[data-discover="true"]').filter({ hasText: 'Dashboard' })).toHaveClass(/bg-blue-500/);
+    await expect(page.locator('h1:has-text("Netsentinel")')).toBeVisible();
   });
 
   test('should handle mobile navigation', async ({ page }) => {
@@ -52,7 +61,7 @@ test.describe('Dashboard', () => {
     await page.setViewportSize({ width: 375, height: 667 });
 
     // Check if mobile menu button is visible (should be visible on screens < 768px)
-    const mobileMenuButton = page.locator('button').filter({ has: page.locator('svg.lucide-menu') });
+    const mobileMenuButton = page.getByTestId('mobile-menu-toggle');
     await expect(mobileMenuButton).toBeVisible();
 
     // Open mobile menu

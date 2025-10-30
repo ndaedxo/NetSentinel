@@ -1,46 +1,40 @@
 import { Brain, Activity, TrendingUp, Zap, CheckCircle, AlertCircle } from "lucide-react";
-import Header from "@/components/Header";
-
-interface MLModel {
-  id: string;
-  name: string;
-  status: "active" | "training" | "inactive";
-  accuracy: number;
-  latency: number;
-  detections: number;
-  falsePositiveRate: number;
-}
+import { PageLayout } from "@/components";
+import { useApi } from "@/hooks";
+import { MLModel } from "@/types";
 
 export default function MLMonitoring() {
-  const models: MLModel[] = [
-    {
-      id: "1",
-      name: "FastFlow",
-      status: "active",
-      accuracy: 94.5,
-      latency: 12,
-      detections: 1847,
-      falsePositiveRate: 2.1,
-    },
-    {
-      id: "2",
-      name: "EfficientAD",
-      status: "active",
-      accuracy: 96.8,
-      latency: 18,
-      detections: 2341,
-      falsePositiveRate: 1.4,
-    },
-    {
-      id: "3",
-      name: "PaDiM",
-      status: "training",
-      accuracy: 92.3,
-      latency: 15,
-      detections: 1523,
-      falsePositiveRate: 3.2,
-    },
-  ];
+  const { data: models } = useApi<MLModel[]>("/api/ml-models", 10000);
+
+  // Loading state
+  if (!models) {
+    return (
+      <PageLayout>
+        <div className="animate-pulse">
+          <div className="h-8 bg-slate-700 rounded w-64 mb-6"></div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="card-dark p-6">
+              <div className="h-16 bg-slate-700 rounded"></div>
+            </div>
+            <div className="card-dark p-6">
+              <div className="h-16 bg-slate-700 rounded"></div>
+            </div>
+            <div className="card-dark p-6">
+              <div className="h-16 bg-slate-700 rounded"></div>
+            </div>
+            <div className="card-dark p-6">
+              <div className="h-16 bg-slate-700 rounded"></div>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="card-dark p-6">
+              <div className="h-32 bg-slate-700 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -69,10 +63,8 @@ export default function MLMonitoring() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <Header />
-      
-      <main className="p-6 space-y-6">
+    <PageLayout>
+      <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gradient flex items-center space-x-3">
             <Brain className="w-8 h-8 text-blue-400" />
@@ -195,7 +187,7 @@ export default function MLMonitoring() {
             <p className="text-slate-500">Performance chart visualization coming soon</p>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </PageLayout>
   );
 }

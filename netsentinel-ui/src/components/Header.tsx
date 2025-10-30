@@ -6,7 +6,12 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { HelpButton } from "./HelpGuide";
 import PerformanceMonitor from "./PerformanceMonitor";
 
-export default function Header() {
+interface HeaderProps {
+  onToggleSidebar?: () => void;
+  isSidebarCollapsed?: boolean;
+}
+
+export default function Header({ onToggleSidebar, isSidebarCollapsed }: HeaderProps) {
   const { user, logout, isPending } = useAuth();
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
@@ -33,7 +38,16 @@ export default function Header() {
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-8">
-            <Link to="/" className="flex items-center space-x-3" data-tour="dashboard">
+            <div className="flex items-center">
+              <button
+                onClick={onToggleSidebar}
+                className="hidden md:inline-flex mr-3 p-2 hover:bg-slate-800 rounded-lg transition-colors"
+                data-testid="sidebar-toggle"
+                title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                <Menu className="w-5 h-5 text-slate-400" />
+              </button>
+              <Link to="/" className="flex items-center space-x-3" data-tour="dashboard">
               <div className="relative">
                 <div className="absolute inset-0 bg-blue-500 blur-lg opacity-30"></div>
                 <Shield className="relative w-8 h-8 text-blue-400" strokeWidth={1.5} />
@@ -42,25 +56,10 @@ export default function Header() {
                 <h1 className="text-xl font-bold text-gradient">Netsentinel</h1>
                 <p className="text-xs text-slate-500">Security Operations Center</p>
               </div>
-            </Link>
+              </Link>
+            </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-1" data-tour="navigation">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive(link.path)
-                      ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
-                      : "text-slate-400 hover:text-slate-300 hover:bg-slate-800"
-                  }`}
-                  data-tour={link.path === '/threats' ? 'threats' : link.path === '/alerts' ? 'alerts' : undefined}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
+            {/* Desktop Navigation moved to Sidebar */}
           </div>
 
         <div className="flex items-center space-x-4">
@@ -68,6 +67,7 @@ export default function Header() {
             <button
               onClick={() => setShowMobileNav(!showMobileNav)}
               className="md:hidden p-2 hover:bg-slate-800 rounded-lg transition-colors"
+              data-testid="mobile-menu-toggle"
             >
               {showMobileNav ? (
                 <X className="w-5 h-5 text-slate-400" />

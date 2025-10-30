@@ -53,7 +53,7 @@ test.describe('Error Handling', () => {
     await page.waitForURL('/');
 
     // Navigate to threats page
-    await page.click('[data-discover="true"]:has-text("Threats")');
+    await page.getByTestId('nav-threats').click();
     await expect(page).toHaveURL('/threats');
 
     // Use browser back button

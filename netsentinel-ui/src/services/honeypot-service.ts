@@ -1,13 +1,24 @@
 import type { HoneypotServiceType } from '@/types';
-import { mockHoneypots } from '@/mock';
+import { mockConfig } from '@/test/__mocks__/mock-config';
+import { generateMockHoneypots } from '@/mock/honeypot-mock';
 
 /**
- * Get all honeypot services
+ * Get all honeypot services using dynamic mocking
  */
 export async function getHoneypots(): Promise<HoneypotServiceType[]> {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return mockHoneypots;
+  const store = mockConfig.getStore('threats');
+  const delayRange = mockConfig.getDelayRange('threats');
+
+  // Simulate realistic API delay
+  await store.getGenerator('threats').delay(delayRange.min, delayRange.max);
+
+  // Check for simulated errors
+  if (store.getGenerator('threats').shouldError()) {
+    throw store.getGenerator('threats').generateError('network');
+  }
+
+  // Generate dynamic honeypot services
+  return generateMockHoneypots(10);
 }
 
 /**
@@ -15,7 +26,16 @@ export async function getHoneypots(): Promise<HoneypotServiceType[]> {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function toggleHoneypot(_honeypotId: number): Promise<{ success: boolean }> {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 300));
+  const store = mockConfig.getStore('threats');
+  const delayRange = mockConfig.getDelayRange('threats');
+
+  // Simulate realistic API delay
+  await store.getGenerator('threats').delay(delayRange.min, delayRange.max);
+
+  // Check for simulated errors
+  if (store.getGenerator('threats').shouldError()) {
+    throw store.getGenerator('threats').generateError('server');
+  }
+
   return { success: true };
 }

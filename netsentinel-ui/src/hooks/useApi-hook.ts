@@ -92,6 +92,12 @@ function mapEndpointToService<T>(endpoint: string): Promise<T> {
       return services.getReports() as Promise<T>;
     case "/api/honeypots":
       return services.getHoneypots() as Promise<T>;
+    case "/api/ml-models":
+      return services.getMLModels() as Promise<T>;
+    case "/api/profile":
+      return services.getUserProfile() as Promise<T>;
+    case "/api/notifications":
+      return services.getUserNotifications() as Promise<T>;
     default:
       throw new Error(`Unknown endpoint: ${endpoint}`);
   }

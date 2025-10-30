@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { NetworkTopology, NetworkDeviceType } from "@/types";
 import { useApi } from "@/hooks";
-import Header from "@/components/Header";
-import { 
-  Network, 
-  Server, 
-  Router, 
-  Monitor, 
-  Shield, 
+import { PageLayout } from "@/components";
+import {
+  Network,
+  Server,
+  Router,
+  Monitor,
+  Shield,
   AlertTriangle,
   CheckCircle,
   XCircle,
@@ -62,23 +62,20 @@ export default function NetworkAnalysisPage() {
 
   if (!topology) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <Header />
+      <PageLayout>
         <div className="flex items-center justify-center h-64">
           <div className="flex flex-col items-center space-y-4">
             <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
             <p className="text-slate-400">Loading network topology...</p>
           </div>
         </div>
-      </div>
+      </PageLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <Header />
-      
-      <div className="px-6 py-8">
+    <PageLayout>
+      <div>
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <div className="relative">
@@ -325,6 +322,6 @@ export default function NetworkAnalysisPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }

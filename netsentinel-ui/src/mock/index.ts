@@ -23,3 +23,12 @@ export * from './dashboard-mock';
 
 // Auth mock data
 export * from './auth-mock';
+
+// ML Models mock data
+export * from './ml-models-mock';
+
+// Profile mock data
+export * from './profile-mock';
+
+// Notifications mock data
+export * from './notifications-mock';

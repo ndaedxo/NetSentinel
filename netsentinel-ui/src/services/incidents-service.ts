@@ -1,29 +1,59 @@
 import type { IncidentType, IncidentTimelineType } from '@/types';
-import { mockIncidents, mockIncidentTimeline } from '@/mock';
+import { mockConfig } from '@/test/__mocks__/mock-config';
+import { generateMockIncidents, generateIncidentTimeline } from '@/mock/incidents-mock';
 
 /**
- * Get all incidents
+ * Get all incidents using dynamic mocking
  */
 export async function getIncidents(): Promise<IncidentType[]> {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return mockIncidents;
+  const store = mockConfig.getStore('alerts');
+  const delayRange = mockConfig.getDelayRange('alerts');
+
+  // Simulate realistic API delay
+  await store.getGenerator('alerts').delay(delayRange.min * 1.2, delayRange.max * 1.2);
+
+  // Check for simulated errors
+  if (store.getGenerator('alerts').shouldError()) {
+    throw store.getGenerator('alerts').generateError('server');
+  }
+
+  // Generate dynamic incidents
+  return generateMockIncidents(10);
 }
 
 /**
- * Get incident timeline for a specific incident
+ * Get incident timeline for a specific incident using dynamic mocking
  */
 export async function getIncidentTimeline(incidentId: number): Promise<IncidentTimelineType[]> {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 200));
-  return mockIncidentTimeline.filter(timeline => timeline.incident_id === incidentId);
+  const store = mockConfig.getStore('alerts');
+  const delayRange = mockConfig.getDelayRange('alerts');
+
+  // Simulate realistic API delay
+  await store.getGenerator('alerts').delay(delayRange.min * 0.8, delayRange.max * 0.8);
+
+  // Check for simulated errors
+  if (store.getGenerator('alerts').shouldError()) {
+    throw store.getGenerator('alerts').generateError('network');
+  }
+
+  // Generate dynamic incident timeline
+  return generateIncidentTimeline(incidentId, 5);
 }
 
 /**
- * Update incident status
+ * Update incident status using dynamic mocking
  */
 export async function updateIncidentStatus(): Promise<{ success: boolean }> {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 300));
+  const store = mockConfig.getStore('alerts');
+  const delayRange = mockConfig.getDelayRange('alerts');
+
+  // Simulate realistic API delay
+  await store.getGenerator('alerts').delay(delayRange.min * 1.5, delayRange.max * 1.5);
+
+  // Check for simulated errors
+  if (store.getGenerator('alerts').shouldError()) {
+    throw store.getGenerator('alerts').generateError('validation');
+  }
+
   return { success: true };
 }

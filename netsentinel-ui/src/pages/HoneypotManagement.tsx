@@ -1,6 +1,6 @@
 import { Server, Activity, Clock, Users, BarChart3 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import Header from "@/components/Header";
+import { PageLayout } from "@/components";
 import { useApi } from "@/hooks";
 import { HoneypotServiceType } from "@/types";
 
@@ -28,10 +28,8 @@ export default function HoneypotManagement() {
   const activeServices = honeypots?.filter(h => h.is_active === 1).length || 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <Header />
-      
-      <main className="p-6 space-y-6">
+    <PageLayout>
+      <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gradient flex items-center space-x-3">
             <Server className="w-8 h-8 text-blue-400" />
@@ -145,7 +143,7 @@ export default function HoneypotManagement() {
             </div>
           ))}
         </div>
-      </main>
-    </div>
+      </div>
+    </PageLayout>
   );
 }

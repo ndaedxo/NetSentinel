@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Search, Filter, Shield, MapPin, Globe, Ban, CheckCircle, Download, AlertTriangle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import Header from "@/components/Header";
+import { PageLayout } from "@/components";
 import { useApi } from "@/hooks";
 import { ThreatType } from "@/types";
 import { getThreatColorClasses } from "@/utils";
@@ -35,10 +35,8 @@ export default function ThreatIntelligence() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <Header />
-      
-      <main className="p-6 space-y-6">
+    <PageLayout>
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gradient flex items-center space-x-3">
@@ -212,15 +210,15 @@ export default function ThreatIntelligence() {
             </table>
           </div>
         </div>
-      </main>
 
-      {selectedThreat && (
-        <ThreatDetailsModal
-          threat={selectedThreat}
-          onClose={() => setSelectedThreat(null)}
-          onBlock={handleBlockIP}
-        />
-      )}
-    </div>
+        {selectedThreat && (
+          <ThreatDetailsModal
+            threat={selectedThreat}
+            onClose={() => setSelectedThreat(null)}
+            onBlock={handleBlockIP}
+          />
+        )}
+      </div>
+    </PageLayout>
   );
 }
