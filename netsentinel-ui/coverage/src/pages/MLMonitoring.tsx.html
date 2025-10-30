@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/19</span>
+                <span class='fraction'>0/21</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/19</span>
+                <span class='fraction'>0/21</span>
             </div>
         
             
@@ -256,23 +256,7 @@
 <a name='L191'></a><a href='#L191'>191</a>
 <a name='L192'></a><a href='#L192'>192</a>
 <a name='L193'></a><a href='#L193'>193</a>
-<a name='L194'></a><a href='#L194'>194</a>
-<a name='L195'></a><a href='#L195'>195</a>
-<a name='L196'></a><a href='#L196'>196</a>
-<a name='L197'></a><a href='#L197'>197</a>
-<a name='L198'></a><a href='#L198'>198</a>
-<a name='L199'></a><a href='#L199'>199</a>
-<a name='L200'></a><a href='#L200'>200</a>
-<a name='L201'></a><a href='#L201'>201</a>
-<a name='L202'></a><a href='#L202'>202</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L194'></a><a href='#L194'>194</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -281,6 +265,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -335,8 +321,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -466,48 +450,42 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Brain, Activity, TrendingUp, Zap, CheckCircle, AlertCircle } from "lucide-react";
-import Header from "@/components/Header";
-&nbsp;
-interface MLModel {
-  id: string;
-  name: string;
-  status: "active" | "training" | "inactive";
-  accuracy: number;
-  latency: number;
-  detections: number;
-  falsePositiveRate: number;
-}
+import { PageLayout } from "@/components";
+import { useApi } from "@/hooks";
+import { MLModel } from "@/types";
 &nbsp;
 export default function <span class="fstat-no" title="function not covered" >MLMonitoring(</span>) {
-  const models: MLModel[] = <span class="cstat-no" title="statement not covered" >[</span>
-    {
-      id: "1",
-      name: "FastFlow",
-      status: "active",
-      accuracy: 94.5,
-      latency: 12,
-      detections: 1847,
-      falsePositiveRate: 2.1,
-    },
-    {
-      id: "2",
-      name: "EfficientAD",
-      status: "active",
-      accuracy: 96.8,
-      latency: 18,
-      detections: 2341,
-      falsePositiveRate: 1.4,
-    },
-    {
-      id: "3",
-      name: "PaDiM",
-      status: "training",
-      accuracy: 92.3,
-      latency: 15,
-      detections: 1523,
-      falsePositiveRate: 3.2,
-    },
-  ];
+  const { data: models } = <span class="cstat-no" title="statement not covered" >useApi&lt;MLModel[]&gt;("/api/ml-models", 10000);</span>
+&nbsp;
+  // Loading state
+<span class="cstat-no" title="statement not covered" >  if (!models) {</span>
+<span class="cstat-no" title="statement not covered" >    return (</span>
+      &lt;PageLayout&gt;
+        &lt;div className="animate-pulse"&gt;
+          &lt;div className="h-8 bg-slate-700 rounded w-64 mb-6"&gt;&lt;/div&gt;
+          &lt;div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6"&gt;
+            &lt;div className="card-dark p-6"&gt;
+              &lt;div className="h-16 bg-slate-700 rounded"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div className="card-dark p-6"&gt;
+              &lt;div className="h-16 bg-slate-700 rounded"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div className="card-dark p-6"&gt;
+              &lt;div className="h-16 bg-slate-700 rounded"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div className="card-dark p-6"&gt;
+              &lt;div className="h-16 bg-slate-700 rounded"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div className="space-y-4"&gt;
+            &lt;div className="card-dark p-6"&gt;
+              &lt;div className="h-32 bg-slate-700 rounded"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/PageLayout&gt;
+    );
+  }
 &nbsp;
   const getStatusColor = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(s</span>tatus: string) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    switch (status) {</span>
@@ -536,10 +514,8 @@ export default function <span class="fstat-no" title="function not covered" >MLM
   };
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  return (</span>
-    &lt;div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"&gt;
-      &lt;Header /&gt;
-      
-      &lt;main className="p-6 space-y-6"&gt;
+    &lt;PageLayout&gt;
+      &lt;div className="space-y-6"&gt;
         &lt;div&gt;
           &lt;h1 className="text-3xl font-bold text-gradient flex items-center space-x-3"&gt;
             &lt;Brain className="w-8 h-8 text-blue-400" /&gt;
@@ -662,8 +638,8 @@ export default function <span class="fstat-no" title="function not covered" >MLM
             &lt;p className="text-slate-500"&gt;Performance chart visualization coming soon&lt;/p&gt;
           &lt;/div&gt;
         &lt;/div&gt;
-      &lt;/main&gt;
-    &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/PageLayout&gt;
   );
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -673,7 +649,7 @@ export default function <span class="fstat-no" title="function not covered" >MLM
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-29T10:20:37.009Z
+                at 2025-10-30T07:36:45.074Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

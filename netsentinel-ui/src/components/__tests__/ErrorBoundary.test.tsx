@@ -174,4 +174,157 @@ describe('useErrorReporting', () => {
     expect(mockConsoleError).toHaveBeenCalledWith('Manual error report:', expect.any(Error), undefined);
     expect(mockConsoleLog).toHaveBeenCalledWith('Manual message report [info]:', 'Test message', undefined);
   });
+
+  it('handles different types of errors', () => {
+    const errorTypes = [
+      new Error('Regular error'),
+      new TypeError('Type error'),
+      new ReferenceError('Reference error'),
+      'String error',
+      null,
+      undefined,
+      { message: 'Object error' }
+    ];
+
+    errorTypes.forEach((error, index) => {
+      const ThrowErrorComponent = () => {
+        throw error;
+      };
+
+      const originalError = console.error;
+      console.error = jest.fn();
+
+      const { unmount } = render(
+        <ErrorBoundary>
+          <ThrowErrorComponent />
+        </ErrorBoundary>
+      );
+
+      console.error = originalError;
+
+      expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
+
+      // Clean up for next iteration
+      unmount();
+    });
+  });
+
+  it('handles errors in nested components', () => {
+    const NestedErrorComponent = () => (
+      <div>
+        <h2>Parent</h2>
+        <ThrowError />
+      </div>
+    );
+
+    const originalError = console.error;
+    console.error = jest.fn();
+
+    render(
+      <ErrorBoundary>
+        <NestedErrorComponent />
+      </ErrorBoundary>
+    );
+
+    console.error = originalError;
+
+    expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
+    expect(screen.queryByText('Parent')).not.toBeInTheDocument();
+  });
+
+  it('handles multiple errors in sequence', () => {
+    const shouldThrow = true;
+
+    const ConditionalErrorComponent = () => {
+      if (shouldThrow) {
+        throw new Error('First error');
+      }
+      return <div>Recovered</div>;
+    };
+
+    const originalError = console.error;
+    console.error = jest.fn();
+
+    render(
+      <ErrorBoundary>
+        <ConditionalErrorComponent />
+      </ErrorBoundary>
+    );
+
+    console.error = originalError;
+
+    expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
+
+    // Click the try again button to reset error state
+    const tryAgainButton = screen.getByRole('button', { name: /try again/i });
+    fireEvent.click(tryAgainButton);
+
+    // Now it should show the component again (but still throw since shouldThrow is true)
+    expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
+  });
+
+  it('handles errors during render with complex component trees', () => {
+    const ComplexErrorComponent = () => {
+      const data = [1, 2, 3];
+      return (
+        <div>
+          {data.map(item => {
+            if (item === 2) {
+              throw new Error('Error in map');
+            }
+            return <span key={item}>{item}</span>;
+          })}
+        </div>
+      );
+    };
+
+    const originalError = console.error;
+    console.error = jest.fn();
+
+    render(
+      <ErrorBoundary>
+        <ComplexErrorComponent />
+      </ErrorBoundary>
+    );
+
+    console.error = originalError;
+
+    expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
+  });
+
+  it('handles async errors', async () => {
+    const AsyncErrorComponent = () => {
+      const [error, setError] = React.useState<Error | null>(null);
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          setError(new Error('Async error'));
+        }, 100);
+      }, []);
+
+      if (error) {
+        throw error;
+      }
+
+      return <div>Loading...</div>;
+    };
+
+    const originalError = console.error;
+    console.error = jest.fn();
+
+    render(
+      <ErrorBoundary>
+        <AsyncErrorComponent />
+      </ErrorBoundary>
+    );
+
+    console.error = originalError;
+
+    // Initially shows loading
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+
+    // After async error
+    await new Promise(resolve => setTimeout(resolve, 150));
+    expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
+  });
 });

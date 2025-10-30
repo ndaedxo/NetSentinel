@@ -192,14 +192,14 @@ export default function FilterBuilder({
                           filterState.rootGroup.groups.some(g => g.conditions.length > 0 || g.groups.length > 0);
 
   return (
-    <div className={`bg-slate-800/50 border border-slate-700 rounded-lg ${className}`}>
+    <div className={`bg-slate-800/50 border border-slate-700 rounded-lg ${className}`} role="region" aria-labelledby="filter-builder-title">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-slate-700">
         <div className="flex items-center space-x-3">
-          <Filter className="w-5 h-5 text-slate-400" />
-          <h3 className="font-medium text-slate-200">Filters</h3>
+          <Filter className="w-5 h-5 text-slate-400" aria-hidden="true" />
+          <h3 id="filter-builder-title" className="font-medium text-slate-200">Filters</h3>
           {hasActiveFilters && (
-            <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">
+            <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full" aria-label="Active filters applied">
               Active
             </span>
           )}
@@ -208,9 +208,12 @@ export default function FilterBuilder({
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-slate-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-expanded={isExpanded}
+            aria-controls="filter-builder-content"
+            aria-label={isExpanded ? "Collapse filter builder" : "Expand filter builder"}
           >
-            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -273,25 +276,33 @@ export default function FilterBuilder({
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="p-4 space-y-4">
+        <div id="filter-builder-content" className="p-4 space-y-4">
           {/* Save Preset */}
-          <div className="flex items-center space-x-3">
+          <fieldset className="flex items-center space-x-3">
+            <legend className="sr-only">Save current filters as preset</legend>
+            <label htmlFor="preset-name-input" className="sr-only">Preset name</label>
             <input
+              id="preset-name-input"
               type="text"
               value={newPresetName}
               onChange={(e) => setNewPresetName(e.target.value)}
               placeholder="Preset name"
               className="flex-1 px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              aria-describedby="preset-save-help"
             />
             <button
               onClick={saveAsPreset}
               disabled={!newPresetName.trim()}
-              className="flex items-center space-x-2 px-3 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:text-green-400 text-white rounded-lg transition-colors text-sm"
+              className="flex items-center space-x-2 px-3 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:text-green-400 text-white rounded-lg transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              aria-describedby="preset-save-help"
             >
-              <Save className="w-4 h-4" />
+              <Save className="w-4 h-4" aria-hidden="true" />
               <span>Save</span>
             </button>
-          </div>
+            <div id="preset-save-help" className="sr-only">
+              Enter a name and click Save to create a filter preset
+            </div>
+          </fieldset>
 
           {/* Filter Builder */}
           <FilterGroupComponent
@@ -429,10 +440,12 @@ function FilterConditionComponent({
     }
   };
 
+  const conditionId = `condition-${condition.id}`;
+
   return (
-    <div className="flex items-center space-x-3 p-3 bg-slate-700/50 rounded-lg">
+    <div className="flex items-center space-x-3 p-3 bg-slate-700/50 rounded-lg" role="group" aria-labelledby={`${conditionId}-label`}>
       {showLogic && (
-        <span className="text-slate-400 text-sm font-medium px-2">
+        <span className="text-slate-400 text-sm font-medium px-2" aria-label={`Logic operator: ${groupLogic}`}>
           {groupLogic}
         </span>
       )}
@@ -440,7 +453,9 @@ function FilterConditionComponent({
       {/* Field Selector */}
       <div className="flex items-center space-x-2 min-w-0 flex-1">
         {field && getFieldIcon(field.type)}
+        <label htmlFor={`${conditionId}-field`} className="sr-only">Field to filter by</label>
         <select
+          id={`${conditionId}-field`}
           value={condition.field}
           onChange={(e) => onUpdate(condition.id, {
             field: e.target.value,
@@ -448,6 +463,7 @@ function FilterConditionComponent({
             value: ''
           })}
           className="flex-1 px-3 py-2 bg-slate-600 border border-slate-500 rounded text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          aria-describedby={`${conditionId}-field-help`}
         >
           {availableFields.map(field => (
             <option key={field.key} value={field.key}>
@@ -458,10 +474,13 @@ function FilterConditionComponent({
       </div>
 
       {/* Operator Selector */}
+      <label htmlFor={`${conditionId}-operator`} className="sr-only">Filter operator</label>
       <select
+        id={`${conditionId}-operator`}
         value={condition.operator}
         onChange={(e) => onUpdate(condition.id, { operator: e.target.value as FilterOperator })}
         className="px-3 py-2 bg-slate-600 border border-slate-500 rounded text-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-32"
+        aria-describedby={`${conditionId}-operator-help`}
       >
         {field?.operators.map(operator => (
           <option key={operator} value={operator}>
@@ -472,16 +491,28 @@ function FilterConditionComponent({
 
       {/* Value Input */}
       <div className="flex-1 min-w-0">
-        {renderValueInput(condition, field, onUpdate)}
+        {renderValueInput(condition, field, onUpdate, conditionId)}
       </div>
 
       {/* Remove Button */}
       <button
         onClick={() => onRemove(condition.id)}
-        className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+        className="p-2 text-slate-400 hover:text-red-400 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 rounded"
+        aria-label="Remove this filter condition"
+        title="Remove condition"
       >
-        <X className="w-4 h-4" />
+        <X className="w-4 h-4" aria-hidden="true" />
       </button>
+
+      <div id={`${conditionId}-label`} className="sr-only">
+        Filter condition {condition.field} {condition.operator}
+      </div>
+      <div id={`${conditionId}-field-help`} className="sr-only">
+        Select the field you want to filter by
+      </div>
+      <div id={`${conditionId}-operator-help`} className="sr-only">
+        Choose how to compare the field value
+      </div>
     </div>
   );
 }
@@ -511,7 +542,8 @@ function getOperatorLabel(operator: FilterOperator): string {
 function renderValueInput(
   condition: FilterCondition,
   field: FilterField | undefined,
-  onUpdate: (conditionId: string, updates: Partial<FilterCondition>) => void
+  onUpdate: (conditionId: string, updates: Partial<FilterCondition>) => void,
+  conditionId?: string
 ) {
   if (!field) return null;
 
@@ -520,77 +552,101 @@ function renderValueInput(
   switch (field.type) {
     case 'select':
       return (
-        <select
-          value={condition.value || ''}
-          onChange={(e) => onUpdate(condition.id, { value: e.target.value })}
-          className={baseClasses}
-        >
-          <option value="">Select...</option>
-          {field.options?.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        <>
+          <label htmlFor={`${conditionId}-value`} className="sr-only">Filter value for {field.label}</label>
+          <select
+            id={`${conditionId}-value`}
+            value={condition.value || ''}
+            onChange={(e) => onUpdate(condition.id, { value: e.target.value })}
+            className={baseClasses}
+          >
+            <option value="">Select...</option>
+            {field.options?.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </>
       );
 
     case 'multiselect':
       // For simplicity, using a text input with comma-separated values
       return (
-        <input
-          type="text"
-          value={Array.isArray(condition.value) ? condition.value.join(', ') : condition.value || ''}
-          onChange={(e) => onUpdate(condition.id, {
-            value: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
-          })}
-          placeholder="Value 1, Value 2, ..."
-          className={baseClasses}
-        />
+        <>
+          <label htmlFor={`${conditionId}-value`} className="sr-only">Filter values for {field.label} (comma-separated)</label>
+          <input
+            id={`${conditionId}-value`}
+            type="text"
+            value={Array.isArray(condition.value) ? condition.value.join(', ') : condition.value || ''}
+            onChange={(e) => onUpdate(condition.id, {
+              value: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+            })}
+            placeholder="Value 1, Value 2, ..."
+            className={baseClasses}
+          />
+        </>
       );
 
     case 'date':
       return (
-        <input
-          type="datetime-local"
-          value={condition.value || ''}
-          onChange={(e) => onUpdate(condition.id, { value: e.target.value })}
-          className={baseClasses}
-        />
+        <>
+          <label htmlFor={`${conditionId}-value`} className="sr-only">Filter date for {field.label}</label>
+          <input
+            id={`${conditionId}-value`}
+            type="datetime-local"
+            value={condition.value || ''}
+            onChange={(e) => onUpdate(condition.id, { value: e.target.value })}
+            className={baseClasses}
+          />
+        </>
       );
 
     case 'number':
       return (
-        <input
-          type="number"
-          value={condition.value || ''}
-          onChange={(e) => onUpdate(condition.id, { value: Number(e.target.value) || '' })}
-          placeholder={field.placeholder || "Enter number"}
-          className={baseClasses}
-        />
+        <>
+          <label htmlFor={`${conditionId}-value`} className="sr-only">Filter number for {field.label}</label>
+          <input
+            id={`${conditionId}-value`}
+            type="number"
+            value={condition.value || ''}
+            onChange={(e) => onUpdate(condition.id, { value: Number(e.target.value) || '' })}
+            placeholder={field.placeholder || "Enter number"}
+            className={baseClasses}
+          />
+        </>
       );
 
     case 'boolean':
       return (
-        <select
-          value={condition.value ?? ''}
-          onChange={(e) => onUpdate(condition.id, { value: e.target.value === 'true' })}
-          className={baseClasses}
-        >
-          <option value="">Select...</option>
-          <option value="true">True</option>
-          <option value="false">False</option>
-        </select>
+        <>
+          <label htmlFor={`${conditionId}-value`} className="sr-only">Filter boolean for {field.label}</label>
+          <select
+            id={`${conditionId}-value`}
+            value={condition.value ?? ''}
+            onChange={(e) => onUpdate(condition.id, { value: e.target.value === 'true' })}
+            className={baseClasses}
+          >
+            <option value="">Select...</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        </>
       );
 
     default:
       return (
-        <input
-          type="text"
-          value={condition.value || ''}
-          onChange={(e) => onUpdate(condition.id, { value: e.target.value })}
-          placeholder={field.placeholder || "Enter value"}
-          className={baseClasses}
-        />
+        <>
+          <label htmlFor={`${conditionId}-value`} className="sr-only">Filter value for {field.label}</label>
+          <input
+            id={`${conditionId}-value`}
+            type="text"
+            value={condition.value || ''}
+            onChange={(e) => onUpdate(condition.id, { value: e.target.value })}
+            placeholder={field.placeholder || "Enter value"}
+            className={baseClasses}
+          />
+        </>
       );
   }
 }

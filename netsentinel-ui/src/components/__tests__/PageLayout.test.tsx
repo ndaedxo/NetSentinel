@@ -1,11 +1,39 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { describe, it, expect } from '@jest/globals';
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect, jest } from '@jest/globals';
 
 import PageLayout from '../PageLayout';
+import { testA11y } from '../../test/test-utils';
+
+// Mock the child components
+jest.mock('../Header', () => {
+  return function MockHeader({ onToggleSidebar, isSidebarCollapsed }: any) {
+    return (
+      <header data-testid="mock-header">
+        <button
+          data-testid="toggle-sidebar-btn"
+          onClick={onToggleSidebar}
+          aria-label="Toggle sidebar"
+        >
+          Toggle ({isSidebarCollapsed ? 'collapsed' : 'expanded'})
+        </button>
+      </header>
+    );
+  };
+});
+
+jest.mock('../SidebarNav', () => {
+  return function MockSidebarNav({ collapsed }: any) {
+    return (
+      <aside data-testid="mock-sidebar" data-collapsed={collapsed}>
+        <nav>Mock Sidebar ({collapsed ? 'collapsed' : 'expanded'})</nav>
+      </aside>
+    );
+  };
+});
 
 describe('PageLayout', () => {
-  it.skip('renders children in main element', () => {
+  it('renders children in main element', () => {
     render(
       <PageLayout>
         <h1>Test Content</h1>
@@ -13,64 +41,64 @@ describe('PageLayout', () => {
       </PageLayout>
     );
 
-    const main = document.querySelector('main');
+    const main = screen.getByRole('main');
     expect(main).toBeInTheDocument();
-    expect(main).toHaveTextContent('Test Content');
-    expect(main).toHaveTextContent('Some description');
+    expect(screen.getByText('Test Content')).toBeInTheDocument();
+    expect(screen.getByText('Some description')).toBeInTheDocument();
   });
 
-  it.skip('applies default maxWidth class', () => {
+  it('applies default maxWidth class', () => {
     render(
       <PageLayout>
         <div>Content</div>
       </PageLayout>
     );
 
-    const main = document.querySelector('main');
+    const main = screen.getByRole('main');
     expect(main).toHaveClass('max-w-7xl');
   });
 
-  it.skip('applies custom maxWidth when provided', () => {
+  it('applies custom maxWidth when provided', () => {
     render(
       <PageLayout maxWidth="max-w-4xl">
         <div>Content</div>
       </PageLayout>
     );
 
-    const main = document.querySelector('main');
+    const main = screen.getByRole('main');
     expect(main).toHaveClass('max-w-4xl');
   });
 
-  it.skip('applies default classes to main element', () => {
+  it('applies default classes to main element', () => {
     render(
       <PageLayout>
         <div>Content</div>
       </PageLayout>
     );
 
-    const main = document.querySelector('main');
+    const main = screen.getByRole('main');
     expect(main).toHaveClass('max-w-7xl', 'mx-auto', 'px-6', 'py-8');
   });
 
-  it.skip('applies custom className to main element', () => {
+  it('applies custom className to main element', () => {
     render(
       <PageLayout className="custom-class">
         <div>Content</div>
       </PageLayout>
     );
 
-    const main = document.querySelector('main');
+    const main = screen.getByRole('main');
     expect(main).toHaveClass('custom-class');
   });
 
-  it.skip('applies background gradient to container', () => {
+  it('applies background gradient to container', () => {
     render(
       <PageLayout>
         <div>Content</div>
       </PageLayout>
     );
 
-    const container = document.querySelector('.min-h-screen');
+    const container = screen.getByTestId('mock-sidebar').parentElement;
     expect(container).toHaveClass(
       'bg-gradient-to-br',
       'from-slate-900',
@@ -79,7 +107,7 @@ describe('PageLayout', () => {
     );
   });
 
-  it.skip('maintains proper layout structure', () => {
+  it('maintains proper layout structure', () => {
     render(
       <PageLayout>
         <section>
@@ -88,10 +116,24 @@ describe('PageLayout', () => {
       </PageLayout>
     );
 
-    const container = document.querySelector('.min-h-screen');
-    expect(container?.children).toHaveLength(2); // Header and main (both mocked and real)
+    // Check that we have the mock sidebar and header
+    expect(screen.getByTestId('mock-sidebar')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-header')).toBeInTheDocument();
 
-    const main = document.querySelector('main');
-    expect(main?.querySelector('section')).toBeInTheDocument();
+    // Check that main contains the content
+    const main = screen.getByRole('main');
+    expect(main.querySelector('section')).toBeInTheDocument();
+    expect(screen.getByText('Main Content')).toBeInTheDocument();
+  });
+
+  it('passes accessibility checks', async () => {
+    const { container } = render(
+      <PageLayout title="Test Page" subtitle="Test subtitle">
+        <h1>Main Content</h1>
+        <p>Some description text</p>
+      </PageLayout>
+    );
+
+    await testA11y(<div>{container.innerHTML}</div>);
   });
 });

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GripVertical, Settings, X, RefreshCw, Activity, Shield, AlertTriangle, Users, Database, Network, TrendingUp, Clock, LucideIcon } from 'lucide-react';
 import { useDashboard, useThreatData, useAlertData, useSystemHealthData } from '@/hooks';
+import { ConfirmationModal } from '@/components';
 import type { Widget, SystemHealthData } from '@/types/dashboard';
 import type { AlertType } from '@/types/alerts';
 import type { ThreatType } from '@/types/threats';
@@ -28,9 +29,19 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
   const threats = useThreatData();
   const alerts = useAlertData();
   const systemHealth = useSystemHealthData();
+  const [confirmRemove, setConfirmRemove] = useState(false);
 
-  const handleRemove = () => {
+  const handleRemoveClick = () => {
+    setConfirmRemove(true);
+  };
+
+  const handleConfirmRemove = () => {
     removeWidget(widget.id);
+    setConfirmRemove(false);
+  };
+
+  const handleCancelRemove = () => {
+    setConfirmRemove(false);
   };
 
   const handleRefresh = () => {
@@ -113,10 +124,10 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
                 </button>
 
                 <button
-                  onClick={handleRemove}
+                  onClick={handleRemoveClick}
                   className="p-1 text-slate-400 hover:text-red-400 transition-colors"
                   title="Remove widget"
-                  aria-label="remove widget"
+                  aria-label={`Remove widget: ${widget.title}`}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -130,6 +141,17 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
       <div className={`p-4 ${widget.config.compact ? 'p-2' : ''}`}>
         {renderWidgetContent()}
       </div>
+
+      <ConfirmationModal
+        isOpen={confirmRemove}
+        onClose={handleCancelRemove}
+        onConfirm={handleConfirmRemove}
+        title="Remove Widget"
+        message={`Are you sure you want to remove the "${widget.title}" widget from your dashboard? This action cannot be undone.`}
+        confirmText="Remove Widget"
+        cancelText="Cancel"
+        type="delete"
+      />
     </div>
   );
 }

@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>0/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>0/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>0/12</span>
             </div>
         
             
@@ -84,7 +84,27 @@
 <a name='L19'></a><a href='#L19'>19</a>
 <a name='L20'></a><a href='#L20'>20</a>
 <a name='L21'></a><a href='#L21'>21</a>
-<a name='L22'></a><a href='#L22'>22</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -96,6 +116,16 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -103,18 +133,39 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type { HoneypotServiceType } from '@/types';
-import { mockHoneypots } from '@/mock';
+import { mockConfig } from '@/test/__mocks__/mock-config';
+import { generateMockHoneypots } from '@/mock/honeypot-mock';
 &nbsp;
 /**
- * Get all honeypot services
+ * Get all honeypot services using dynamic mocking
  */
 export async function <span class="fstat-no" title="function not covered" >getHoneypots(</span>): Promise&lt;HoneypotServiceType[]&gt; {
-  // Simulate API delay
-<span class="cstat-no" title="statement not covered" >  await new Promise(<span class="fstat-no" title="function not covered" >re</span>solve =&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, 300))</span>;</span>
-<span class="cstat-no" title="statement not covered" >  return mockHoneypots;</span>
+  const store = <span class="cstat-no" title="statement not covered" >mockConfig.getStore('threats');</span>
+  const delayRange = <span class="cstat-no" title="statement not covered" >mockConfig.getDelayRange('threats');</span>
+&nbsp;
+  // Simulate realistic API delay
+<span class="cstat-no" title="statement not covered" >  await store.getGenerator('threats').delay(delayRange.min, delayRange.max);</span>
+&nbsp;
+  // Check for simulated errors
+<span class="cstat-no" title="statement not covered" >  if (store.getGenerator('threats').shouldError()) {</span>
+<span class="cstat-no" title="statement not covered" >    throw store.getGenerator('threats').generateError('network');</span>
+  }
+&nbsp;
+  // Generate dynamic honeypot services
+<span class="cstat-no" title="statement not covered" >  return generateMockHoneypots(10);</span>
 }
 &nbsp;
 /**
@@ -122,8 +173,17 @@ export async function <span class="fstat-no" title="function not covered" >getHo
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function <span class="fstat-no" title="function not covered" >toggleHoneypot(</span>_honeypotId: number): Promise&lt;{ success: boolean }&gt; {
-  // Simulate API delay
-<span class="cstat-no" title="statement not covered" >  await new Promise(<span class="fstat-no" title="function not covered" >re</span>solve =&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, 300))</span>;</span>
+  const store = <span class="cstat-no" title="statement not covered" >mockConfig.getStore('threats');</span>
+  const delayRange = <span class="cstat-no" title="statement not covered" >mockConfig.getDelayRange('threats');</span>
+&nbsp;
+  // Simulate realistic API delay
+<span class="cstat-no" title="statement not covered" >  await store.getGenerator('threats').delay(delayRange.min, delayRange.max);</span>
+&nbsp;
+  // Check for simulated errors
+<span class="cstat-no" title="statement not covered" >  if (store.getGenerator('threats').shouldError()) {</span>
+<span class="cstat-no" title="statement not covered" >    throw store.getGenerator('threats').generateError('server');</span>
+  }
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  return { success: true };</span>
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -133,7 +193,7 @@ export async function <span class="fstat-no" title="function not covered" >toggl
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-29T10:20:36.731Z
+                at 2025-10-30T07:36:44.804Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from '@jest/globals';
 import StatCard from '../StatCard';
 import { Activity } from 'lucide-react';
+import { testA11y } from '../../test/test-utils';
 
 describe('StatCard', () => {
   const defaultProps = {
@@ -124,5 +125,11 @@ describe('StatCard', () => {
     const card = screen.getByText('Test Metric').closest('.card-dark');
     expect(card).toBeInTheDocument();
     expect(card).toHaveClass('p-6', 'bg-gradient-to-br', 'border', 'transition-all', 'duration-300', 'hover:scale-[1.02]');
+  });
+
+  it('passes accessibility checks', async () => {
+    const { container } = render(<StatCard {...defaultProps} />);
+
+    await testA11y(<div>{container.innerHTML}</div>);
   });
 });

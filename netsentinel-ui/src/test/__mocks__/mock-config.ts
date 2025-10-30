@@ -250,7 +250,6 @@ MockGenerator.prototype.generateError = function(type) {
 };
 
 // Update MockGenerator's delay method to respect configuration
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _originalDelay = MockGenerator.prototype.delay;
 MockGenerator.prototype.delay = function(minMs: number, maxMs: number): Promise<void> {
   const manager = MockConfigManager.getInstance();

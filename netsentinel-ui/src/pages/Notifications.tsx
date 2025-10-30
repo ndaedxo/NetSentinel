@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import { NotificationItem, NotificationType, NotificationPriority } from "@/mock";
 import { useApi } from "@/hooks";
-import { PageLayout } from "@/components";
+import { PageLayout, ConfirmationModal } from "@/components";
 import {
   Bell,
   CheckCircle,
-  XCircle,
   AlertTriangle,
-  Info,
   Trash2,
   Filter,
   Search,
@@ -22,7 +20,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 
 export default function NotificationsPage() {
-  const { data: notificationsResponse, refetch } = useApi<{ notifications: NotificationItem[], total: number, unread: number }>(
+  const { data: notificationsResponse } = useApi<{ notifications: NotificationItem[], total: number, unread: number }>(
     "/api/notifications",
     30000
   );
@@ -33,6 +31,11 @@ export default function NotificationsPage() {
   const [typeFilter, setTypeFilter] = useState<NotificationType | 'all'>('all');
   const [priorityFilter, setPriorityFilter] = useState<NotificationPriority | 'all'>('all');
   const [readFilter, setReadFilter] = useState<'all' | 'read' | 'unread'>('all');
+  const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; notificationId: string; notificationTitle: string }>({
+    isOpen: false,
+    notificationId: '',
+    notificationTitle: ''
+  });
 
   useEffect(() => {
     if (notificationsResponse) {
@@ -110,13 +113,22 @@ export default function NotificationsPage() {
     }
   };
 
-  const deleteNotification = async (id: string) => {
+  const onDeleteClick = (id: string, title: string) => {
+    setConfirmDelete({ isOpen: true, notificationId: id, notificationTitle: title });
+  };
+
+  const onConfirmDelete = async () => {
     try {
       // Mock API call
-      setNotifications(prev => prev.filter(n => n.id !== id));
+      setNotifications(prev => prev.filter(n => n.id !== confirmDelete.notificationId));
+      setConfirmDelete({ isOpen: false, notificationId: '', notificationTitle: '' });
     } catch (error) {
       console.error('Failed to delete notification:', error);
     }
+  };
+
+  const onCancelDelete = () => {
+    setConfirmDelete({ isOpen: false, notificationId: '', notificationTitle: '' });
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -318,9 +330,10 @@ export default function NotificationsPage() {
                       </button>
                     )}
                     <button
-                      onClick={() => deleteNotification(notification.id)}
+                      onClick={() => onDeleteClick(notification.id, notification.title)}
                       className="p-2 text-slate-400 hover:text-red-400 transition-colors"
                       title="Delete notification"
+                      aria-label={`Delete notification: ${notification.title}`}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -350,6 +363,17 @@ export default function NotificationsPage() {
           </div>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={confirmDelete.isOpen}
+        onClose={onCancelDelete}
+        onConfirm={onConfirmDelete}
+        title="Delete Notification"
+        message={`Are you sure you want to delete the notification "${confirmDelete.notificationTitle}"? This action cannot be undone.`}
+        confirmText="Delete Notification"
+        cancelText="Cancel"
+        type="delete"
+      />
     </PageLayout>
   );
 }

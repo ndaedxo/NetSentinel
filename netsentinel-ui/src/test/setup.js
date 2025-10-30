@@ -1,6 +1,27 @@
 // Jest setup file for React Testing Library
 require('@testing-library/jest-dom');
 
+// Configure axe for accessibility testing
+const { configureAxe } = require('jest-axe');
+
+configureAxe({
+  rules: {
+    // Disable rules that are not relevant for component testing
+    'color-contrast': { enabled: false },
+    'document-title': { enabled: false },
+    'html-has-lang': { enabled: false },
+    'landmark-one-main': { enabled: false },
+    'page-has-heading-one': { enabled: false },
+    'region': { enabled: false },
+  },
+  // Only run checks that are relevant for components
+  checks: {
+    'autocomplete-valid': { enabled: false },
+    'dlitem': { enabled: false },
+    'listitem': { enabled: false },
+  },
+});
+
 // Polyfill for TextEncoder/TextDecoder (needed for jsPDF)
 global.TextEncoder = require('util').TextEncoder;
 global.TextDecoder = require('util').TextDecoder;

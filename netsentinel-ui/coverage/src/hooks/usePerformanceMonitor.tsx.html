@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">31.57% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/19</span>
+                <span class='fraction'>6/19</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">20% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>1/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">37.5% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/16</span>
+                <span class='fraction'>6/16</span>
             </div>
         
             
@@ -107,16 +107,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -125,15 +125,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -144,11 +144,11 @@
 /**
  * Hook for performance monitoring functionality
  */
-export function <span class="fstat-no" title="function not covered" >usePerformanceMonitor(</span>) {
-  const renderTimeRef = <span class="cstat-no" title="statement not covered" >useRef&lt;number[]&gt;([]);</span>
-  const renderCountRef = <span class="cstat-no" title="statement not covered" >useRef(0);</span>
+export function usePerformanceMonitor() {
+  const renderTimeRef = useRef&lt;number[]&gt;([]);
+  const renderCountRef = useRef(0);
 &nbsp;
-  const recordRenderTime = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(s</span>tartTime: number) =&gt; {</span>
+  const recordRenderTime = <span class="fstat-no" title="function not covered" >(s</span>tartTime: number) =&gt; {
     const renderTime = <span class="cstat-no" title="statement not covered" >performance.now() - startTime;</span>
 <span class="cstat-no" title="statement not covered" >    if (renderTimeRef.current) {</span>
 <span class="cstat-no" title="statement not covered" >      renderTimeRef.current.push(renderTime);</span>
@@ -163,15 +163,15 @@ export function <span class="fstat-no" title="function not covered" >usePerforma
     }
   };
 &nbsp;
-  const getAverageRenderTime = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+  const getAverageRenderTime = <span class="fstat-no" title="function not covered" >()</span> =&gt; {
     const renderTimes = <span class="cstat-no" title="statement not covered" >renderTimeRef.current || [];</span>
 <span class="cstat-no" title="statement not covered" >    if (renderTimes.length === 0) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
 <span class="cstat-no" title="statement not covered" >    return renderTimes.reduce(<span class="fstat-no" title="function not covered" >(s</span>um: number, time: number) =&gt; <span class="cstat-no" title="statement not covered" >sum + time,</span> 0) / renderTimes.length;</span>
   };
 &nbsp;
-  const getRenderCount = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >renderCountRef.current;</span></span>
+  const getRenderCount = <span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >renderCountRef.current;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return {</span>
+  return {
     recordRenderTime,
     getAverageRenderTime,
     getRenderCount
@@ -184,7 +184,7 @@ export function <span class="fstat-no" title="function not covered" >usePerforma
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-29T10:20:37.009Z
+                at 2025-10-30T07:36:45.074Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

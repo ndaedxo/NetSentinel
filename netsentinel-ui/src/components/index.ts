@@ -18,9 +18,17 @@ export { default as DashboardWidget } from './DashboardWidget';
 
 // Modal components
 export { default as ThreatDetailsModal } from './ThreatDetailsModal';
+export { default as ConfirmationModal } from './ConfirmationModal';
+
+// Input components
+export { default as ScopeTagsInput } from './ScopeTagsInput';
 
 // Layout components
 export { default as PageLayout } from './PageLayout';
 
 // Loading components
 export { default as LoadingSpinner } from './LoadingSpinner';
+
+// Toast components
+export { Toast, ToastContainer } from './Toast';
+export type { ToastMessage } from './Toast';

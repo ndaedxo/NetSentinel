@@ -5,6 +5,10 @@ export * from './threats';
 
 // Alert-related types
 export * from './alerts';
+export * from './api-keys';
+export * from './correlation';
+export * from './logs';
+export * from './notifications';
 
 // Network-related types
 export * from './network';

@@ -1,12 +1,5 @@
-import { NotificationItem, mockNotificationsResponse, getUnreadCount } from "@/mock";
-
-export interface NotificationsResponse {
-  notifications: NotificationItem[];
-  total: number;
-  unread: number;
-  page: number;
-  limit: number;
-}
+import { mockNotificationsResponse } from "@/mock";
+import type { NotificationPreferences, ChannelConfig, NotificationsResponse } from '@/types';
 
 /**
  * Get user notifications
@@ -26,9 +19,10 @@ export async function getUserNotifications(page: number = 1, limit: number = 50)
 /**
  * Mark notification as read
  */
-export async function markNotificationAsRead(notificationId: string): Promise<{ success: boolean }> {
+export async function markNotificationAsRead(_notificationId: string): Promise<{ success: boolean }> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 200));
+  void _notificationId;
 
   return { success: true };
 }
@@ -46,9 +40,43 @@ export async function markAllNotificationsAsRead(): Promise<{ success: boolean }
 /**
  * Delete notification
  */
-export async function deleteNotification(notificationId: string): Promise<{ success: boolean }> {
+export async function deleteNotification(_notificationId: string): Promise<{ success: boolean }> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 200));
+  void _notificationId;
 
   return { success: true };
+}
+
+// Mock in-memory prefs
+let prefs: NotificationPreferences = {
+  emailEnabled: true,
+  smsEnabled: false,
+  slackEnabled: false,
+  severities: ['high','critical'],
+};
+let channels: ChannelConfig = {
+  email: { from: 'alerts@netsentinel.local' },
+};
+
+export async function getNotificationPreferences(): Promise<NotificationPreferences> {
+  await new Promise(r => setTimeout(r, 150));
+  return { ...prefs };
+}
+
+export async function updateNotificationPreferences(update: Partial<NotificationPreferences>): Promise<NotificationPreferences> {
+  await new Promise(r => setTimeout(r, 200));
+  prefs = { ...prefs, ...update };
+  return { ...prefs };
+}
+
+export async function getChannelConfig(): Promise<ChannelConfig> {
+  await new Promise(r => setTimeout(r, 150));
+  return { ...channels };
+}
+
+export async function updateChannelConfig(update: Partial<ChannelConfig>): Promise<ChannelConfig> {
+  await new Promise(r => setTimeout(r, 200));
+  channels = { ...channels, ...update };
+  return { ...channels };
 }

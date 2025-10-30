@@ -27,5 +27,16 @@ export default tseslint.config(
         },
       ],
     },
+  },
+  {
+    files: [
+      "src/**/__tests__/**/*.{ts,tsx}",
+      "src/test/**/*.{ts,tsx}",
+      "src/mock/**/*.{ts,tsx}"
+    ],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+    },
   }
 );

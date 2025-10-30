@@ -28,6 +28,10 @@ const navLinks = [
   { path: '/reports', label: 'Reports', Icon: FileText },
   { path: '/profile', label: 'Profile', Icon: User },
   { path: '/notifications', label: 'Notifications', Icon: Settings },
+  { path: '/settings/notifications', label: 'Notif Settings', Icon: Bell },
+  { path: '/settings/api-keys', label: 'API Keys', Icon: FileText },
+  { path: '/correlation', label: 'Correlation', Icon: Brain },
+  { path: '/logs', label: 'Logs', Icon: FileText },
 ];
 
 export default function SidebarNav({ collapsed }: SidebarNavProps) {

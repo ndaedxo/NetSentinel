@@ -17,3 +17,6 @@ export * from './mock-auth';
 
 // Onboarding tour
 export * from './useOnboardingTour';
+
+// Toast hooks
+export * from './useToast.tsx';

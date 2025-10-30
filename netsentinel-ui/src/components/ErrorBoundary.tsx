@@ -1,6 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
-import { captureException, captureMessage, addBreadcrumb } from '@/utils/sentry';
+import { captureException, addBreadcrumb } from '@/utils/sentry';
 
 interface Props {
   children: ReactNode;
@@ -148,30 +148,5 @@ export function withErrorBoundary<P extends object>(
 }
 
 // Hook for manual error reporting (for non-React errors)
-export function useErrorReporting() {
-  const reportError = (error: Error, context?: Record<string, unknown>) => {
-    console.error('Manual error report:', error, context);
-
-    // Send to Sentry
-    captureException(error, {
-      ...context,
-      manual: true,
-      userAgent: navigator.userAgent,
-      url: window.location.href,
-    });
-  };
-
-  const reportMessage = (message: string, level: 'info' | 'warning' | 'error' = 'error', context?: Record<string, unknown>) => {
-    console.log(`Manual message report [${level}]:`, message, context);
-
-    // Send to Sentry
-    captureMessage(message, level, {
-      ...context,
-      manual: true,
-      userAgent: navigator.userAgent,
-      url: window.location.href,
-    });
-  };
-
-  return { reportError, reportMessage };
-}
+// moved to src/hooks/useErrorReporting.ts
+export { useErrorReporting } from '@/hooks/useErrorReporting';

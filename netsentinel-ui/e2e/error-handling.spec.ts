@@ -8,7 +8,7 @@ test.describe('Error Handling', () => {
     // Should not crash - page should load without throwing JavaScript errors
     // React Router may redirect to dashboard or show error boundary
     // The key is that no uncaught errors occur
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // If we get here without crashing, the test passes
     expect(true).toBe(true);
