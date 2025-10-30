@@ -21,6 +21,7 @@ from ..core.models import (
     create_alert,
 )
 from ..core.error_handler import handle_errors, create_error_context
+from ..core.event_bus import get_event_bus, create_event as create_bus_event
 from ..monitoring.metrics import get_metrics_collector
 from .event_consumer import EventConsumer, ConsumerConfig
 from .event_analyzer import EventAnalyzer, AnalysisResult
@@ -52,6 +53,7 @@ class ProcessorConfig:
     threat_ttl: int = 3600
     correlation_ttl: int = 1800
     firewall_manager_enabled: bool = True
+    websocket_enabled: bool = True
 
 
 class RefactoredEventProcessor(BaseComponent):
@@ -75,6 +77,7 @@ class RefactoredEventProcessor(BaseComponent):
         self.api_server: Optional[APIServer] = None
         self.threat_storage: Optional[ThreatStorage] = None
         self.firewall_manager: Optional[FirewallManager] = None
+        self.websocket_manager = None  # Will be initialized if websocket_enabled
 
         # Processing metrics
         self.events_processed = 0
@@ -124,6 +127,12 @@ class RefactoredEventProcessor(BaseComponent):
                     threat_ttl=self.config.threat_ttl,
                     correlation_ttl=self.config.correlation_ttl,
                 )
+
+            # Initialize WebSocket manager if enabled
+            if self.config.websocket_enabled:
+                from .websocket_manager import WebSocketManager
+                self.websocket_manager = WebSocketManager()
+                await self.websocket_manager.start()
 
             # Initialize firewall manager if enabled
             if self.config.firewall_manager_enabled:
@@ -240,6 +249,10 @@ class RefactoredEventProcessor(BaseComponent):
                 await self.consumer.stop()
                 self.logger.info("Event consumer stopped")
 
+            if self.websocket_manager:
+                await self.websocket_manager.stop()
+                self.logger.info("WebSocket manager stopped")
+
             # Stop resource manager
             await self.resource_manager.stop()
 
@@ -309,6 +322,20 @@ class RefactoredEventProcessor(BaseComponent):
                     labels={"threat_level": result.threat_level.value},
                 )
 
+                # Publish threat event to event bus for real-time broadcasting
+                if result.threat_score > 5.0:
+                    threat_data = {
+                        "source_ip": result.event.source,
+                        "threat_score": result.threat_score,
+                        "threat_level": result.threat_level.value,
+                        "event_type": result.event.event_type,
+                        "timestamp": time.time(),
+                        "indicators": result.indicators
+                    }
+                    threat_event = create_bus_event("threat.new", threat_data)
+                    event_bus = get_event_bus()
+                    await event_bus.publish(threat_event)
+
                 # Track analysis time
                 self.metrics_collector.observe_histogram(
                     "threat_analysis_duration_seconds", result.analysis_time
@@ -353,6 +380,20 @@ class RefactoredEventProcessor(BaseComponent):
                         "alerts_created_total",
                         labels={"severity": result.threat_level.value},
                     )
+
+                    # Publish alert event to event bus for real-time broadcasting
+                    alert_data = {
+                        "id": alert.id,
+                        "severity": alert.severity,
+                        "message": alert.title,
+                        "description": alert.description,
+                        "timestamp": alert.timestamp,
+                        "source": alert.source,
+                        "tags": alert.tags
+                    }
+                    alert_event = create_bus_event("alert.new", alert_data)
+                    event_bus = get_event_bus()
+                    await event_bus.publish(alert_event)
 
         except Exception as e:
             self.logger.error(f"Error handling alert: {e}")

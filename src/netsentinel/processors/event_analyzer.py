@@ -109,20 +109,28 @@ class EventAnalyzer(BaseProcessor):
             self._initialize_ml_analyzer()
 
     def _initialize_ml_analyzer(self):
-        """Initialize ML analyzer for anomaly detection"""
+        """Initialize ML analyzer for anomaly detection using IMLDetector interface"""
         try:
+            from ..core.interfaces import IMLDetector
             from ..ml_anomaly_detector import NetworkEventAnomalyDetector
 
+            # Create ML analyzer implementing IMLDetector interface
             self.ml_analyzer = NetworkEventAnomalyDetector(
                 model_type=self.config.get("ml_model_type", "fastflow"),
                 model_path=self.config.get("ml_model_path"),
                 config=self.config.get("ml_config", {}),
             )
 
-            self.logger.info("ML analyzer initialized successfully")
+            # Verify it implements the interface
+            if not isinstance(self.ml_analyzer, IMLDetector):
+                self.logger.warning("ML analyzer does not implement IMLDetector interface")
+                self.ml_enabled = False
+                return
+
+            self.logger.info("ML analyzer initialized successfully with IMLDetector interface")
 
         except ImportError as e:
-            self.logger.warning(f"ML analyzer not available: {e}")
+            self.logger.warning(f"ML analyzer or interface not available: {e}")
             self.ml_enabled = False
         except Exception as e:
             self.logger.error(f"Failed to initialize ML analyzer: {e}")
@@ -269,16 +277,16 @@ class EventAnalyzer(BaseProcessor):
     async def _ml_analysis(
         self, event: StandardEvent
     ) -> Tuple[float, Optional[Dict[str, Any]]]:
-        """Perform ML-based analysis"""
+        """Perform ML-based analysis using IMLDetector interface"""
         if not self.ml_enabled or not self.ml_analyzer:
             return 0.0, None
 
         try:
-            # Convert event to ML features
-            features = self._extract_ml_features(event)
+            # Convert event to standardized format for IMLDetector interface
+            event_data = self._convert_event_for_ml_interface(event)
 
-            # Get ML analysis (synchronous call)
-            ml_result = self.ml_analyzer.analyze_event(features)
+            # Use async IMLDetector interface
+            ml_result = await self.ml_analyzer.analyze_event(event_data)
 
             if ml_result and ml_result.get("is_anomaly", False):
                 score = ml_result.get("anomaly_score", 0.0) * 10  # Scale to 0-10
@@ -288,6 +296,23 @@ class EventAnalyzer(BaseProcessor):
             self.logger.error(f"ML analysis error: {e}")
 
         return 0.0, None
+
+    def _convert_event_for_ml_interface(self, event: StandardEvent) -> Dict[str, Any]:
+        """Convert StandardEvent to format expected by IMLDetector interface"""
+        return {
+            "timestamp": event.timestamp,
+            "event_type": event.event_type,
+            "source_ip": event.source,
+            "destination_ip": getattr(event, 'destination', ''),
+            "destination_port": getattr(event, 'destination_port', 0),
+            "protocol": getattr(event, 'protocol', 'UNKNOWN'),
+            "username_attempts": 0,  # Will be extracted from logdata if needed
+            "password_attempts": 0,  # Will be extracted from logdata if needed
+            "connection_duration": getattr(event, 'duration', 0.0),
+            "bytes_transferred": getattr(event, 'bytes_transferred', 0),
+            "error_count": getattr(event, 'error_count', 0),
+            "data": event.data,  # Include original event data
+        }
 
     def _extract_ml_features(self, event: StandardEvent) -> Dict[str, Any]:
         """Extract features for ML analysis"""

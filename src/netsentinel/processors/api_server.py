@@ -8,7 +8,7 @@ import asyncio
 import time
 from typing import Dict, List, Optional, Any
 from datetime import datetime
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import uvicorn
@@ -79,6 +79,10 @@ class APIServer(BaseComponent):
         self.port = port
         self.processor = processor
         self.start_time = time.time()
+
+        # WebSocket components
+        self.websocket_manager = None
+        self.websocket_server = None
 
         # Initialize FastAPI app
         self.app = FastAPI(

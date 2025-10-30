@@ -15,18 +15,19 @@ from collections import deque
 import threading
 
 # Anomalib imports
-from anomalib.models import Fastflow, EfficientAd, Padim
-from anomalib.data import Folder
-from anomalib.engine import Engine
 from anomalib.deploy.inferencers import TorchInferencer
 
-# Import new core components
+# Import new ML components
 try:
+    from .ml_models import ModelManager, FeatureExtractor
     from .core.base import BaseComponent
+    from .core.interfaces import IMLDetector
     from .utils.centralized import create_logger
 except ImportError:
     # Fallback for standalone usage
+    from ml_models import ModelManager, FeatureExtractor
     from core.base import BaseComponent
+    from core.interfaces import IMLDetector
     from utils.centralized import create_logger
 
 logger = create_logger("ml_anomaly_detector", level="INFO")
@@ -48,10 +49,15 @@ class EventFeatures:
     error_count: int = 0
 
 
-class NetworkEventAnomalyDetector(BaseComponent):
+class NetworkEventAnomalyDetector(BaseComponent, IMLDetector):
     """
     ML-based anomaly detector for network security events
     Uses Anomalib models to detect behavioral anomalies
+
+    Now uses the new ML component architecture:
+    - ModelManager for model loading/versioning
+    - FeatureExtractor for feature processing
+    - TorchInferencer for actual anomaly detection
     """
 
     def __init__(
@@ -74,13 +80,20 @@ class NetworkEventAnomalyDetector(BaseComponent):
 
         self.model_type = model_type.lower()
         self.model_path = model_path
-        self.model = None
-        self.inferencer = None
         self.is_trained = False
 
-        # Feature normalization parameters
-        self.feature_stats = {}
-        self.feature_scaler = None
+        # Initialize new ML components
+        self.model_manager = ModelManager(
+            models_dir=self.config.get("models_dir", "models"),
+            max_versions=self.config.get("max_model_versions", 5),
+        )
+
+        self.feature_extractor = FeatureExtractor(
+            normalization_method=self.config.get("normalization_method", "standard"),
+            image_size=tuple(self.config.get("image_size", [32, 32])),
+        )
+
+        self.inferencer = None  # Will be loaded by model manager
 
         # Event history for context - limit memory usage
         self.event_history = deque(maxlen=1000)
@@ -93,64 +106,49 @@ class NetworkEventAnomalyDetector(BaseComponent):
         # Thread lock for concurrent access
         self.lock = threading.Lock()
 
-        # Initialize model
-        self._initialize_model()
+        # Initialize components
+        self._initialize_components()
 
-    def _initialize_model(self):
-        """Initialize the selected Anomalib model"""
+    def _initialize_components(self):
+        """Initialize ML components and load model if available"""
         try:
-            if self.model_type == "fastflow":
-                self.model = Fastflow()
-            elif self.model_type == "efficient_ad":
-                self.model = EfficientAd()
-            elif self.model_type == "padim":
-                self.model = Padim()
-            else:
-                raise ValueError(f"Unsupported model type: {self.model_type}")
+            # Try to load existing trained model
+            self.inferencer = self.model_manager.load_model(self.model_type)
 
-            logger.info(f"Initialized {self.model_type} model for anomaly detection")
+            if self.inferencer is not None:
+                self.is_trained = True
+                logger.info(f"Loaded trained {self.model_type} model for inference")
+            else:
+                logger.info(f"No trained {self.model_type} model found, will use behavioral analysis only")
 
         except Exception as e:
-            logger.error(f"Failed to initialize model: {e}")
-            raise
+            logger.error(f"Failed to initialize ML components: {e}")
+            self.inferencer = None
+            self.is_trained = False
 
     def _extract_features(self, event_data: Dict) -> Optional[EventFeatures]:
-        """Extract structured features from NetSentinel event data"""
+        """Extract structured features from NetSentinel event data using FeatureExtractor"""
         try:
-            # Basic event information
-            event_type = event_data.get("logtype", 0)
-            source_ip = event_data.get("src_host", "unknown")
-            dest_port = event_data.get("dst_port", 0)
+            # Use the new FeatureExtractor component
+            network_features = self.feature_extractor.extract_features(event_data)
 
-            # Validate required fields
-            if not source_ip or source_ip == "unknown":
-                logger.warning("Invalid source IP in event data")
+            if network_features is None:
+                logger.warning("Feature extraction failed")
                 return None
 
-            # Determine protocol from event type
-            protocol_map = {
-                2000: "FTP",
-                3000: "HTTP",
-                4000: "SSH",
-                6001: "TELNET",
-                8001: "MySQL",
-                4002: "SSH",
-            }
-            protocol = protocol_map.get(event_type, "UNKNOWN")
-
-            # Extract additional features from logdata
-            logdata = event_data.get("logdata", {})
-            username_attempts = 1 if "USERNAME" in str(logdata) else 0
-            password_attempts = 1 if "PASSWORD" in str(logdata) else 0
-
+            # Convert NetworkFeatures to EventFeatures for backward compatibility
+            # (This can be removed once we fully migrate to NetworkFeatures)
             return EventFeatures(
-                timestamp=time.time(),
-                event_type=event_type,
-                source_ip=source_ip,
-                destination_port=dest_port,
-                protocol=protocol,
-                username_attempts=username_attempts,
-                password_attempts=password_attempts,
+                timestamp=network_features.timestamp,
+                event_type=network_features.event_type,
+                source_ip=network_features.source_ip,
+                destination_port=network_features.destination_port,
+                protocol=network_features.protocol,
+                username_attempts=network_features.username_attempts,
+                password_attempts=network_features.password_attempts,
+                connection_duration=network_features.connection_duration,
+                bytes_transferred=network_features.bytes_sent,  # Map to existing field
+                error_count=network_features.error_count,
             )
 
         except Exception as e:
@@ -158,74 +156,46 @@ class NetworkEventAnomalyDetector(BaseComponent):
             return None
 
     def _normalize_features(self, features: EventFeatures) -> np.ndarray:
-        """Convert features to normalized numpy array for ML model"""
+        """Convert features to normalized numpy array using FeatureExtractor"""
         try:
-            # Convert to numerical features
-            feature_vector = np.array(
-                [
-                    features.event_type,
-                    features.destination_port,
-                    features.username_attempts,
-                    features.password_attempts,
-                    features.connection_duration,
-                    features.bytes_transferred,
-                    features.error_count,
-                ],
-                dtype=np.float32,
-            )
+            # Convert EventFeatures back to dict for FeatureExtractor
+            event_dict = {
+                "timestamp": features.timestamp,
+                "event_type": features.event_type,
+                "source_ip": features.source_ip,
+                "destination_port": features.destination_port,
+                "protocol": features.protocol,
+                "username_attempts": features.username_attempts,
+                "password_attempts": features.password_attempts,
+                "connection_duration": features.connection_duration,
+                "bytes_transferred": features.bytes_transferred,
+                "error_count": features.error_count,
+            }
 
-            # Normalize features (simple min-max normalization)
-            if not self.feature_stats:
-                self.feature_stats = {
-                    "min": feature_vector,
-                    "max": feature_vector,
-                    "mean": feature_vector,
-                }
-            else:
-                self.feature_stats["min"] = np.minimum(
-                    self.feature_stats["min"], feature_vector
-                )
-                self.feature_stats["max"] = np.maximum(
-                    self.feature_stats["max"], feature_vector
-                )
-                self.feature_stats["mean"] = (
-                    self.feature_stats["mean"] + feature_vector
-                ) / 2
+            # Use FeatureExtractor to get NetworkFeatures and normalize
+            network_features = self.feature_extractor.extract_features(event_dict)
+            if network_features is None:
+                return np.zeros((17,), dtype=np.float32)  # NetworkFeatures has 17 features
 
-            # Apply normalization
-            normalized = (feature_vector - self.feature_stats["min"]) / (
-                self.feature_stats["max"] - self.feature_stats["min"] + 1e-8
-            )
+            # Normalize using FeatureExtractor
+            normalized = self.feature_extractor.normalize_features(network_features, update_stats=True)
 
-            return normalized.reshape(1, -1)
+            return normalized
 
         except Exception as e:
             logger.error(f"Error normalizing features: {e}")
-            return np.zeros((1, 7), dtype=np.float32)
+            return np.zeros((17,), dtype=np.float32)
 
     def _create_feature_image(self, features: np.ndarray) -> torch.Tensor:
-        """Convert 1D features to 2D image-like tensor for Anomalib models"""
+        """Convert 1D features to 2D image-like tensor using FeatureExtractor"""
         try:
-            # Reshape to square-ish format and pad if necessary
-            size = int(np.ceil(np.sqrt(features.shape[1])))
-            padded = np.zeros((size, size), dtype=np.float32)
-
-            # Fill with feature values
-            for i, val in enumerate(features[0]):
-                if i < size * size:
-                    padded[i // size, i % size] = val
-
-            # Convert to RGB-like format (3 channels)
-            image = np.stack([padded, padded, padded], axis=2)
-
-            # Convert to tensor and add batch dimension
-            tensor = torch.from_numpy(image).permute(2, 0, 1).unsqueeze(0)
-
-            return tensor
+            # Use FeatureExtractor's image conversion
+            image_tensor = self.feature_extractor.features_to_image(features, method="direct")
+            return image_tensor
 
         except Exception as e:
             logger.error(f"Error creating feature image: {e}")
-            return torch.zeros((1, 3, 8, 8))
+            return torch.zeros((1, 3, 32, 32))  # Default size
 
     def train_on_normal_events(self, normal_events: List[Dict], epochs: int = 10):
         """Train the model on normal network behavior"""
@@ -353,27 +323,46 @@ class NetworkEventAnomalyDetector(BaseComponent):
     def _ml_anomaly_detection(
         self, features: EventFeatures, normalized_features: np.ndarray
     ) -> float:
-        """Use ML model for anomaly detection"""
+        """Use ML model for anomaly detection with TorchInferencer"""
         try:
+            # Check if we have a trained model loaded
+            if self.inferencer is None:
+                logger.debug("No ML model loaded, returning 0.0 for anomaly score")
+                return 0.0
+
             # Create image tensor for ML model
             image_tensor = self._create_feature_image(normalized_features)
 
-            # Simple distance-based anomaly detection
-            # In a full implementation, this would use the actual Anomalib model
-            if hasattr(self, "training_data") and self.training_data is not None:
-                # Calculate distance to training data
-                distances = torch.cdist(image_tensor, self.training_data)
-                min_distance = torch.min(distances).item()
+            # Run actual inference using TorchInferencer
+            prediction = self.inferencer.predict(image_tensor)
 
-                # Convert distance to anomaly score (closer to 0 = more normal)
-                # This is a simplified approach - real Anomalib models would provide proper scores
-                anomaly_score = min(min_distance * 10, 1.0)  # Scale and cap at 1.0
-                return anomaly_score
+            # Extract anomaly score from prediction
+            # Anomalib models return predictions with anomaly scores/maps
+            if hasattr(prediction, 'pred_score'):
+                # Direct anomaly score
+                anomaly_score = float(prediction.pred_score.item())
+            elif hasattr(prediction, 'anomaly_map'):
+                # Use anomaly map - average anomaly score across the image
+                anomaly_map = prediction.anomaly_map
+                anomaly_score = float(torch.mean(anomaly_map).item())
+            else:
+                # Fallback: try to get score from other prediction attributes
+                logger.warning("Unexpected prediction format from TorchInferencer")
+                anomaly_score = 0.0
 
-            return 0.0
+            # Ensure score is in [0, 1] range
+            anomaly_score = max(0.0, min(1.0, anomaly_score))
+
+            logger.debug(".3f")
+            return anomaly_score
 
         except Exception as e:
             logger.error(f"ML anomaly detection failed: {e}")
+            # Update model health if available
+            if hasattr(self, 'model_manager') and self.model_type:
+                health = self.model_manager.get_model_health(self.model_type)
+                if health:
+                    health["error_count"] = health.get("error_count", 0) + 1
             return 0.0
 
     def _behavioral_analysis(self, features: EventFeatures) -> float:
@@ -501,19 +490,19 @@ class NetworkEventAnomalyDetector(BaseComponent):
             logger.error(f"Failed to save model: {e}")
 
     def _load_model(self):
-        """Load trained model from disk"""
+        """Load trained model using ModelManager"""
         try:
-            if self.model_path and os.path.exists(self.model_path):
-                model_state = torch.load(self.model_path)
-                self.model_type = model_state.get("model_type", self.model_type)
-                self.feature_stats = model_state.get("feature_stats", {})
-                self.training_data = model_state.get("training_data")
-                self.is_trained = model_state.get("is_trained", False)
-                logger.info(f"Model loaded from {self.model_path}")
-            else:
-                logger.warning(f"Model file not found: {self.model_path}")
+            # Model loading is now handled by ModelManager in _initialize_components
+            # This method is kept for backward compatibility but delegates to ModelManager
+            if self.inferencer is None:
+                self.inferencer = self.model_manager.load_model(self.model_type)
+                if self.inferencer is not None:
+                    self.is_trained = True
+                    logger.info(f"Model loaded via ModelManager: {self.model_type}")
+                else:
+                    logger.warning(f"Failed to load model: {self.model_type}")
         except Exception as e:
-            logger.error(f"Failed to load model: {e}")
+            logger.error(f"Failed to load model via ModelManager: {e}")
 
     def _cleanup_old_data(self):
         """Clean up old data to prevent memory leaks"""
@@ -574,7 +563,84 @@ class NetworkEventAnomalyDetector(BaseComponent):
         except Exception as e:
             logger.error(f"Error during cleanup: {e}")
 
-    def analyze_event(self, features: Dict[str, Any]) -> Dict[str, Any]:
+    # IMLDetector interface implementation
+    async def analyze_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze event for anomalies (IMLDetector interface)"""
+        try:
+            # Convert event dict to features dict format expected by existing method
+            features_dict = {
+                "timestamp": event.get("timestamp", time.time()),
+                "event_type": event.get("event_type", event.get("logtype", 0)),
+                "source_ip": event.get("source_ip", event.get("src_host", "unknown")),
+                "destination_port": event.get("destination_port", event.get("dst_port", 0)),
+                "protocol": event.get("protocol", "UNKNOWN"),
+                "username_attempts": event.get("username_attempts", 0),
+                "password_attempts": event.get("password_attempts", 0),
+                "connection_duration": event.get("connection_duration", 0.0),
+                "bytes_transferred": event.get("bytes_transferred", 0),
+                "error_count": event.get("error_count", 0),
+                "data": event,  # Pass full event as data
+            }
+
+            # Use existing synchronous method
+            result = self.analyze_event_sync(features_dict)
+            return result
+
+        except Exception as e:
+            logger.error(f"Interface analyze_event failed: {e}")
+            return {
+                "is_anomaly": False,
+                "anomaly_score": 0.0,
+                "confidence": 0.0,
+                "error": str(e),
+            }
+
+    async def train_on_events(self, events: List[Dict[str, Any]]) -> bool:
+        """Train model on events (IMLDetector interface)"""
+        try:
+            # Use TrainingPipeline for proper training
+            from .ml_models import TrainingPipeline
+
+            trainer = TrainingPipeline(
+                model_type=self.model_type,
+                model_path=self.model_path,
+                config=self.config,
+            )
+
+            # Convert events to expected format
+            formatted_events = []
+            for event in events:
+                formatted_event = {
+                    "logtype": event.get("event_type", event.get("logtype", 0)),
+                    "src_host": event.get("source_ip", event.get("src_host", "unknown")),
+                    "dst_port": event.get("destination_port", event.get("dst_port", 0)),
+                    "logdata": event.get("data", {}),
+                    "timestamp": event.get("timestamp", time.time()),
+                }
+                formatted_events.append(formatted_event)
+
+            # Train the model
+            success = trainer.train_on_events(formatted_events)
+
+            if success:
+                # Register the trained model with ModelManager
+                model_info = trainer.get_training_metrics()
+                self.model_manager.register_model(
+                    model_type=self.model_type,
+                    model_path=trainer.model_path,
+                    training_metrics=model_info,
+                )
+
+                # Reload the model
+                self._initialize_components()
+
+            return success
+
+        except Exception as e:
+            logger.error(f"Interface train_on_events failed: {e}")
+            return False
+
+    def analyze_event_sync(self, features: Dict[str, Any]) -> Dict[str, Any]:
         """Analyze event using ML models (interface for EventAnalyzer)"""
         try:
             # Convert features dict to EventFeatures object

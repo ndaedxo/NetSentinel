@@ -477,17 +477,32 @@ docker-compose down -v        # Stop and remove volumes
 
 ```
 netsentinel/
-├── opencanary/                 # Core NetSentinel code
-│   ├── logger.py               # Enhanced logging with Kafka/Valkey handlers
-│   ├── event_processor.py      # Real-time threat analysis
-│   └── modules/                # Honeypot service modules
-├── hybrid-data/                # Configuration and data
-│   └── opencanary/config/      # NetSentinel configuration
-├── bin/                        # Executable scripts
-├── Dockerfile                  # NetSentinel container
-├── Dockerfile.event-processor  # Event processor container
-├── docker-compose.yml          # Hybrid system orchestration
-└── requirements.txt            # Python dependencies
+├── src/netsentinel/           # Core NetSentinel code
+│   ├── core/                  # Core architecture & base classes
+│   ├── processors/            # Event processing & API server
+│   ├── modules/               # Honeypot service modules
+│   ├── monitoring/            # Logging & metrics
+│   ├── alerts/                # Alert management
+│   └── utils/                 # Utilities & helpers
+├── netsentinel-ui/            # React frontend application
+│   ├── src/
+│   │   ├── components/        # UI components
+│   │   ├── pages/             # Page components
+│   │   ├── services/          # API services (mock)
+│   │   ├── hooks/             # React hooks
+│   │   └── types/             # TypeScript types
+├── docs/                      # Documentation
+│   ├── API.md                 # API documentation
+│   ├── DEPLOYMENT.md          # Deployment guide
+│   ├── DEVELOPER_GUIDE.md     # Developer guide
+│   ├── TROUBLESHOOTING.md     # Troubleshooting guide
+│   └── ...                    # Additional docs
+├── bin/                       # Executable scripts
+├── Dockerfile                 # NetSentinel container
+├── Dockerfile.event-processor # Event processor container
+├── docker-compose.yml         # Hybrid system orchestration
+├── requirements.txt           # Python dependencies
+└── pyproject.toml            # Python project configuration
 ```
 
 ## 🤝 Contributing
@@ -526,6 +541,15 @@ docker exec netsentinel-kafka kafka-topics --describe --topic netsentinel-events
 **Grafana not accessible:**
 - Ensure port 3000 is available
 - Check Grafana logs: `docker-compose logs grafana`
+
+### Documentation
+
+- **[API Documentation](docs/API.md)** - Complete API reference
+- **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment instructions
+- **[Developer Guide](docs/DEVELOPER_GUIDE.md)** - Development setup and workflows
+- **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+- **[Project Overview](docs/project-overview.md)** - Architecture and design
+- **[ML Setup Guide](docs/ml-setup-guide.md)** - Machine learning configuration
 
 ### Support
 

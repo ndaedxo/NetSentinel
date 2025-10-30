@@ -126,6 +126,62 @@ class IThreatIntelligence(ABC):
         pass
 
 
+class IMLDetector(ABC):
+    """Interface for ML anomaly detection"""
+
+    @abstractmethod
+    async def analyze_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze event and return anomaly score"""
+        pass
+
+    @abstractmethod
+    async def train_on_events(self, events: List[Dict[str, Any]]) -> bool:
+        """Train model on events"""
+        pass
+
+
 # Removed unused IDataStore interface - use specific database implementations
 
 # Removed unused INotifier interface - use AlertManager and specific notification handlers
+
+
+class IWebSocketBroadcaster(ABC):
+    """Interface for real-time event broadcasting"""
+
+    @abstractmethod
+    async def broadcast_threat(self, threat_data: Dict[str, Any]) -> None:
+        """Broadcast threat to connected clients"""
+        pass
+
+    @abstractmethod
+    async def broadcast_alert(self, alert_data: Dict[str, Any]) -> None:
+        """Broadcast alert to connected clients"""
+        pass
+
+
+class IMLDetector(ABC):
+    """Interface for ML anomaly detection"""
+
+    @abstractmethod
+    async def analyze_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze event and return anomaly score"""
+        pass
+
+    @abstractmethod
+    async def train_on_events(self, events: List[Dict[str, Any]]) -> bool:
+        """Train model on events"""
+        pass
+
+
+class IAuthProvider(ABC):
+    """Interface for authentication"""
+
+    @abstractmethod
+    async def authenticate(self, credentials: Dict[str, str]) -> Optional[str]:
+        """Authenticate user and return token"""
+        pass
+
+    @abstractmethod
+    async def validate_token(self, token: str) -> Optional[Dict[str, Any]]:
+        """Validate JWT token"""
+        pass
