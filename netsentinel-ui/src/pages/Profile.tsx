@@ -76,9 +76,9 @@ export default function Profile() {
 
   return (
     <PageLayout title="Profile Settings" subtitle="Manage your account settings">
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-4xl mx-auto space-mobile-y">
         {/* Profile Header */}
-        <div className="bg-slate-900/60 border border-slate-700/50 rounded-lg p-6">
+        <div className="bg-slate-900/60 border border-slate-700/50 rounded-lg p-4 md:p-6">
           <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
             {/* Avatar Section */}
             <div className="relative">
@@ -112,9 +112,9 @@ export default function Profile() {
         {/* Profile Form */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Personal Information */}
-          <div className="bg-slate-900/60 border border-slate-700/50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Personal Information</h3>
-            <div className="space-y-4">
+          <div className="bg-slate-900/60 border border-slate-700/50 rounded-lg p-4 md:p-6">
+            <h3 className="text-mobile-responsive-lg font-semibold text-white mb-4">Personal Information</h3>
+            <div className="space-mobile-y">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
                   Full Name
@@ -122,7 +122,7 @@ export default function Profile() {
                 <input
                   id="name"
                   type="text"
-                  className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base"
                   value={formData.name || ''}
                   onChange={(e) => handleInputChange('name', e.target.value)}
                 />
@@ -135,7 +135,7 @@ export default function Profile() {
                 <input
                   id="email"
                   type="email"
-                  className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base"
                   value={formData.email || ''}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                 />
@@ -148,7 +148,7 @@ export default function Profile() {
                 <input
                   id="phone"
                   type="tel"
-                  className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base"
                   value={formData.phone || ''}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                 />
@@ -161,7 +161,7 @@ export default function Profile() {
                 <textarea
                   id="bio"
                   rows={3}
-                  className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base resize-none"
                   value={formData.bio || ''}
                   onChange={(e) => handleInputChange('bio', e.target.value)}
                   placeholder="Tell us about yourself..."
@@ -171,9 +171,9 @@ export default function Profile() {
           </div>
 
           {/* Professional Information */}
-          <div className="bg-slate-900/60 border border-slate-700/50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Professional Information</h3>
-            <div className="space-y-4">
+          <div className="bg-slate-900/60 border border-slate-700/50 rounded-lg p-4 md:p-6">
+            <h3 className="text-mobile-responsive-lg font-semibold text-white mb-4">Professional Information</h3>
+            <div className="space-mobile-y">
               <div>
                 <label htmlFor="department" className="block text-sm font-medium text-slate-300 mb-2">
                   Department
@@ -181,7 +181,7 @@ export default function Profile() {
                 <input
                   id="department"
                   type="text"
-                  className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base"
                   value={formData.department || ''}
                   onChange={(e) => handleInputChange('department', e.target.value)}
                 />
@@ -194,7 +194,7 @@ export default function Profile() {
                 <input
                   id="location"
                   type="text"
-                  className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base"
                   value={formData.location || ''}
                   onChange={(e) => handleInputChange('location', e.target.value)}
                 />
@@ -206,7 +206,7 @@ export default function Profile() {
                 </label>
                 <select
                   id="role"
-                  className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base"
                   value={formData.role || ''}
                   onChange={(e) => handleInputChange('role', e.target.value)}
                 >
@@ -220,16 +220,16 @@ export default function Profile() {
         </div>
 
         {/* Preferences */}
-        <div className="bg-slate-900/60 border border-slate-700/50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Preferences</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-slate-900/60 border border-slate-700/50 rounded-lg p-4 md:p-6">
+          <h3 className="text-mobile-responsive-lg font-semibold text-white mb-4">Preferences</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
               <label htmlFor="theme" className="block text-sm font-medium text-slate-300 mb-2">
                 Theme
               </label>
               <select
                 id="theme"
-                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base"
                 value={formData.theme || 'dark'}
                 onChange={(e) => handleInputChange('theme', e.target.value)}
               >
@@ -245,7 +245,7 @@ export default function Profile() {
               </label>
               <select
                 id="language"
-                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 text-base"
                 value={formData.language || 'en-US'}
                 onChange={(e) => handleInputChange('language', e.target.value)}
               >
@@ -264,7 +264,7 @@ export default function Profile() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-base font-medium min-h-[44px]"
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>

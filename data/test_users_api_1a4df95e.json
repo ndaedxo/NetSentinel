@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "user_id": "api_test_user_1a4df95e",
+      "username": "apiuser_1a4df95e",
+      "email": "api_1a4df95e@test.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "read:events",
+        "write:events",
+        "write:alerts",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818607.1912966,
+      "last_login": null,
+      "password_hash": "c26131b0067f69e130e86132f972d96bd01a8a4a6a998ad602c1234878d0b878",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818607.1913295
+}

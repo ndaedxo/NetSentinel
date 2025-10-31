@@ -77,7 +77,7 @@ describe('PageLayout', () => {
     );
 
     const main = screen.getByRole('main');
-    expect(main).toHaveClass('max-w-7xl', 'mx-auto', 'px-6', 'py-8');
+    expect(main).toHaveClass('max-w-7xl', 'mx-auto', 'px-4', 'py-6', 'md:px-6', 'md:py-8');
   });
 
   it('applies custom className to main element', () => {

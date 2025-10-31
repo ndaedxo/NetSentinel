@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "user_id": "user_e8c0b4a2",
+      "username": "testuser_e8c0b4a2",
+      "email": "test_e8c0b4a2@test.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "read:alerts",
+        "write:alerts",
+        "read:events",
+        "write:events"
+      ],
+      "is_active": true,
+      "created_at": 1761820679.9847949,
+      "last_login": 1761820679.9871428,
+      "password_hash": "ffc121a2210958bf74e5a874668f3d978d24b6a8241496ccff3c0ea245e4f126",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761820679.9871511
+}

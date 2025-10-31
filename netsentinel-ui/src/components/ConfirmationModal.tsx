@@ -91,7 +91,7 @@ export default function ConfirmationModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500"
+            className="p-3 hover:bg-slate-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Close confirmation dialog"
           >
             <X className="w-5 h-5 text-slate-400" />
@@ -106,14 +106,14 @@ export default function ConfirmationModal({
           <div className="flex space-x-3 mt-6">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 rounded-lg transition-colors text-white"
+              className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 rounded-lg transition-colors text-white min-h-[44px]"
               autoFocus
             >
               {cancelText}
             </button>
             <button
               onClick={onConfirm}
-              className={`flex-1 px-4 py-2 ${getConfirmButtonClass()} focus:outline-none focus:ring-2 rounded-lg transition-colors text-white`}
+              className={`flex-1 px-4 py-3 ${getConfirmButtonClass()} focus:outline-none focus:ring-2 rounded-lg transition-colors text-white min-h-[44px]`}
             >
               {confirmText}
             </button>

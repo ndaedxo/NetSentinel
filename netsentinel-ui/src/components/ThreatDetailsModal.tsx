@@ -22,7 +22,8 @@ export default function ThreatDetailsModal({ threat, onClose, onBlock }: ThreatD
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-3 hover:bg-slate-800 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+            aria-label="Close threat details"
           >
             <X className="w-5 h-5 text-slate-400" />
           </button>
@@ -43,7 +44,7 @@ export default function ThreatDetailsModal({ threat, onClose, onBlock }: ThreatD
                     onBlock(threat.ip_address);
                     onClose();
                   }}
-                  className="flex items-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg transition-colors"
+                  className="flex items-center space-x-2 px-4 py-3 bg-red-600 hover:bg-red-500 rounded-lg transition-colors min-h-[44px]"
                 >
                   <Ban className="w-4 h-4" />
                   <span className="text-sm font-medium">Block IP</span>
@@ -54,7 +55,7 @@ export default function ThreatDetailsModal({ threat, onClose, onBlock }: ThreatD
                   <span>IP Blocked</span>
                 </span>
               )}
-              <button className="flex items-center space-x-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors">
+              <button className="flex items-center space-x-2 px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors min-h-[44px]">
                 <Download className="w-4 h-4" />
                 <span className="text-sm font-medium">Export</span>
               </button>
@@ -62,7 +63,7 @@ export default function ThreatDetailsModal({ threat, onClose, onBlock }: ThreatD
           </div>
 
           {/* Basic Info Grid */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="card-dark p-4">
               <div className="flex items-center space-x-2 mb-2">
                 <MapPin className="w-4 h-4 text-blue-400" />

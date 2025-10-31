@@ -46,6 +46,10 @@ class WebSocketServer(BaseComponent):
 
         logger.info("WebSocket server initialized")
 
+    async def _start_internal(self):
+        """Start WebSocket server operations"""
+        logger.info("WebSocket server started")
+
     async def _stop_internal(self):
         """Stop WebSocket server"""
         logger.info("WebSocket server stopped")

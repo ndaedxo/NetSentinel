@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "user_id": "test_admin",
+      "username": "adminuser",
+      "email": "admin@example.com",
+      "roles": [
+        "admin"
+      ],
+      "permissions": [
+        "admin",
+        "read:alerts",
+        "read:config",
+        "write:events",
+        "write:config",
+        "read:events",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818518.7428846,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818518.7430017
+}

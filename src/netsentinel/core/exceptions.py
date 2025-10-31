@@ -50,6 +50,14 @@ class ValidationError(NetSentinelException):
         self.value = value
 
 
+class AuthenticationError(NetSentinelException):
+    """Authentication and authorization errors"""
+
+    def __init__(self, message: str, user_id: str = None, details: dict = None):
+        super().__init__(message, "AUTHENTICATION_ERROR", details)
+        self.user_id = user_id
+
+
 # Removed unused exception classes - use standard Python exceptions instead
 # AuthenticationError -> use PermissionError
 # RateLimitError -> use ConnectionError with custom message

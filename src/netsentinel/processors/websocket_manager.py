@@ -59,6 +59,10 @@ class WebSocketManager(BaseComponent, IWebSocketBroadcaster):
         logger.info("WebSocket manager initialized and subscribed to event bus")
         self.metrics_collector = None  # Will be set by parent if needed
 
+    async def _start_internal(self):
+        """Start WebSocket manager operations"""
+        logger.info("WebSocket manager started")
+
     async def _stop_internal(self):
         """Stop WebSocket manager and close all connections"""
         logger.info("Stopping WebSocket manager...")

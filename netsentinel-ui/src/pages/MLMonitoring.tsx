@@ -115,22 +115,22 @@ export default function MLMonitoring() {
         <div className="space-y-4">
           {models.map((model) => (
             <div key={model.id} className="card-dark p-6">
-              <div className="flex items-start justify-between mb-6">
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-0 mb-6">
                 <div className="flex items-center space-x-4">
                   <div className="p-3 bg-blue-500/20 rounded-lg">
                     <Brain className="w-6 h-6 text-blue-400" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-white">{model.name}</h3>
+                    <h3 className="text-lg lg:text-xl font-semibold text-white">{model.name}</h3>
                     <p className="text-sm text-slate-400 mt-1">Deep Learning Anomaly Detection</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <span className={`inline-flex items-center space-x-2 px-3 py-1 rounded-lg text-sm font-medium border ${getStatusColor(model.status)}`}>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-3">
+                  <span className={`inline-flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium border min-h-[32px] ${getStatusColor(model.status)}`}>
                     {getStatusIcon(model.status)}
                     <span>{model.status.charAt(0).toUpperCase() + model.status.slice(1)}</span>
                   </span>
-                  <button className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors text-sm font-medium">
+                  <button className="px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors text-sm font-medium min-h-[44px] w-full sm:w-auto">
                     Configure
                   </button>
                 </div>

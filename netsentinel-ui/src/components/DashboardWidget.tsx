@@ -88,19 +88,21 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
         gridColumn: `span ${widget.size.width}`,
         gridRow: `span ${widget.size.height}`,
       }}
+      data-testid="dashboard-widget"
     >
       {/* Widget Header */}
       {(widget.config.showHeader !== false) && (
-        <div className="flex items-center justify-between p-3 border-b border-slate-700">
-          <h3 className="font-medium text-slate-200 truncate">
+        <div className="flex items-center justify-between p-3 md:p-4 border-b border-slate-700">
+          <h3 className="font-medium text-slate-200 truncate text-sm md:text-base">
             {widget.title}
           </h3>
 
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 md:space-x-2">
             <button
               onClick={handleRefresh}
-              className="p-1 text-slate-400 hover:text-slate-300 transition-colors"
+              className="p-2 text-slate-400 hover:text-slate-300 transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
               title="Refresh"
+              aria-label="Refresh widget"
             >
               <RefreshCw className="w-4 h-4" />
             </button>
@@ -108,7 +110,7 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
             {isEditing && (
               <>
                 <button
-                  className="p-1 text-slate-400 hover:text-slate-300 transition-colors cursor-grab active:cursor-grabbing"
+                  className="p-2 text-slate-400 hover:text-slate-300 transition-colors cursor-grab active:cursor-grabbing min-w-[32px] min-h-[32px] flex items-center justify-center"
                   title="Drag to move"
                   aria-label="drag handle"
                 >
@@ -116,7 +118,7 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
                 </button>
 
                 <button
-                  className="p-1 text-slate-400 hover:text-slate-300 transition-colors"
+                  className="p-2 text-slate-400 hover:text-slate-300 transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
                   title="Configure"
                   aria-label="settings"
                 >
@@ -125,7 +127,7 @@ export default function DashboardWidget({ widget, isEditing = false }: Dashboard
 
                 <button
                   onClick={handleRemoveClick}
-                  className="p-1 text-slate-400 hover:text-red-400 transition-colors"
+                  className="p-2 text-slate-400 hover:text-red-400 transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
                   title="Remove widget"
                   aria-label={`Remove widget: ${widget.title}`}
                 >

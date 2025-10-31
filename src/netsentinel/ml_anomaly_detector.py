@@ -398,9 +398,13 @@ class NetworkEventAnomalyDetector(BaseComponent, IMLDetector):
                 score += 0.2
 
             # 4. Temporal patterns
-            recent_events = [
-                e for e in self.event_history[-10:] if time.time() - e.timestamp < 300
-            ]  # Last 5 minutes
+            recent_events = []
+            if len(self.event_history) > 0:
+                # Get last 10 events safely
+                last_events = list(self.event_history)[-10:]
+                recent_events = [
+                    e for e in last_events if time.time() - e.timestamp < 300
+                ]  # Last 5 minutes
             if len(recent_events) > 5:
                 score += 0.2
 
@@ -476,16 +480,22 @@ class NetworkEventAnomalyDetector(BaseComponent, IMLDetector):
     def _save_model(self):
         """Save trained model to disk"""
         try:
-            if self.model_path and hasattr(self, "training_data"):
-                model_state = {
+            # Model saving is now handled by ModelManager
+            # This method is kept for backward compatibility
+            if hasattr(self, "training_data") and self.training_data:
+                # Save training data for potential retraining
+                training_state = {
                     "model_type": self.model_type,
-                    "feature_stats": self.feature_stats,
                     "training_data": self.training_data,
                     "is_trained": self.is_trained,
                     "timestamp": time.time(),
                 }
-                torch.save(model_state, self.model_path)
-                logger.info(f"Model saved to {self.model_path}")
+                # Use ModelManager to save the model
+                self.model_manager.save_model(
+                    model_type=self.model_type,
+                    model_data=training_state
+                )
+                logger.info(f"Model state saved via ModelManager")
         except Exception as e:
             logger.error(f"Failed to save model: {e}")
 

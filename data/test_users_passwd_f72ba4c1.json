@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "user_id": "user_f72ba4c1",
+      "username": "testuser_f72ba4c1",
+      "email": "test_f72ba4c1@test.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "read:alerts",
+        "write:alerts",
+        "read:events",
+        "write:events"
+      ],
+      "is_active": true,
+      "created_at": 1761819429.1405613,
+      "last_login": null,
+      "password_hash": "ffc121a2210958bf74e5a874668f3d978d24b6a8241496ccff3c0ea245e4f126",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761819429.1405814
+}

@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "user_id": "test_user_1",
+      "username": "testuser",
+      "email": "test@example.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "read:events",
+        "write:alerts",
+        "write:events",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761820700.2104821,
+      "last_login": null,
+      "password_hash": "hashed_password",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761820700.2105298
+}

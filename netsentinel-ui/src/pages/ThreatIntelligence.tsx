@@ -37,15 +37,15 @@ export default function ThreatIntelligence() {
   return (
     <PageLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gradient flex items-center space-x-3">
+            <h1 className="text-2xl lg:text-3xl font-bold text-gradient flex items-center space-x-3">
               <Shield className="w-8 h-8 text-blue-400" />
               <span>Threat Intelligence</span>
             </h1>
-            <p className="text-slate-400 mt-2">Monitor and investigate detected threats</p>
+            <p className="text-slate-400 mt-2 text-sm lg:text-base">Monitor and investigate detected threats</p>
           </div>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors">
+          <button className="flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors min-h-[44px] w-full sm:w-auto">
             <Download className="w-4 h-4" />
             <span className="text-sm font-medium">Export Report</span>
           </button>
@@ -61,7 +61,8 @@ export default function ThreatIntelligence() {
                 placeholder="Search by IP address or threat type..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50"
+                className="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 text-base min-h-[44px]"
+                aria-label="Search threats"
               />
             </div>
             <div className="flex items-center space-x-2">
@@ -69,7 +70,8 @@ export default function ThreatIntelligence() {
               <select
                 value={severityFilter}
                 onChange={(e) => setSeverityFilter(e.target.value)}
-                className="px-4 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50"
+                className="px-4 py-3 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50 text-base min-h-[44px]"
+                aria-label="Filter by severity"
               >
                 <option value="all">All Severities</option>
                 <option value="critical">Critical</option>
@@ -198,7 +200,7 @@ export default function ThreatIntelligence() {
                             e.stopPropagation();
                             handleBlockIP(threat.ip_address);
                           }}
-                          className="px-3 py-1 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-300 text-xs rounded transition-colors"
+                          className="px-3 py-2 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-300 text-xs rounded transition-colors min-h-[36px]"
                         >
                           Block
                         </button>

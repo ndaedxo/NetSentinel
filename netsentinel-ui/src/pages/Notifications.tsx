@@ -150,21 +150,21 @@ export default function NotificationsPage() {
     <PageLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center space-x-4">
             <div className="relative">
               <div className="absolute inset-0 bg-blue-500 blur-lg opacity-30"></div>
               <Bell className="relative w-8 h-8 text-blue-400" strokeWidth={1.5} />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">Notifications</h1>
-              <p className="text-slate-400">Stay updated with system alerts and activities</p>
+              <h1 className="text-2xl lg:text-3xl font-bold text-white">Notifications</h1>
+              <p className="text-slate-400 text-sm lg:text-base">Stay updated with system alerts and activities</p>
             </div>
           </div>
           {unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors"
+              className="flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors min-h-[44px] w-full sm:w-auto"
             >
               <CheckCheck className="w-4 h-4" />
               <span>Mark All Read</span>
@@ -230,7 +230,7 @@ export default function NotificationsPage() {
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value as NotificationType | 'all')}
-                className="px-4 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50"
+                className="px-4 py-3 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50 text-base min-h-[44px]"
               >
                 <option value="all">All Types</option>
                 <option value="threat">Threat</option>
@@ -243,7 +243,7 @@ export default function NotificationsPage() {
               <select
                 value={priorityFilter}
                 onChange={(e) => setPriorityFilter(e.target.value as NotificationPriority | 'all')}
-                className="px-4 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50"
+                className="px-4 py-3 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50 text-base min-h-[44px]"
               >
                 <option value="all">All Priorities</option>
                 <option value="critical">Critical</option>
@@ -254,7 +254,7 @@ export default function NotificationsPage() {
               <select
                 value={readFilter}
                 onChange={(e) => setReadFilter(e.target.value as 'all' | 'read' | 'unread')}
-                className="px-4 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50"
+                className="px-4 py-3 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50 text-base min-h-[44px]"
               >
                 <option value="all">All Status</option>
                 <option value="unread">Unread</option>
@@ -323,15 +323,16 @@ export default function NotificationsPage() {
                     {!notification.read && (
                       <button
                         onClick={() => markAsRead(notification.id)}
-                        className="p-2 text-slate-400 hover:text-blue-400 transition-colors"
+                        className="p-3 text-slate-400 hover:text-blue-400 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg"
                         title="Mark as read"
+                        aria-label="Mark notification as read"
                       >
                         <CheckCircle className="w-4 h-4" />
                       </button>
                     )}
                     <button
                       onClick={() => onDeleteClick(notification.id, notification.title)}
-                      className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+                      className="p-3 text-slate-400 hover:text-red-400 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg"
                       title="Delete notification"
                       aria-label={`Delete notification: ${notification.title}`}
                     >
@@ -357,7 +358,7 @@ export default function NotificationsPage() {
         {/* Load More (if needed) */}
         {filteredNotifications.length > 0 && (
           <div className="text-center">
-            <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors">
+            <button className="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors min-h-[44px]">
               Load More Notifications
             </button>
           </div>

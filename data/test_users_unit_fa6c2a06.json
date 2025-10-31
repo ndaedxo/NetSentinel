@@ -1,0 +1,63 @@
+{
+  "users": [
+    {
+      "user_id": "test_admin_perms",
+      "username": "adminperms",
+      "email": "admin@example.com",
+      "roles": [
+        "admin"
+      ],
+      "permissions": [
+        "admin",
+        "read:alerts",
+        "read:config",
+        "write:events",
+        "write:config",
+        "read:events",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818518.9258866,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_analyst_perms",
+      "username": "analystperms",
+      "email": "analyst@example.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "write:events",
+        "read:events",
+        "read:alerts",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818518.9298315,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_viewer_perms",
+      "username": "viewerperms",
+      "email": "viewer@example.com",
+      "roles": [
+        "viewer"
+      ],
+      "permissions": [
+        "read:events",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818518.9339721,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818518.934058
+}

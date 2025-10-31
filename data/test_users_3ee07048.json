@@ -1,0 +1,41 @@
+{
+  "users": [
+    {
+      "user_id": "integration_test_user_3ee07048",
+      "username": "integrationuser_3ee07048",
+      "email": "integration_3ee07048@test.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "read:events",
+        "write:events",
+        "write:alerts",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818607.071361,
+      "last_login": null,
+      "password_hash": "7e6e0c3079a08c5cc6036789b57e951f65f82383913ba1a49ae992544f1b4b6e",
+      "metadata": {}
+    },
+    {
+      "user_id": "new_test_user_3ee07048",
+      "username": "newuser_3ee07048",
+      "email": "new_3ee07048@test.com",
+      "roles": [
+        "viewer"
+      ],
+      "permissions": [
+        "read:events",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818607.074516,
+      "last_login": null,
+      "password_hash": "newhash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818607.074551
+}

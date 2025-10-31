@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "user_id": "jwt_test_user",
+      "username": "jwttest",
+      "email": "jwt@example.com",
+      "roles": [
+        "admin"
+      ],
+      "permissions": [
+        "write:alerts",
+        "write:events",
+        "read:events",
+        "admin",
+        "read:config",
+        "write:config",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818474.0390475,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818474.0391295
+}

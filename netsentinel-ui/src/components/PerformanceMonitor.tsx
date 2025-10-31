@@ -135,11 +135,11 @@ export default function PerformanceMonitor({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-slate-900 border border-slate-700 rounded-lg shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
-        <div className="flex h-full">
+        <div className="flex flex-col lg:flex-row h-full">
           {/* Sidebar */}
-          <div className="w-80 bg-slate-800/50 border-r border-slate-700 p-6 overflow-y-auto">
+          <div className="w-full lg:w-80 bg-slate-800/50 border-b lg:border-b-0 lg:border-r border-slate-700 p-4 lg:p-6 overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-slate-200">Performance Monitor</h2>
+              <h2 className="text-lg lg:text-xl font-semibold text-slate-200">Performance Monitor</h2>
               <div className="flex items-center space-x-2">
                 <div className={`w-2 h-2 rounded-full ${isRecording ? 'bg-green-400 animate-pulse' : 'bg-slate-500'}`} />
                 <span className="text-sm text-slate-400">
@@ -147,7 +147,8 @@ export default function PerformanceMonitor({
                 </span>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                  className="p-3 hover:bg-slate-700 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  aria-label="Close performance monitor"
                 >
                   ×
                 </button>
@@ -198,12 +199,12 @@ export default function PerformanceMonitor({
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 p-6 overflow-y-auto">
+          <div className="flex-1 p-4 lg:p-6 overflow-y-auto">
             <div className="space-y-6">
               {/* Performance Metrics Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                 {/* Page Performance */}
-                <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-3 lg:p-4">
                   <div className="flex items-center space-x-2 mb-3">
                     <Monitor className="w-5 h-5 text-blue-400" />
                     <h3 className="font-medium text-slate-200">Page Performance</h3>
@@ -233,7 +234,7 @@ export default function PerformanceMonitor({
                 </div>
 
                 {/* Memory Usage */}
-                <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-3 lg:p-4">
                   <div className="flex items-center space-x-2 mb-3">
                     <HardDrive className="w-5 h-5 text-purple-400" />
                     <h3 className="font-medium text-slate-200">Memory Usage</h3>
@@ -258,7 +259,7 @@ export default function PerformanceMonitor({
                 </div>
 
                 {/* Network Performance */}
-                <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-3 lg:p-4">
                   <div className="flex items-center space-x-2 mb-3">
                     <Wifi className="w-5 h-5 text-green-400" />
                     <h3 className="font-medium text-slate-200">Network</h3>
@@ -283,7 +284,7 @@ export default function PerformanceMonitor({
                 </div>
 
                 {/* React Performance */}
-                <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-3 lg:p-4">
                   <div className="flex items-center space-x-2 mb-3">
                     <Activity className="w-5 h-5 text-orange-400" />
                     <h3 className="font-medium text-slate-200">React Performance</h3>
@@ -303,7 +304,7 @@ export default function PerformanceMonitor({
                 </div>
 
                 {/* System Health */}
-                <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-3 lg:p-4">
                   <div className="flex items-center space-x-2 mb-3">
                     <TrendingUp className="w-5 h-5 text-cyan-400" />
                     <h3 className="font-medium text-slate-200">System Health</h3>

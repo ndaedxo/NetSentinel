@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "user_id": "expire_test_user",
+      "username": "expiretest",
+      "email": "expire@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1761818422.7373953,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818422.737402
+}

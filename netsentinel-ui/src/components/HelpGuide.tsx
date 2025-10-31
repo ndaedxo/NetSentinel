@@ -201,8 +201,9 @@ export function HelpButton() {
     <>
       <button
         onClick={() => setIsHelpOpen(true)}
-        className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+        className="p-3 hover:bg-slate-800 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
         title="Help & Documentation"
+        aria-label="Help & Documentation"
       >
         <HelpCircle className="w-5 h-5 text-slate-400" />
       </button>

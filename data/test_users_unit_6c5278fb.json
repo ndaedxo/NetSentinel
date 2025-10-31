@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "user_id": "activity_test_user",
+      "username": "activitytest",
+      "email": "activity@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1761818518.8247483,
+      "last_login": 1761818518.8268747,
+      "password_hash": "hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818518.8268812
+}

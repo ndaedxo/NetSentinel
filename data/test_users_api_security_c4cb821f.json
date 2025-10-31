@@ -1,0 +1,63 @@
+{
+  "users": [
+    {
+      "user_id": "viewer_user_c4cb821f",
+      "username": "viewer_c4cb821f",
+      "email": "viewer_c4cb821f@test.com",
+      "roles": [
+        "viewer"
+      ],
+      "permissions": [
+        "read:events",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818683.74058,
+      "last_login": 1761818683.7452707,
+      "password_hash": "357379bc625074220b4f8a644dea0844c669836e4431094cd3ed42a77c638dee",
+      "metadata": {}
+    },
+    {
+      "user_id": "analyst_user_c4cb821f",
+      "username": "analyst_c4cb821f",
+      "email": "analyst_c4cb821f@test.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "write:alerts",
+        "read:events",
+        "write:events",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818683.7423542,
+      "last_login": 1761818683.7466557,
+      "password_hash": "bc363e9ccfe1b6bfac325ddebda4f2e395497fa730bd040ed8ce13aa7673f6b4",
+      "metadata": {}
+    },
+    {
+      "user_id": "admin_user_c4cb821f",
+      "username": "admin_c4cb821f",
+      "email": "admin_c4cb821f@test.com",
+      "roles": [
+        "admin"
+      ],
+      "permissions": [
+        "read:events",
+        "read:alerts",
+        "write:alerts",
+        "read:config",
+        "write:events",
+        "admin",
+        "write:config"
+      ],
+      "is_active": true,
+      "created_at": 1761818683.7439466,
+      "last_login": 1761818683.7497613,
+      "password_hash": "713bfda78870bf9d1b261f565286f85e97ee614efe5f0faf7c34e7ca4f65baca",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818683.7497795
+}

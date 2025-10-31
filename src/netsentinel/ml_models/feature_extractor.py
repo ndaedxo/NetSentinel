@@ -77,7 +77,7 @@ class NetworkFeatures:
         features = np.array([
             self.event_type,
             self.destination_port,
-            self.protocol_mapping.get(self.protocol, 0),
+            protocol_map.get(self.protocol, 0),
             self.username_attempts,
             self.password_attempts,
             int(self.auth_success),

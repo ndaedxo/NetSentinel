@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "user_id": "test_user_auth",
+      "username": "testuser",
+      "email": "test@example.com",
+      "roles": [
+        "viewer"
+      ],
+      "permissions": [
+        "read:events",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818471.848822,
+      "last_login": 1761818471.8517418,
+      "password_hash": "7e6e0c3079a08c5cc6036789b57e951f65f82383913ba1a49ae992544f1b4b6e",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818471.851766
+}

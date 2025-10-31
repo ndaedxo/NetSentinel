@@ -2,6 +2,7 @@ LICENSE
 README.md
 pyproject.toml
 setup.py
+netsentinel-ui/node_modules/flatted/python/flatted.py
 netsentinel.egg-info/PKG-INFO
 netsentinel.egg-info/SOURCES.txt
 netsentinel.egg-info/dependency_links.txt

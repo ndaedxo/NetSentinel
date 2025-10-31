@@ -19,6 +19,11 @@ export default function Header({ onToggleSidebar, isSidebarCollapsed }: HeaderPr
   const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
   const location = useLocation();
 
+  const handleNotificationsClick = () => {
+    navigate('/notifications');
+    setShowMobileNav(false); // Close mobile nav if open
+  };
+
   const isActive = (path: string) => location.pathname === path;
 
   const navLinks = [
@@ -30,6 +35,10 @@ export default function Header({ onToggleSidebar, isSidebarCollapsed }: HeaderPr
     { path: "/ml-models", label: "ML Models" },
     { path: "/alerts", label: "Alerts" },
     { path: "/reports", label: "Reports" },
+    { path: "/profile", label: "Profile" },
+    { path: "/notifications", label: "Notifications" },
+    { path: "/correlation", label: "Correlation" },
+    { path: "/logs", label: "Logs" },
   ];
 
   return (
@@ -66,27 +75,36 @@ export default function Header({ onToggleSidebar, isSidebarCollapsed }: HeaderPr
             {/* Mobile menu button */}
             <button
               onClick={() => setShowMobileNav(!showMobileNav)}
-              className="md:hidden p-2 hover:bg-slate-800 rounded-lg transition-colors"
+              className="md:hidden p-3 hover:bg-slate-800 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
               data-testid="mobile-menu-toggle"
+              aria-label={showMobileNav ? "Close menu" : "Open menu"}
             >
               {showMobileNav ? (
-                <X className="w-5 h-5 text-slate-400" />
+                <X className="w-6 h-6 text-slate-400" />
               ) : (
-                <Menu className="w-5 h-5 text-slate-400" />
+                <Menu className="w-6 h-6 text-slate-400" />
               )}
             </button>
 
-            <button className="p-2 hover:bg-slate-800 rounded-lg transition-colors relative">
-              <Bell className="w-5 h-5 text-slate-400" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            <button
+              onClick={handleNotificationsClick}
+              className={`p-3 hover:bg-slate-800 rounded-lg transition-colors relative min-w-[44px] min-h-[44px] flex items-center justify-center ${
+                isActive('/notifications') ? 'bg-blue-500/20 border border-blue-500/30' : ''
+              }`}
+              title="Notifications"
+              aria-label="View notifications"
+            >
+              <Bell className={`w-5 h-5 ${isActive('/notifications') ? 'text-blue-300' : 'text-slate-400'}`} />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
 
             <HelpButton />
 
             <button
               onClick={() => setShowPerformanceMonitor(true)}
-              className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+              className="p-3 hover:bg-slate-800 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
               title="Performance Monitor"
+              aria-label="Performance Monitor"
             >
               <Activity className="w-5 h-5 text-slate-400" />
             </button>
@@ -94,7 +112,8 @@ export default function Header({ onToggleSidebar, isSidebarCollapsed }: HeaderPr
           <div className="relative" data-tour="user-menu">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="flex items-center space-x-3 p-2 hover:bg-slate-800 rounded-lg transition-colors"
+                className="flex items-center space-x-3 p-3 hover:bg-slate-800 rounded-lg transition-colors min-h-[44px]"
+                aria-label="User menu"
               >
                 <div className="text-right hidden md:block">
                   <p className="text-sm font-medium text-slate-300">{user?.name || user?.email}</p>
@@ -128,13 +147,13 @@ export default function Header({ onToggleSidebar, isSidebarCollapsed }: HeaderPr
         {/* Mobile Navigation */}
         {showMobileNav && (
           <nav className="md:hidden mt-4 pb-4 border-t border-slate-700/50 pt-4">
-            <div className="space-y-1">
+            <div className="space-y-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
                   onClick={() => setShowMobileNav(false)}
-                  className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  className={`block px-4 py-4 rounded-lg text-base font-medium transition-colors min-h-[48px] flex items-center ${
                     isActive(link.path)
                       ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
                       : "text-slate-400 hover:text-slate-300 hover:bg-slate-800"

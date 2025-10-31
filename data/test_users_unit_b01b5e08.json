@@ -1,0 +1,29 @@
+{
+  "users": [
+    {
+      "user_id": "test_all_1",
+      "username": "user1",
+      "email": "user1@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1761818457.5298004,
+      "last_login": null,
+      "password_hash": "hash1",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_all_2",
+      "username": "user2",
+      "email": "user2@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1761818457.5313323,
+      "last_login": null,
+      "password_hash": "hash2",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818457.5313413
+}

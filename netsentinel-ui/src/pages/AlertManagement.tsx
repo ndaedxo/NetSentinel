@@ -127,7 +127,8 @@ export default function AlertManagement() {
                 placeholder="Search alerts..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50"
+                className="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 text-base min-h-[44px]"
+                aria-label="Search alerts"
               />
             </div>
             <div className="flex items-center space-x-2">
@@ -135,7 +136,8 @@ export default function AlertManagement() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50"
+                className="px-4 py-3 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50 text-base min-h-[44px]"
+                aria-label="Filter by status"
               >
                 <option value="all">All Statuses</option>
                 <option value="new">New</option>
@@ -145,7 +147,8 @@ export default function AlertManagement() {
               <select
                 value={severityFilter}
                 onChange={(e) => setSeverityFilter(e.target.value)}
-                className="px-4 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50"
+                className="px-4 py-3 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:border-blue-500/50 text-base min-h-[44px]"
+                aria-label="Filter by severity"
               >
                 <option value="all">All Severities</option>
                 <option value="critical">Critical</option>
@@ -162,9 +165,9 @@ export default function AlertManagement() {
           {filteredAlerts.map((alert) => (
             <div
               key={alert.id}
-              className="card-dark p-6 hover:border-slate-600/50 transition-all"
+              className="card-dark p-4 md:p-6 hover:border-slate-600/50 transition-all"
             >
-              <div className="flex items-start justify-between">
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-0">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
                     {getStatusIcon(alert.status)}
@@ -176,23 +179,23 @@ export default function AlertManagement() {
                   {alert.description && (
                     <p className="text-sm text-slate-400 mb-3">{alert.description}</p>
                   )}
-                  <div className="flex items-center space-x-4 text-xs text-slate-500">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-slate-500">
                     <span>Created {formatDistanceToNow(new Date(alert.created_at), { addSuffix: true })}</span>
-                    <span>•</span>
+                    <span className="hidden sm:inline">•</span>
                     <span className="capitalize">Status: {alert.status}</span>
                     {alert.threat_id && (
                       <>
-                        <span>•</span>
+                        <span className="hidden sm:inline">•</span>
                         <span>Threat ID: {alert.threat_id}</span>
                       </>
                     )}
                   </div>
                 </div>
-                <div className="flex items-center space-x-2 ml-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2 ml-4 mt-4 sm:mt-0">
                   {alert.status === "new" && (
                     <button
                       onClick={() => handleAcknowledge(alert.id)}
-                      className="px-4 py-2 bg-yellow-600/20 hover:bg-yellow-600/30 border border-yellow-500/30 text-yellow-300 rounded-lg transition-colors text-sm"
+                      className="px-4 py-3 bg-yellow-600/20 hover:bg-yellow-600/30 border border-yellow-500/30 text-yellow-300 rounded-lg transition-colors text-sm font-medium min-h-[44px] w-full sm:w-auto"
                     >
                       Acknowledge
                     </button>
@@ -200,13 +203,13 @@ export default function AlertManagement() {
                   {alert.status !== "resolved" && (
                     <button
                       onClick={() => handleResolve(alert.id)}
-                      className="px-4 py-2 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 text-green-300 rounded-lg transition-colors text-sm"
+                      className="px-4 py-3 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 text-green-300 rounded-lg transition-colors text-sm font-medium min-h-[44px] w-full sm:w-auto"
                     >
                       Resolve
                     </button>
                   )}
                   {alert.status === "resolved" && (
-                    <span className="flex items-center space-x-2 px-4 py-2 bg-green-500/10 border border-green-500/30 text-green-300 rounded-lg text-sm">
+                    <span className="flex items-center justify-center space-x-2 px-4 py-3 bg-green-500/10 border border-green-500/30 text-green-300 rounded-lg text-sm font-medium min-h-[44px] w-full sm:w-auto">
                       <CheckCircle className="w-4 h-4" />
                       <span>Resolved</span>
                     </span>

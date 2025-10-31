@@ -76,23 +76,23 @@ export default function NetworkAnalysisPage() {
   return (
     <PageLayout>
       <div>
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 lg:gap-4 mb-6 lg:mb-8">
           <div className="flex items-center space-x-4">
             <div className="relative">
               <div className="absolute inset-0 bg-purple-500 blur-lg opacity-30"></div>
               <Network className="relative w-8 h-8 text-purple-400" strokeWidth={1.5} />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">Network Analysis</h1>
-              <p className="text-slate-400">Real-time network topology and device monitoring</p>
+              <h1 className="text-2xl lg:text-3xl font-bold text-white">Network Analysis</h1>
+              <p className="text-slate-400 text-sm lg:text-base">Real-time network topology and device monitoring</p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <div className="flex bg-slate-800 rounded-lg p-1">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-3">
+            <div className="flex bg-slate-800 rounded-lg p-1 w-full sm:w-auto">
               <button
                 onClick={() => setViewMode('topology')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`px-4 py-3 rounded-md text-sm font-medium transition-colors min-h-[44px] flex-1 sm:flex-initial ${
                   viewMode === 'topology'
                     ? 'bg-purple-500 text-white'
                     : 'text-slate-400 hover:text-slate-300'
@@ -102,7 +102,7 @@ export default function NetworkAnalysisPage() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`px-4 py-3 rounded-md text-sm font-medium transition-colors min-h-[44px] flex-1 sm:flex-initial ${
                   viewMode === 'list'
                     ? 'bg-purple-500 text-white'
                     : 'text-slate-400 hover:text-slate-300'

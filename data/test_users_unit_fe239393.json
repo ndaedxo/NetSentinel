@@ -1,0 +1,213 @@
+{
+  "users": [
+    {
+      "user_id": "test_admin_perms",
+      "username": "adminperms",
+      "email": "admin@example.com",
+      "roles": [
+        "admin"
+      ],
+      "permissions": [
+        "read:events",
+        "read:config",
+        "write:events",
+        "write:config",
+        "read:alerts",
+        "admin",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818367.1144986,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_analyst_perms",
+      "username": "analystperms",
+      "email": "analyst@example.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "read:events",
+        "write:events",
+        "write:alerts",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818367.1252503,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_viewer_perms",
+      "username": "viewerperms",
+      "email": "viewer@example.com",
+      "roles": [
+        "viewer"
+      ],
+      "permissions": [
+        "read:events",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818367.1283722,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_user_token",
+      "username": "tokenuser",
+      "email": "token@example.com",
+      "roles": [
+        "admin"
+      ],
+      "permissions": [
+        "read:events",
+        "read:config",
+        "write:events",
+        "write:config",
+        "read:alerts",
+        "admin",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818367.1448088,
+      "last_login": 1761818367.1489794,
+      "password_hash": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_logout",
+      "username": "logoutuser",
+      "email": "logout@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1761818367.1666567,
+      "last_login": 1761818367.1748536,
+      "password_hash": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_get_user",
+      "username": "getuser",
+      "email": "get@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1761818367.1941428,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_duplicate",
+      "username": "dupeuser",
+      "email": "dupe@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1761818367.2356575,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_get_by_username",
+      "username": "uniqueusername",
+      "email": "unique@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1761818367.2509568,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_all_1",
+      "username": "user1",
+      "email": "user1@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1761818367.2664278,
+      "last_login": null,
+      "password_hash": "hash1",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_all_2",
+      "username": "user2",
+      "email": "user2@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1761818367.269037,
+      "last_login": null,
+      "password_hash": "hash2",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_admin",
+      "username": "adminuser",
+      "email": "admin@example.com",
+      "roles": [
+        "admin"
+      ],
+      "permissions": [
+        "read:events",
+        "read:config",
+        "write:events",
+        "write:config",
+        "read:alerts",
+        "admin",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818367.2841146,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_user_auth",
+      "username": "testuser",
+      "email": "test@example.com",
+      "roles": [
+        "viewer"
+      ],
+      "permissions": [
+        "read:events",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818367.3086605,
+      "last_login": 1761818367.313514,
+      "password_hash": "7e6e0c3079a08c5cc6036789b57e951f65f82383913ba1a49ae992544f1b4b6e",
+      "metadata": {}
+    },
+    {
+      "user_id": "test_viewer",
+      "username": "vieweruser",
+      "email": "viewer@example.com",
+      "roles": [
+        "viewer"
+      ],
+      "permissions": [
+        "read:events",
+        "read:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1761818367.3315985,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818367.3316555
+}

@@ -88,7 +88,7 @@ export default function ExportButton({
     return (
       <button
         disabled
-        className={`flex items-center space-x-2 px-4 py-2 bg-slate-700 text-slate-500 rounded-lg cursor-not-allowed ${className}`}
+        className={`flex items-center space-x-2 px-4 py-3 bg-slate-700 text-slate-500 rounded-lg cursor-not-allowed min-h-[44px] ${className}`}
       >
         <Download className="w-4 h-4" />
         <span>Export</span>
@@ -101,7 +101,7 @@ export default function ExportButton({
     <div className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+        className="flex items-center space-x-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors min-h-[44px]"
       >
         <Download className="w-4 h-4" />
         <span>Export</span>

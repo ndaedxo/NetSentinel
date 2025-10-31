@@ -37,10 +37,10 @@ export default function CustomDashboard({ className = '' }: CustomDashboardProps
           </p>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <button
             onClick={handleOpenCustomizer}
-            className="flex items-center space-x-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-colors"
+            className="flex items-center justify-center space-x-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>Add Widget</span>
@@ -48,7 +48,7 @@ export default function CustomDashboard({ className = '' }: CustomDashboardProps
 
           <button
             onClick={handleEditToggle}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+            className={`flex items-center justify-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
               state.isEditing
                 ? 'bg-blue-600 hover:bg-blue-700 text-white'
                 : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
@@ -63,11 +63,11 @@ export default function CustomDashboard({ className = '' }: CustomDashboardProps
       {/* Dashboard Grid */}
       <div
         className={`
-          grid gap-6 auto-rows-fr
+          grid gap-4 md:gap-6 auto-rows-fr
+          grid-cols-1 sm:grid-cols-2 xl:grid-cols-3
           ${state.isEditing ? 'min-h-screen' : ''}
         `}
         style={{
-          gridTemplateColumns: 'repeat(3, 1fr)',
           gridTemplateRows: 'repeat(auto-fill, minmax(200px, 1fr))'
         }}
       >

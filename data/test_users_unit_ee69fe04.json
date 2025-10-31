@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "user_id": "test_user_token",
+      "username": "tokenuser",
+      "email": "token@example.com",
+      "roles": [
+        "admin"
+      ],
+      "permissions": [
+        "read:config",
+        "write:config",
+        "read:alerts",
+        "write:alerts",
+        "admin",
+        "read:events",
+        "write:events"
+      ],
+      "is_active": true,
+      "created_at": 1761818459.622874,
+      "last_login": 1761818459.6241932,
+      "password_hash": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1761818459.624205
+}
