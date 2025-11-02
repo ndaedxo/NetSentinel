@@ -31,6 +31,7 @@ class WebSocketManager(BaseComponent, IWebSocketBroadcaster):
         # Connection management
         self.active_connections: Set[Any] = set()  # WebSocket connections
         self.subscriptions: Dict[str, Set[Any]] = defaultdict(set)  # channel -> connections
+        self.websocket_to_connection_id: Dict[Any, str] = {}  # websocket -> connection_id
 
         # Health monitoring
         self.connection_health: Dict[str, Dict[str, Any]] = {}
@@ -79,6 +80,7 @@ class WebSocketManager(BaseComponent, IWebSocketBroadcaster):
         # Clear collections
         self.active_connections.clear()
         self.subscriptions.clear()
+        self.websocket_to_connection_id.clear()
         self.connection_health.clear()
 
         logger.info(f"WebSocket manager stopped. Closed {len(disconnected)} connections")
@@ -104,6 +106,9 @@ class WebSocketManager(BaseComponent, IWebSocketBroadcaster):
             with self._lock:
                 self.active_connections.add(websocket)
                 self.connections_accepted += 1
+
+                # Store websocket to connection_id mapping
+                self.websocket_to_connection_id[websocket] = connection_id
 
                 # Store connection health info
                 self.connection_health[connection_id] = {
@@ -136,6 +141,10 @@ class WebSocketManager(BaseComponent, IWebSocketBroadcaster):
                 self.active_connections.discard(websocket)
                 self.connections_closed += 1
 
+                # Remove websocket to connection_id mapping
+                if websocket in self.websocket_to_connection_id:
+                    del self.websocket_to_connection_id[websocket]
+
                 # Remove from all subscriptions
                 for channel, connections in self.subscriptions.items():
                     if websocket in connections:
@@ -143,6 +152,11 @@ class WebSocketManager(BaseComponent, IWebSocketBroadcaster):
                         if connection_id and connection_id in self.connection_health:
                             self.connection_health[connection_id]["subscriptions"].discard(channel)
                         logger.debug(f"Removed connection from channel: {channel}")
+
+                # Clean up empty channels
+                empty_channels = [ch for ch, connections in list(self.subscriptions.items()) if len(connections) == 0]
+                for channel in empty_channels:
+                    del self.subscriptions[channel]
 
                 # Clean up health tracking
                 if connection_id and connection_id in self.connection_health:
@@ -200,18 +214,22 @@ class WebSocketManager(BaseComponent, IWebSocketBroadcaster):
         """
         try:
             with self._lock:
-                # Remove from subscriptions
+                # Remove from subscriptions (if channel exists)
                 if channel in self.subscriptions:
                     self.subscriptions[channel].discard(websocket)
+
+                    # Clean up empty channels
+                    if len(self.subscriptions[channel]) == 0:
+                        del self.subscriptions[channel]
 
                     # Update health tracking
                     if connection_id and connection_id in self.connection_health:
                         self.connection_health[connection_id]["subscriptions"].discard(channel)
 
                     logger.debug(f"WebSocket unsubscribed from channel '{channel}': {connection_id}")
-                    return True
-
-            return False
+                
+                # Return True even if already unsubscribed (idempotent operation)
+                return True
 
         except Exception as e:
             logger.error(f"Error unsubscribing from channel {channel}: {e}")
@@ -260,8 +278,20 @@ class WebSocketManager(BaseComponent, IWebSocketBroadcaster):
                 with self._lock:
                     for ws in disconnected:
                         self.active_connections.discard(ws)
+                        # Clean up websocket to connection_id mapping and health tracking
+                        if ws in self.websocket_to_connection_id:
+                            conn_id = self.websocket_to_connection_id[ws]
+                            if conn_id in self.connection_health:
+                                del self.connection_health[conn_id]
+                            del self.websocket_to_connection_id[ws]
+                        # Remove from all subscriptions
                         for ch, connections in self.subscriptions.items():
                             connections.discard(ws)
+
+                        # Clean up empty channels
+                        empty_channels = [ch for ch, connections in list(self.subscriptions.items()) if len(connections) == 0]
+                        for channel in empty_channels:
+                            del self.subscriptions[channel]
                 logger.info(f"Cleaned up {len(disconnected)} disconnected WebSocket connections")
 
             logger.debug(f"Broadcasted to {recipients} clients on channel '{channel}'")
@@ -322,7 +352,8 @@ class WebSocketManager(BaseComponent, IWebSocketBroadcaster):
         # Clean up unhealthy connections
         if disconnected:
             for ws in disconnected:
-                await self.disconnect(ws)
+                connection_id = self.websocket_to_connection_id.get(ws)
+                await self.disconnect(ws, connection_id)
 
         return {
             "healthy": healthy,

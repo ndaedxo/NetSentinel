@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "user_id": "test_get_user",
+      "username": "getuser",
+      "email": "get@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1762103535.4868042,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1762103535.4868112
+}

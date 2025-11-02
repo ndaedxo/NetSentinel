@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "user_id": "audit_test_user",
+      "username": "audittest",
+      "email": "audit@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1762103535.441274,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1762103535.4412804
+}

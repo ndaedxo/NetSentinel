@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "user_id": "refresh_test_user",
+      "username": "refreshtest",
+      "email": "refresh@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1762103535.3808534,
+      "last_login": 1762103535.3862371,
+      "password_hash": "hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1762103535.3862455
+}

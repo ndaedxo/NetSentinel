@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "user_id": "other_test_user",
+      "username": "otheruser",
+      "email": "other@test.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1762103493.982495,
+      "last_login": null,
+      "password_hash": "other_hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1762103493.982502
+}

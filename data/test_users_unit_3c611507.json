@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "user_id": "password_test_user",
+      "username": "passwordtest",
+      "email": "password@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1762103535.4334474,
+      "last_login": 1762103535.4349189,
+      "password_hash": "test_password_hash_123",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1762103535.4349246
+}

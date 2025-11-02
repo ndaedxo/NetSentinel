@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "user_id": "test_duplicate",
+      "username": "dupeuser",
+      "email": "dupe@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1762103535.476603,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1762103535.4766116
+}

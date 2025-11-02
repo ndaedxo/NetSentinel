@@ -94,9 +94,9 @@ class TestWebSocketManager:
         assert mock_websocket not in manager.subscriptions["threats"]
         assert "threats" not in manager.connection_health[connection_id]["subscriptions"]
 
-        # Unsubscribe from non-existent channel should return False
+        # Unsubscribe from non-existent channel should succeed (idempotent)
         success = await manager.unsubscribe(mock_websocket, "nonexistent", connection_id)
-        assert not success
+        assert success
 
     @pytest.mark.asyncio
     async def test_broadcast(self, manager, mock_websocket):
@@ -268,17 +268,16 @@ class TestWebSocketManager:
         await manager.disconnect(ws1, conn1)
 
         assert len(manager.active_connections) == 1
-        # defaultdict keeps keys, but threats channel should be empty
-        assert len(manager.subscriptions["threats"]) == 0
+        # Empty channels are cleaned up
+        assert "threats" not in manager.subscriptions
         assert ws1 not in manager.active_connections
-        assert ws1 not in manager.subscriptions["threats"]
 
         # Cycle 2: Reconnect ws1, subscribe to different channels
         conn1_new = await manager.connect(ws1)
         await manager.subscribe(ws1, "metrics", conn1_new)
 
         assert len(manager.active_connections) == 2
-        assert len(manager.subscriptions) == 2
+        assert len(manager.subscriptions) == 2  # alerts, metrics (threats cleaned up)
         assert ws1 in manager.active_connections
         assert "metrics" in manager.subscriptions
 
@@ -826,9 +825,9 @@ class TestWebSocketManager:
         """Test unsubscription edge cases"""
         connection_id = await manager.connect(mock_websocket)
 
-        # Try to unsubscribe from non-existent channel
+        # Try to unsubscribe from non-existent channel (should succeed - idempotent)
         success = await manager.unsubscribe(mock_websocket, "nonexistent", connection_id)
-        assert not success
+        assert success
 
         # Subscribe then unsubscribe
         await manager.subscribe(mock_websocket, "threats", connection_id)
@@ -913,11 +912,10 @@ class TestWebSocketManager:
         # Disconnect should clean up all subscriptions
         await manager.disconnect(ws, connection_id)
 
-        # All subscriptions should be cleaned up (websockets removed from channels)
-        # defaultdict keeps empty channel keys
-        assert len(manager.subscriptions) >= 4  # threats, alerts, metrics, extra_channel
+        # All subscriptions should be cleaned up (empty channels are removed)
+        assert len(manager.subscriptions) == 0
         for channel in ["threats", "alerts", "metrics", "extra_channel"]:
-            assert ws not in manager.subscriptions[channel]
+            assert channel not in manager.subscriptions
 
     @pytest.mark.asyncio
     async def test_state_validation_connection_transitions(self, manager):
@@ -1065,16 +1063,8 @@ class TestWebSocketManager:
         assert len(manager.active_connections) == 0
         assert len(manager.connection_health) == 0
 
-        # Channels should still exist but be empty (defaultdict behavior)
-        # The fake_channel should still exist but be empty
-        assert len(manager.subscriptions) >= 3  # threats, alerts, fake_channel
-        assert len(manager.subscriptions["threats"]) == 0
-        assert len(manager.subscriptions["alerts"]) == 0
-        assert len(manager.subscriptions["fake_channel"]) == 0
-
-        # No orphaned websocket entries in any channels
-        for channel_subs in manager.subscriptions.values():
-            assert ws not in channel_subs
+        # Empty channels are cleaned up
+        assert len(manager.subscriptions) == 0
 
     @pytest.mark.asyncio
     async def test_state_validation_bulk_operations(self, manager):
