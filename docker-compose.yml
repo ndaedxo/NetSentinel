@@ -85,6 +85,12 @@ services:
     volumes:
       - ./src/data/opencanary/config/opencanary.conf:/root/.netsentinel.conf
       - netsentinel-logs:/var/log/netsentinel
+    healthcheck:
+      test: ["CMD", "sh", "-c", "ls /proc/1/exe > /dev/null 2>&1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     environment:
       - NETSENTINEL_KAFKA_SERVERS=kafka:29092
       - NETSENTINEL_REDIS_HOST=redis
@@ -106,10 +112,10 @@ services:
     ports:
       - "8082:8082"
     environment:
-      - NETSENTINEL_KAFKA_SERVERS=localhost:9092
+      - NETSENTINEL_KAFKA_SERVERS=kafka:29092
       - NETSENTINEL_KAFKA_TOPIC=netsentinel-events
       - NETSENTINEL_CONSUMER_GROUP=netsentinel-processor
-      - NETSENTINEL_REDIS_HOST=localhost
+      - NETSENTINEL_REDIS_HOST=redis
       - NETSENTINEL_REDIS_PORT=6379
       - NETSENTINEL_REDIS_PASSWORD=hybrid-detection-2024
       - NETSENTINEL_ML_ENABLED=true
@@ -152,17 +158,23 @@ services:
       - NETSENTINEL_PROCESSOR_MAX_WORKERS=3
       - NETSENTINEL_PROCESSOR_QUEUE_SIZE=1000
       - NETSENTINEL_THREAT_INTELLIGENCE_ENABLED=true
+      - NETSENTINEL_API_ENABLED=true
     # Privileged access for firewall management and packet capture
     privileged: true
     cap_add:
       - NET_ADMIN
       - NET_RAW
-    # Network host mode for packet capture on all interfaces
-    network_mode: host
+    # Remove host network mode for Windows compatibility
+    # network_mode: host
     volumes:
       # Mount host iptables for firewall management
       - /var/lib/iptables:/var/lib/iptables
       - /etc/iptables:/etc/iptables
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # Monitoring and management
   kafka-ui:
@@ -178,6 +190,11 @@ services:
       KAFKA_CLUSTERS_0_NAME: netsentinel-cluster
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   redis-commander:
     image: rediscommander/redis-commander:latest
@@ -245,6 +262,11 @@ services:
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.enable-lifecycle'
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   grafana:
     image: grafana/grafana:latest
@@ -262,6 +284,11 @@ services:
       - grafana-data:/var/lib/grafana
       - ./src/data/config/grafana/provisioning:/etc/grafana/provisioning
       - ./src/data/config/grafana/dashboards:/var/lib/grafana/dashboards
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   zookeeper-data:

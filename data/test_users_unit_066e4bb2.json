@@ -1,0 +1,37 @@
+{
+  "users": [
+    {
+      "user_id": "no_role_user",
+      "username": "norole",
+      "email": "norole@example.com",
+      "roles": [],
+      "permissions": [],
+      "is_active": true,
+      "created_at": 1762155127.8667471,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    },
+    {
+      "user_id": "multi_role_user",
+      "username": "multirole",
+      "email": "multirole@example.com",
+      "roles": [
+        "viewer",
+        "analyst"
+      ],
+      "permissions": [
+        "write:events",
+        "read:alerts",
+        "read:events",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1762155127.8737822,
+      "last_login": null,
+      "password_hash": "hash",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1762155127.873821
+}

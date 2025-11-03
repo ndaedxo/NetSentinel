@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "user_id": "integration_test_user_a18fc10e",
+      "username": "integrationuser_a18fc10e",
+      "email": "integration_a18fc10e@test.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "write:events",
+        "read:alerts",
+        "read:events",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1762155156.0520837,
+      "last_login": 1762155156.053893,
+      "password_hash": "7e6e0c3079a08c5cc6036789b57e951f65f82383913ba1a49ae992544f1b4b6e",
+      "metadata": {}
+    }
+  ],
+  "last_updated": 1762155156.0539
+}

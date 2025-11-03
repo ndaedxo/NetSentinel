@@ -33,10 +33,10 @@ RUN find /app/bin -name "*.sh" -o -name "*" -type f -executable | xargs -I {} do
 RUN sed -i 's|${DIR}/twistd|/usr/local/bin/twistd|g' /app/bin/netsentinel
 
 # Install additional packages for hybrid functionality
-RUN pip install --no-cache-dir kafka-python redis prometheus-client flask scapy pcapy-ng
+RUN pip install --no-cache-dir kafka-python redis prometheus-client flask scapy pcapy-ng psutil twisted requests passlib cryptography pyOpenSSL bcrypt ntlmlib
 
 # Set environment variables
-ENV PYTHONPATH="/app"
+ENV PYTHONPATH="/app:/app/src:/usr/local/lib/python3.11/site-packages"
 
 # Set the default application
 ENTRYPOINT ["bash", "/app/bin/netsentinel"]

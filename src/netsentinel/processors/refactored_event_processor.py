@@ -213,6 +213,10 @@ class RefactoredEventProcessor(BaseComponent):
                 await self.api_server.start()
                 self.logger.info("API server started")
 
+            # Start event bus processing
+            event_bus = get_event_bus()
+            event_bus.start()
+
             # Initialize resource manager
             await self.resource_manager.start()
 

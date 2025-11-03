@@ -15,7 +15,7 @@ def resource_filename(package: str, resource: str) -> str:
     return str(importlib.resources.files(package) / resource)
 
 
-SAMPLE_SETTINGS = resource_filename(__name__, "data/settings.json")
+SAMPLE_SETTINGS = resource_filename("netsentinel", "data/settings.json")
 SETTINGS = "netsentinel.conf"
 
 

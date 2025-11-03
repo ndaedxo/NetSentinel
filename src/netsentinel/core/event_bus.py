@@ -172,6 +172,9 @@ class EventBus:
     async def publish(self, event: Event) -> None:
         """Publish event to bus"""
         try:
+            # Debug: Check event type
+            logger.debug(f"Publishing event type: {type(event)}, is_Event: {hasattr(event, 'priority')}")
+
             # Check queue size
             if self.event_queue.qsize() >= self.max_queue_size:
                 logger.warning("Event queue is full, dropping event")
@@ -184,12 +187,19 @@ class EventBus:
             with self._lock:
                 self._statistics["events_published"] += 1
 
+            # Debug: Check event before logging
+            logger.debug(f"About to log event: type={type(event)}, hasattr priority={hasattr(event, 'priority')}")
+            if hasattr(event, 'priority') and hasattr(event.priority, 'value'):
+                priority_value = event.priority.value
+            else:
+                priority_value = "unknown"
+
             structured_logger.info(
                 "Event published",
-                {
+                extra_data={
                     "event_type": event.event_type,
                     "event_id": event.event_id,
-                    "priority": event.priority.value,
+                    "priority": priority_value,
                     "source": event.source,
                 },
             )

@@ -45,79 +45,77 @@ logger = create_logger("api_server", level="INFO")
 class HealthResponse(BaseModel):
     """Health check response model"""
 
-    status: str = Field(..., description="Service health status")
-    timestamp: float = Field(..., description="Current timestamp")
-    uptime: float = Field(..., description="Service uptime in seconds")
-    version: str = Field(default="1.0.0", description="API version")
+    status: str
+    timestamp: float
+    uptime: float
+    version: str
 
 
 class ThreatInfo(BaseModel):
     """Threat information model"""
 
-    source_ip: str = Field(..., description="Source IP address")
-    threat_score: float = Field(..., description="Calculated threat score")
-    threat_level: str = Field(..., description="Threat level classification")
-    event_count: int = Field(..., description="Number of related events")
-    last_seen: float = Field(..., description="Last event timestamp")
-    indicators: List[str] = Field(default_factory=list, description="Threat indicators")
+    source_ip: str
+    threat_score: float
+    threat_level: str
+    event_count: int
+    last_seen: float
+    indicators: List[str]
 
 
 class ThreatResponse(BaseModel):
     """Threat intelligence response model"""
 
-    total_threats: int = Field(..., description="Total number of tracked threats")
-    threats: Dict[str, ThreatInfo] = Field(
-        default_factory=dict, description="Threat details by IP"
-    )
+    total_threats: int
+    threats: Dict[str, Any]
 
 
 class LoginRequest(BaseModel):
     """Login request model"""
 
-    username: str = Field(..., description="Username for authentication")
-    password: str = Field(..., description="Password for authentication")
+    username: str
+    password: str
 
 
 class LoginResponse(BaseModel):
     """Login response model"""
 
-    access_token: str = Field(..., description="JWT access token")
-    token_type: str = Field(default="bearer", description="Token type")
-    expires_in: int = Field(default=3600, description="Token expiration time in seconds")
-    user: Dict[str, Any] = Field(..., description="User information")
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int = 3600
+    user: Dict[str, Any]
 
 
 class UserInfo(BaseModel):
     """User information model"""
 
-    user_id: str = Field(..., description="Unique user identifier")
-    username: str = Field(..., description="Username")
-    email: str = Field(..., description="User email")
-    roles: List[str] = Field(default_factory=list, description="User roles")
-    permissions: List[str] = Field(default_factory=list, description="User permissions")
-    is_active: bool = Field(default=True, description="User active status")
-    last_login: Optional[float] = Field(None, description="Last login timestamp")
+    user_id: str
+    username: str
+    email: str
+    roles: List[str]
+    permissions: List[str]
+    is_active: bool
+    last_login: Optional[float]
 
 
 class UserCreateRequest(BaseModel):
     """User creation request model"""
 
-    username: str = Field(..., description="Username")
-    email: str = Field(..., description="Email address")
-    password: str = Field(..., description="Password")
+    username: str
+    email: str
+    password: str
     roles: List[str] = Field(default_factory=list, description="User roles")
 
 
 class TokenRefreshRequest(BaseModel):
     """Token refresh request model"""
 
-    token: str = Field(..., description="Current valid token to refresh")
+    token: str
 
 
 class LogoutResponse(BaseModel):
     """Logout response model"""
 
-    message: str = Field(..., description="Logout confirmation message")
+    message: str
 
 
 class APIServer(BaseComponent):
@@ -235,7 +233,7 @@ class APIServer(BaseComponent):
                 logger.error(f"Login failed: {e}")
                 raise HTTPException(status_code=500, detail="Login failed")
 
-        @self.app.post("/auth/logout", response_model=LogoutResponse)
+        # @self.app.post("/auth/logout", response_model=LogoutResponse)
         async def logout(request: Request, current_user: User = Depends(get_current_user)):
             """User logout endpoint"""
             try:
@@ -271,7 +269,7 @@ class APIServer(BaseComponent):
                 logger.error(f"Logout failed: {e}")
                 raise HTTPException(status_code=500, detail="Logout failed")
 
-        @self.app.post("/auth/refresh", response_model=LoginResponse)
+        # @self.app.post("/auth/refresh", response_model=LoginResponse)
         async def refresh_token(refresh_request: TokenRefreshRequest, request: Request):
             """Token refresh endpoint"""
             try:
@@ -315,7 +313,7 @@ class APIServer(BaseComponent):
                 logger.error(f"Token refresh failed: {e}")
                 raise HTTPException(status_code=500, detail="Token refresh failed")
 
-        @self.app.get("/auth/me", response_model=UserInfo)
+        # @self.app.get("/auth/me", response_model=UserInfo)
         async def get_current_user_info(current_user: User = Depends(get_current_user)):
             """Get current user information"""
             return UserInfo(
@@ -360,143 +358,143 @@ class APIServer(BaseComponent):
                     status_code=503, detail=f"Health check failed: {str(e)}"
                 )
 
-        @self.app.get("/threats", response_model=ThreatResponse)
-        @require_auth
-        async def get_threats(
-            current_user: User = Depends(get_current_user),
-            min_score: float = Query(
-                0.0, description="Minimum threat score to include"
-            ),
-            limit: int = Query(100, description="Maximum number of threats to return"),
-        ):
-            """Get threat intelligence data"""
-            try:
-                if not self.processor:
-                    raise HTTPException(
-                        status_code=503, detail="Event processor not available"
-                    )
+        # @self.app.get("/threats", response_model=ThreatResponse)
+        # @require_auth
+        # async def get_threats(
+        #     current_user: User = Depends(get_current_user),
+        #     min_score: float = Query(
+        #         0.0, description="Minimum threat score to include"
+        #     ),
+        #     limit: int = Query(100, description="Maximum number of threats to return"),
+        # ):
+        #     """Get threat intelligence data"""
+        #     try:
+        #         if not self.processor:
+        #             raise HTTPException(
+        #                 status_code=503, detail="Event processor not available"
+        #             )
 
-                # Get threat data from processor
-                threat_data = await self._get_threat_intelligence(min_score, limit)
+        #         # Get threat data from processor
+        #         threat_data = await self._get_threat_intelligence(min_score, limit)
 
-                return ThreatResponse(
-                    total_threats=len(threat_data), threats=threat_data
-                )
+        #         return ThreatResponse(
+        #             total_threats=len(threat_data), threats=threat_data
+        #         )
 
-            except Exception as e:
-                logger.error(f"Failed to get threat data: {e}")
-                context = create_error_context("get_threats", "api_server")
-                handle_errors(e, context)
-                raise HTTPException(
-                    status_code=500, detail=f"Failed to get threat data: {str(e)}"
-                )
+        #     except Exception as e:
+        #         logger.error(f"Failed to get threat data: {e}")
+        #         context = create_error_context("get_threats", "api_server")
+        #         handle_errors(e, context)
+        #         raise HTTPException(
+        #             status_code=500, detail=f"Failed to get threat data: {str(e)}"
+        #         )
 
-        @self.app.get("/threats/{ip_address}", response_model=ThreatInfo)
-        @require_auth
-        async def get_threat_by_ip(
-            ip_address: str,
-            current_user: User = Depends(get_current_user)
-        ):
-            """Get threat information for specific IP address"""
-            try:
-                if not self.processor:
-                    raise HTTPException(
-                        status_code=503, detail="Event processor not available"
-                    )
+        # @self.app.get("/threats/{ip_address}", response_model=ThreatInfo)
+        # @require_auth
+        # async def get_threat_by_ip(
+        #     ip_address: str,
+        #     current_user: User = Depends(get_current_user)
+        # ):
+        #     """Get threat information for specific IP address"""
+        #     try:
+        #         if not self.processor:
+        #             raise HTTPException(
+        #                 status_code=503, detail="Event processor not available"
+        #             )
 
-                threat_info = await self._get_threat_by_ip(ip_address)
-                if not threat_info:
-                    raise HTTPException(
-                        status_code=404,
-                        detail=f"No threat data found for IP: {ip_address}",
-                    )
+        #         threat_info = await self._get_threat_by_ip(ip_address)
+        #         if not threat_info:
+        #             raise HTTPException(
+        #                 status_code=404,
+        #                 detail=f"No threat data found for IP: {ip_address}",
+        #             )
 
-                return threat_info
+        #         return threat_info
 
-            except HTTPException:
-                raise
-            except Exception as e:
-                logger.error(f"Failed to get threat data for IP {ip_address}: {e}")
-                context = create_error_context(
-                    "get_threat_by_ip", "api_server", additional_data={"ip": ip_address}
-                )
-                handle_errors(e, context)
-                raise HTTPException(
-                    status_code=500, detail=f"Failed to get threat data: {str(e)}"
-                )
+        #     except HTTPException:
+        #         raise
+        #     except Exception as e:
+        #         logger.error(f"Failed to get threat data for IP {ip_address}: {e}")
+        #         context = create_error_context(
+        #             "get_threat_by_ip", "api_server", additional_data={"ip": ip_address}
+        #         )
+        #         handle_errors(e, context)
+        #         raise HTTPException(
+        #             status_code=500, detail=f"Failed to get threat data: {str(e)}"
+        #         )
 
-        @self.app.get("/metrics")
-        @require_analyst
-        async def get_metrics(current_user: User = Depends(get_current_user)):
-            """Get Prometheus-compatible metrics"""
-            try:
-                # Get metrics from collector
-                metrics_data = self.metrics_collector.get_prometheus_metrics()
+        # @self.app.get("/metrics")
+        # @require_analyst
+        # async def get_metrics(current_user: User = Depends(get_current_user)):
+        #     """Get Prometheus-compatible metrics"""
+        #     try:
+        #         # Get metrics from collector
+        #         metrics_data = self.metrics_collector.get_prometheus_metrics()
 
-                # Add custom API metrics
-                custom_metrics = f"""# NetSentinel API Server Metrics
-netsentinel_api_uptime_seconds{{service="api_server"}} {time.time() - self.start_time}
-netsentinel_api_requests_total{{service="api_server", endpoint="health"}} 1
-netsentinel_api_requests_total{{service="api_server", endpoint="threats"}} 1
-"""
+        #         # Add custom API metrics
+        #         custom_metrics = f"""# NetSentinel API Server Metrics
+        # netsentinel_api_uptime_seconds{{service="api_server"}} {time.time() - self.start_time}
+        # netsentinel_api_requests_total{{service="api_server", endpoint="health"}} 1
+        # netsentinel_api_requests_total{{service="api_server", endpoint="threats"}} 1
+        # """
 
-                return JSONResponse(
-                    content={"metrics": metrics_data + custom_metrics},
-                    media_type="text/plain",
-                )
+        #         return JSONResponse(
+        #             content={"metrics": metrics_data + custom_metrics},
+        #             media_type="text/plain",
+        #         )
 
-            except Exception as e:
-                logger.error(f"Failed to get metrics: {e}")
-                context = create_error_context("get_metrics", "api_server")
-                handle_errors(e, context)
-                raise HTTPException(
-                    status_code=500, detail=f"Failed to get metrics: {str(e)}"
-                )
+        #     except Exception as e:
+        #         logger.error(f"Failed to get metrics: {e}")
+        #         context = create_error_context("get_metrics", "api_server")
+        #         handle_errors(e, context)
+        #         raise HTTPException(
+        #             status_code=500, detail=f"Failed to get metrics: {str(e)}"
+        #         )
 
-        @self.app.get("/status")
-        @require_analyst
-        async def get_status(current_user: User = Depends(get_current_user)):
-            """Get detailed system status"""
-            try:
-                status = {
-                    "api_server": {
-                        "status": "healthy" if self.is_healthy() else "unhealthy",
-                        "uptime": time.time() - self.start_time,
-                        "host": self.host,
-                        "port": self.port,
-                    },
-                    "event_processor": {"status": "unknown"},
-                    "components": {},
-                }
+        # @self.app.get("/status")
+        # @require_analyst
+        # async def get_status(current_user: User = Depends(get_current_user)):
+        #     """Get detailed system status"""
+        #     try:
+        #         status = {
+        #             "api_server": {
+        #                 "status": "healthy" if self.is_healthy() else "unhealthy",
+        #                 "uptime": time.time() - self.start_time,
+        #                 "host": self.host,
+        #                 "port": self.port,
+        #             },
+        #             "event_processor": {"status": "unknown"},
+        #             "components": {},
+        #         }
 
-                # Add processor status if available
-                if self.processor:
-                    if hasattr(self.processor, "is_healthy"):
-                        status["event_processor"]["status"] = (
-                            "healthy" if self.processor.is_healthy() else "unhealthy"
-                        )
+        #         # Add processor status if available
+        #         if self.processor:
+        #             if hasattr(self.processor, "is_healthy"):
+        #                 status["event_processor"]["status"] = (
+        #                     "healthy" if self.processor.is_healthy() else "unhealthy"
+        #                 )
 
-                    if hasattr(self.processor, "get_metrics"):
-                        status["event_processor"][
-                            "metrics"
-                        ] = self.processor.get_metrics()
+        #             if hasattr(self.processor, "get_metrics"):
+        #                 status["event_processor"][
+        #                     "metrics"
+        #                 ] = self.processor.get_metrics()
 
-                # Add component information
-                if hasattr(self, "_dependencies"):
-                    for dep in self._dependencies:
-                        status["components"][dep.name] = {
-                            "status": "healthy" if dep.is_healthy() else "unhealthy"
-                        }
+        #         # Add component information
+        #         if hasattr(self, "_dependencies"):
+        #             for dep in self._dependencies:
+        #                 status["components"][dep.name] = {
+        #                     "status": "healthy" if dep.is_healthy() else "unhealthy"
+        #                 }
 
-                return status
+        #         return status
 
-            except Exception as e:
-                logger.error(f"Failed to get status: {e}")
-                context = create_error_context("get_status", "api_server")
-                handle_errors(e, context)
-                raise HTTPException(
-                    status_code=500, detail=f"Failed to get status: {str(e)}"
-                )
+        #     except Exception as e:
+        #         logger.error(f"Failed to get status: {e}")
+        #         context = create_error_context("get_status", "api_server")
+        #         handle_errors(e, context)
+        #         raise HTTPException(
+        #             status_code=500, detail=f"Failed to get status: {str(e)}"
+        #         )
 
     async def _get_threat_intelligence(
         self, min_score: float = 0.0, limit: int = 100

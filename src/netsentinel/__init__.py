@@ -18,6 +18,10 @@ Version: 1.0.0
 __version__ = "1.0.0"
 __author__ = "NetSentinel Development Team"
 
+# OpenCanary compatibility constants
+import os
+STDPATH = os.environ.get('PATH', '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin')
+
 # Core imports for easy access
 from .core.base import BaseComponent, managed_component
 from .core.models import (
@@ -39,6 +43,7 @@ __all__ = [
     "create_alert",
     "handle_errors",
     "create_error_context",
+    "STDPATH",
     "__version__",
     "__author__",
 ]

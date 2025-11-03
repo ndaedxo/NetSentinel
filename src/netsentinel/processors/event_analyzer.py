@@ -6,6 +6,7 @@ Performs threat analysis and scoring on events
 
 import asyncio
 import time
+import threading
 import logging
 from typing import Dict, Any, Optional, List, Tuple
 from dataclasses import dataclass

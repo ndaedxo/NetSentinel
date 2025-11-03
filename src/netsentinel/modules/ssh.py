@@ -105,13 +105,17 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
             # extract the public key blob from the SSH packet
             key_blob = getNS(getNS(packet[1:])[1])[0]
         except (IndexError, ValueError) as e:
-            logger.warning(f"Failed to extract public key blob: {e}")
+            # Use global logger since local logger is not yet defined
+            import logging
+            logging.getLogger(__name__).warning(f"Failed to extract public key blob: {e}")
             key_blob = "No public key found."
         try:
             # convert blob into openssh key format
             key = keys.Key.fromString(key_blob).toString("openssh")
         except (ValueError, TypeError) as e:
-            logger.warning(f"Failed to convert key blob to OpenSSH format: {e}")
+            # Use global logger since local logger is not yet defined
+            import logging
+            logging.getLogger(__name__).warning(f"Failed to convert key blob to OpenSSH format: {e}")
             key = "Invalid SSH Public Key Submitted: {key_blob}".format(
                 key_blob=key_blob.hex()
             )

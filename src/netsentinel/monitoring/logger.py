@@ -548,9 +548,19 @@ class NetSentinelLogger:
             )
             self.logger.addHandler(file_handler)
 
-    def info(self, message: str, **kwargs):
+    def info(self, message: str, extra_data=None, **kwargs):
         """Log info message"""
-        self.logger.info(message, extra=kwargs)
+        if extra_data is not None:
+            if isinstance(extra_data, dict):
+                # Merge with kwargs
+                all_extra = extra_data.copy()
+                all_extra.update(kwargs)
+                self.logger.info(message, extra=all_extra)
+            else:
+                # Handle non-dict data
+                self.logger.info(message, extra={"data": extra_data, **kwargs})
+        else:
+            self.logger.info(message, extra=kwargs)
 
     def warning(self, message: str, **kwargs):
         """Log warning message"""

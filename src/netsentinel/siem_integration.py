@@ -5,6 +5,7 @@ Connects NetSentinel to enterprise SIEM systems (Splunk, ELK, Syslog)
 """
 
 import json
+import os
 import time
 from typing import Dict, List, Optional, Any, Callable
 from dataclasses import dataclass, asdict

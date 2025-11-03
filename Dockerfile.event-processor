@@ -43,14 +43,16 @@ RUN pip install --no-cache-dir \
     requests \
     aiohttp \
     fastapi \
-    uvicorn
+    uvicorn \
+    psutil \
+    PyJWT
 
 # Set working directory
 WORKDIR /app
 
 # Copy NetSentinel, Anomalib modules, and scripts
-COPY netsentinel/ ./netsentinel/
-COPY anomalib/ ./anomalib/
+COPY src/netsentinel/ ./netsentinel/
+COPY src/anomalib/ ./anomalib/
 COPY scripts/ ./scripts/
 
 # Set Python path

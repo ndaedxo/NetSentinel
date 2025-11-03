@@ -8,9 +8,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -27,9 +27,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -46,9 +46,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -65,9 +65,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -84,9 +84,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -103,9 +103,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -122,9 +122,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -141,9 +141,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -160,9 +160,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -179,9 +179,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -198,9 +198,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -217,9 +217,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -236,9 +236,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -255,9 +255,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -274,9 +274,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -293,9 +293,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -312,9 +312,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -331,9 +331,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -350,9 +350,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -369,9 +369,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -388,9 +388,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -407,9 +407,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -426,9 +426,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -445,9 +445,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -464,9 +464,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -483,9 +483,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -502,9 +502,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -521,9 +521,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -540,9 +540,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -559,9 +559,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -578,9 +578,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -597,9 +597,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -616,9 +616,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -635,9 +635,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -654,9 +654,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -673,9 +673,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -692,9 +692,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -711,9 +711,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -730,9 +730,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -749,9 +749,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -768,9 +768,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -787,9 +787,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -806,9 +806,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -825,9 +825,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -844,9 +844,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -863,9 +863,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -882,9 +882,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -901,9 +901,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -920,9 +920,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -939,9 +939,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -958,9 +958,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -977,9 +977,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -996,9 +996,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1015,9 +1015,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1034,9 +1034,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1053,9 +1053,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1072,9 +1072,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1091,9 +1091,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1110,9 +1110,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1129,9 +1129,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1148,9 +1148,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1167,9 +1167,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1186,9 +1186,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1205,9 +1205,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1224,9 +1224,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1243,9 +1243,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1262,9 +1262,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1281,9 +1281,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1300,9 +1300,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1319,9 +1319,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1338,9 +1338,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1357,9 +1357,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1376,9 +1376,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1395,9 +1395,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1414,9 +1414,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1433,9 +1433,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1452,9 +1452,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1471,9 +1471,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1490,9 +1490,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1509,9 +1509,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1528,9 +1528,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1547,9 +1547,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1566,9 +1566,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1585,9 +1585,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1604,9 +1604,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1623,9 +1623,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1642,9 +1642,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1661,9 +1661,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1680,9 +1680,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1699,9 +1699,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1718,9 +1718,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1737,9 +1737,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1756,9 +1756,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1775,9 +1775,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1794,9 +1794,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1813,9 +1813,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1832,9 +1832,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1851,9 +1851,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1870,9 +1870,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1889,9 +1889,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -1925,9 +1925,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2029,9 +2029,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2048,9 +2048,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2067,9 +2067,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2086,9 +2086,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2105,9 +2105,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2124,9 +2124,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2160,9 +2160,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2179,13 +2179,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1761821866.5286348,
@@ -2201,9 +2201,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2220,13 +2220,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1761822071.3568838,
@@ -2242,9 +2242,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2261,13 +2261,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1761822096.6319797,
@@ -2283,9 +2283,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2302,13 +2302,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1761822097.357524,
@@ -2324,9 +2324,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2343,13 +2343,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1761822924.0361433,
@@ -2365,9 +2365,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2384,13 +2384,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1761822924.189996,
@@ -2406,9 +2406,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2425,13 +2425,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1761822924.2508514,
@@ -2447,9 +2447,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2466,13 +2466,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1761822952.065881,
@@ -2488,9 +2488,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2507,13 +2507,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1761822952.1144013,
@@ -2529,9 +2529,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2548,13 +2548,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1761822982.9882002,
@@ -2570,9 +2570,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2589,13 +2589,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1761822983.0394664,
@@ -2611,9 +2611,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2630,13 +2630,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762001945.370827,
@@ -2652,9 +2652,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2705,9 +2705,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2724,10 +2724,10 @@
         "analyst"
       ],
       "permissions": [
-        "read:alerts",
-        "write:alerts",
         "write:events",
-        "read:events"
+        "read:alerts",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762002924.4564416,
@@ -2743,9 +2743,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2762,10 +2762,10 @@
         "analyst"
       ],
       "permissions": [
-        "read:alerts",
-        "write:alerts",
         "write:events",
-        "read:events"
+        "read:alerts",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762002924.5384965,
@@ -2781,9 +2781,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2851,9 +2851,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2887,10 +2887,10 @@
         "analyst"
       ],
       "permissions": [
-        "read:alerts",
-        "write:alerts",
         "write:events",
-        "read:events"
+        "read:alerts",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762002924.822368,
@@ -2906,13 +2906,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762002946.0690498,
@@ -2928,10 +2928,10 @@
         "analyst"
       ],
       "permissions": [
-        "read:alerts",
-        "write:alerts",
         "write:events",
-        "read:events"
+        "read:alerts",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762002946.0769937,
@@ -2947,13 +2947,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762002946.119647,
@@ -2969,9 +2969,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -2988,13 +2988,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762003072.4443882,
@@ -3010,10 +3010,10 @@
         "analyst"
       ],
       "permissions": [
-        "read:alerts",
-        "write:alerts",
         "write:events",
-        "read:events"
+        "read:alerts",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762003072.45562,
@@ -3029,13 +3029,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762003091.5750046,
@@ -3051,9 +3051,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -3070,13 +3070,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762003091.6430056,
@@ -3092,9 +3092,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5151,9 +5151,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5170,9 +5170,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5189,9 +5189,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5208,9 +5208,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5227,9 +5227,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5246,9 +5246,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5265,9 +5265,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5284,9 +5284,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5303,9 +5303,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5322,9 +5322,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5341,9 +5341,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5360,9 +5360,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5379,9 +5379,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5398,9 +5398,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5417,9 +5417,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5436,9 +5436,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5455,9 +5455,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5474,9 +5474,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5493,9 +5493,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5512,9 +5512,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5531,9 +5531,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5550,9 +5550,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5569,9 +5569,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5588,9 +5588,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5607,9 +5607,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5626,9 +5626,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5645,9 +5645,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5664,9 +5664,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5683,9 +5683,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5702,9 +5702,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5721,9 +5721,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5740,9 +5740,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5759,9 +5759,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5778,9 +5778,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5797,9 +5797,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5816,9 +5816,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5835,9 +5835,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5854,9 +5854,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5873,9 +5873,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5892,9 +5892,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5911,9 +5911,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5930,9 +5930,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5949,9 +5949,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5968,9 +5968,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -5987,9 +5987,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6006,9 +6006,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6025,9 +6025,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6044,9 +6044,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6063,9 +6063,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6082,9 +6082,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6101,9 +6101,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6120,9 +6120,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6139,9 +6139,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6158,9 +6158,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6177,9 +6177,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6196,9 +6196,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6215,9 +6215,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6234,9 +6234,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6253,9 +6253,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6272,9 +6272,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6291,9 +6291,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6310,9 +6310,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6329,9 +6329,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6348,9 +6348,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6367,9 +6367,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6386,9 +6386,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6405,9 +6405,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6424,9 +6424,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6443,9 +6443,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6462,9 +6462,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6481,9 +6481,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6500,9 +6500,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6519,9 +6519,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6538,9 +6538,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6557,9 +6557,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6576,9 +6576,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6595,9 +6595,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6614,9 +6614,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6633,9 +6633,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6652,9 +6652,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6671,9 +6671,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6690,9 +6690,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6709,9 +6709,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6728,9 +6728,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6747,9 +6747,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6766,9 +6766,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6785,9 +6785,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6804,9 +6804,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6823,9 +6823,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6842,9 +6842,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6861,9 +6861,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6880,9 +6880,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6899,9 +6899,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6918,9 +6918,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6937,9 +6937,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6956,9 +6956,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6975,9 +6975,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -6994,9 +6994,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -7013,9 +7013,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -7032,9 +7032,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -24051,10 +24051,10 @@
         "analyst"
       ],
       "permissions": [
-        "read:alerts",
-        "write:alerts",
         "write:events",
-        "read:events"
+        "read:alerts",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762103669.9741216,
@@ -24070,9 +24070,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -24089,10 +24089,10 @@
         "analyst"
       ],
       "permissions": [
-        "read:alerts",
-        "write:alerts",
         "write:events",
-        "read:events"
+        "read:alerts",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762103670.7744207,
@@ -24108,13 +24108,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762103685.5708897,
@@ -24130,9 +24130,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -24149,13 +24149,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762103685.936435,
@@ -24171,10 +24171,10 @@
         "analyst"
       ],
       "permissions": [
-        "read:alerts",
-        "write:alerts",
         "write:events",
-        "read:events"
+        "read:alerts",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762103686.0803018,
@@ -24190,13 +24190,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762103686.322556,
@@ -24212,9 +24212,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -24231,13 +24231,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762103686.7128737,
@@ -24253,10 +24253,10 @@
         "analyst"
       ],
       "permissions": [
-        "read:alerts",
-        "write:alerts",
         "write:events",
-        "read:events"
+        "read:alerts",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762103686.848208,
@@ -24272,13 +24272,13 @@
         "admin"
       ],
       "permissions": [
+        "write:events",
         "read:config",
         "read:alerts",
-        "admin",
-        "write:alerts",
-        "write:events",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762103687.7625937,
@@ -24294,9 +24294,9 @@
         "analyst"
       ],
       "permissions": [
-        "read:events",
-        "read:alerts",
         "write:events",
+        "read:alerts",
+        "read:events",
         "write:alerts"
       ],
       "is_active": true,
@@ -24313,13 +24313,13 @@
         "admin"
       ],
       "permissions": [
-        "read:config",
-        "admin",
-        "read:alerts",
-        "write:alerts",
         "write:events",
+        "read:config",
+        "read:alerts",
         "write:config",
-        "read:events"
+        "admin",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762103688.1965117,
@@ -24335,17 +24335,140 @@
         "analyst"
       ],
       "permissions": [
-        "read:alerts",
         "write:events",
-        "write:alerts",
-        "read:events"
+        "read:alerts",
+        "read:events",
+        "write:alerts"
       ],
       "is_active": true,
       "created_at": 1762103688.3407047,
       "last_login": null,
       "password_hash": "bfdb6fa4ae220a101aad0a4dbf155afdddb1af2ef09dee3c6f5d5e2642d4018a",
       "metadata": {}
+    },
+    {
+      "user_id": "admin_2fa2e605",
+      "username": "test_admin_2fa2e605",
+      "email": "admin_2fa2e605@test.com",
+      "roles": [
+        "admin"
+      ],
+      "permissions": [
+        "write:events",
+        "read:config",
+        "read:alerts",
+        "write:config",
+        "admin",
+        "read:events",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1762155173.1636603,
+      "last_login": null,
+      "password_hash": "14ffa6375bd5c2f71e5a58299070866519482873c0250063e6d915681cb1c481",
+      "metadata": {}
+    },
+    {
+      "user_id": "user_2fa2e605",
+      "username": "test_user_2fa2e605",
+      "email": "user_2fa2e605@test.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "write:events",
+        "read:alerts",
+        "read:events",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1762155173.2410536,
+      "last_login": null,
+      "password_hash": "bfdb6fa4ae220a101aad0a4dbf155afdddb1af2ef09dee3c6f5d5e2642d4018a",
+      "metadata": {}
+    },
+    {
+      "user_id": "admin_b8cc980a",
+      "username": "test_admin_b8cc980a",
+      "email": "admin_b8cc980a@test.com",
+      "roles": [
+        "admin"
+      ],
+      "permissions": [
+        "write:events",
+        "read:config",
+        "read:alerts",
+        "write:config",
+        "admin",
+        "read:events",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1762155173.399777,
+      "last_login": null,
+      "password_hash": "14ffa6375bd5c2f71e5a58299070866519482873c0250063e6d915681cb1c481",
+      "metadata": {}
+    },
+    {
+      "user_id": "user_b8cc980a",
+      "username": "test_user_b8cc980a",
+      "email": "user_b8cc980a@test.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "write:events",
+        "read:alerts",
+        "read:events",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1762155173.4746275,
+      "last_login": null,
+      "password_hash": "bfdb6fa4ae220a101aad0a4dbf155afdddb1af2ef09dee3c6f5d5e2642d4018a",
+      "metadata": {}
+    },
+    {
+      "user_id": "admin_6914fe91",
+      "username": "test_admin_6914fe91",
+      "email": "admin_6914fe91@test.com",
+      "roles": [
+        "admin"
+      ],
+      "permissions": [
+        "write:events",
+        "read:config",
+        "read:alerts",
+        "write:config",
+        "admin",
+        "read:events",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1762155173.6051528,
+      "last_login": null,
+      "password_hash": "14ffa6375bd5c2f71e5a58299070866519482873c0250063e6d915681cb1c481",
+      "metadata": {}
+    },
+    {
+      "user_id": "user_6914fe91",
+      "username": "test_user_6914fe91",
+      "email": "user_6914fe91@test.com",
+      "roles": [
+        "analyst"
+      ],
+      "permissions": [
+        "write:events",
+        "read:alerts",
+        "read:events",
+        "write:alerts"
+      ],
+      "is_active": true,
+      "created_at": 1762155173.6849616,
+      "last_login": null,
+      "password_hash": "bfdb6fa4ae220a101aad0a4dbf155afdddb1af2ef09dee3c6f5d5e2642d4018a",
+      "metadata": {}
     }
   ],
-  "last_updated": 1762103688.345823
+  "last_updated": 1762155173.6883123
 }
