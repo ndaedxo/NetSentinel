@@ -13,7 +13,7 @@ import os
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from opencanary.threat_intelligence import get_threat_intel_manager
+from netsentinel.threat_intelligence import get_threat_intel_manager
 
 EVENT_PROCESSOR_URL = "http://localhost:8082"
 
@@ -185,7 +185,7 @@ def test_feed_management():
 
 def main():
     """Run all threat intelligence tests"""
-    print("🛡️ OpenCanary Threat Intelligence Integration Test Suite")
+    print("🛡️ NetSentinel Threat Intelligence Integration Test Suite")
     print("=" * 60)
 
     # Check if event processor is running

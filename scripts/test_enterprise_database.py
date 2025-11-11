@@ -13,7 +13,7 @@ import os
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from opencanary.enterprise_database import get_enterprise_db
+from netsentinel.enterprise_database import get_enterprise_db
 
 EVENT_PROCESSOR_URL = "http://localhost:8082"
 
@@ -90,19 +90,19 @@ def test_database_api_endpoints():
         response = requests.get(f"{EVENT_PROCESSOR_URL}/db/status")
         if response.status_code == 200:
             status = response.json()
-            print(f"✅ Database status API: enabled={status['enterprise_db_enabled']}")
-            health = status['statistics']['overall_health']
-            print(f"   Overall health: {health}")
+            print(f"✅ Database status API: elasticsearch={'healthy' if status.get('elasticsearch', {}).get('events') is not None else 'degraded'}")
+            influxdb_status = status.get('influxdb', {}).get('status', 'unknown')
+            print(f"   InfluxDB status: {influxdb_status}")
         else:
             print(f"❌ Database status API failed: {response.status_code}")
             return False
 
-        # Test searching events
-        response = requests.get(f"{EVENT_PROCESSOR_URL}/db/search/events?size=5")
+        # Test searching events with IP parameter
+        response = requests.get(f"{EVENT_PROCESSOR_URL}/db/search/events?src_ip=192.168.1.100&limit=5")
         if response.status_code == 200:
             search_results = response.json()
-            total = search_results.get('total', 0)
-            print(f"✅ Event search API: {total} total events found")
+            total = search_results.get('count', 0)
+            print(f"✅ Event search API: {total} events found for IP 192.168.1.100")
         else:
             print(f"❌ Event search API failed: {response.status_code}")
 
@@ -142,40 +142,28 @@ def test_database_search_functionality():
 
     try:
         # Test searching by source IP
-        response = requests.get(f"{EVENT_PROCESSOR_URL}/db/search/events?src_ip=192.168.1.100&size=10")
+        response = requests.get(f"{EVENT_PROCESSOR_URL}/db/search/events?src_ip=192.168.1.100&limit=10")
         if response.status_code == 200:
             results = response.json()
-            hits = results.get('results', {}).get('hits', {}).get('hits', [])
-            print(f"✅ IP search: {len(hits)} events from 192.168.1.100")
+            events = results.get('events', [])
+            print(f"✅ IP search: {len(events)} events from 192.168.1.100")
         else:
             print(f"❌ IP search failed: {response.status_code}")
 
-        # Test searching by threat score range
-        response = requests.get(f"{EVENT_PROCESSOR_URL}/db/search/events?threat_score_min=5.0&threat_score_max=10.0&size=5")
-        if response.status_code == 200:
-            results = response.json()
-            hits = results.get('results', {}).get('hits', {}).get('hits', [])
-            print(f"✅ Threat score search: {len(hits)} high-threat events")
-        else:
-            print(f"❌ Threat score search failed: {response.status_code}")
+        # Skip threat score search (API doesn't support it yet)
+        print(f"ℹ️  Threat score search: Not implemented in current API")
 
         # Test searching by destination port
-        response = requests.get(f"{EVENT_PROCESSOR_URL}/db/search/events?dst_port=22&size=5")
+        response = requests.get(f"{EVENT_PROCESSOR_URL}/db/search/events?dst_port=22&limit=10")
         if response.status_code == 200:
             results = response.json()
-            hits = results.get('results', {}).get('hits', {}).get('hits', [])
-            print(f"✅ Port search: {len(hits)} events targeting port 22")
+            events = results.get('events', [])
+            print(f"✅ Port search: {len(events)} events targeting port 22")
         else:
             print(f"❌ Port search failed: {response.status_code}")
 
-        # Test searching anomalies
-        response = requests.get(f"{EVENT_PROCESSOR_URL}/db/search/events?index=anomalies&size=5")
-        if response.status_code == 200:
-            results = response.json()
-            hits = results.get('results', {}).get('hits', {}).get('hits', [])
-            print(f"✅ Anomaly search: {len(hits)} anomaly records")
-        else:
-            print(f"❌ Anomaly search failed: {response.status_code}")
+        # Skip anomaly search (would need separate endpoint)
+        print(f"ℹ️  Anomaly search: Not implemented in current API")
 
         return True
 

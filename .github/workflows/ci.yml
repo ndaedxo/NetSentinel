@@ -163,9 +163,9 @@ jobs:
           REDIS_PORT: 6379
           KAFKA_BOOTSTRAP_SERVERS: localhost:9092
 
-  # Docker build and test
-  docker-tests:
-    name: Docker Tests
+  # Docker integration tests
+  docker-integration-tests:
+    name: Docker Integration Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -174,30 +174,63 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build NetSentinel image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile.event-processor
-          tags: netsentinel:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Test Docker image
+      - name: Build and start NetSentinel stack
         run: |
-          # Test if container starts
-          docker run --rm -d --name netsentinel-test netsentinel:test
-          sleep 10
+          # Build and start all services
+          docker-compose up -d --build
 
-          # Check if container is running
-          if [ "$(docker ps -q -f name=netsentinel-test)" ]; then
-              echo "✅ Container started successfully"
-              docker stop netsentinel-test
-          else
-              echo "❌ Container failed to start"
-              docker logs netsentinel-test
-              exit 1
+          # Wait for services to be healthy
+          echo "Waiting for services to be healthy..."
+          timeout=300
+          elapsed=0
+
+          while [ $elapsed -lt $timeout ]; do
+            # Check if all services are running
+            running=$(docker-compose ps | grep -c "Up")
+            total=$(docker-compose ps | grep -c -E "(netsentinel-|elasticsearch|grafana|prometheus|kafka|redis)")
+
+            if [ "$running" -eq "$total" ]; then
+              echo "✅ All $total services are running"
+              break
+            fi
+
+            echo "Waiting... ($elapsed/$timeout seconds) - $running/$total services running"
+            sleep 10
+            elapsed=$((elapsed + 10))
+          done
+
+          if [ $elapsed -ge $timeout ]; then
+            echo "❌ Services failed to start within timeout"
+            docker-compose logs
+            exit 1
           fi
+
+      - name: Run Docker infrastructure tests
+        run: |
+          # Test basic Docker setup
+          docker-compose ps
+
+          # Run our comprehensive test suite
+          pwsh scripts/test-netsentinel-docker.ps1
+
+      - name: Run functionality tests (with Docker stack)
+        run: |
+          # Run comprehensive functionality tests
+          pwsh scripts/test_functionality.ps1
+
+      - name: Run component-specific tests
+        run: |
+          # Test individual components
+          python scripts/test_enterprise_database.py
+          python scripts/test_firewall.py
+          python scripts/test_alerting.py
+          python scripts/test_complete_data_flow.py
+
+      - name: Clean up Docker stack
+        if: always()
+        run: |
+          docker-compose down -v
+          docker system prune -f
 
   # Security tests
   security-tests:
@@ -329,30 +362,56 @@ jobs:
           processor.cleanup()
           "
 
-  # Generate test report
+  # Generate comprehensive test report
   test-report:
     name: Generate Test Report
     runs-on: ubuntu-latest
     if: always()
-    needs: [unit-tests, integration-tests, docker-tests]
+    needs: [unit-tests, integration-tests, docker-integration-tests, security-tests, performance-tests, ml-tests, smoke-tests]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Generate test summary
+      - name: Generate comprehensive test summary
         run: |
-          echo "## Test Results Summary" > test-summary.md
+          echo "# NetSentinel CI/CD Test Results" > test-summary.md
           echo "" >> test-summary.md
-          echo "| Job | Status |" >> test-summary.md
-          echo "|-----|--------|" >> test-summary.md
-          echo "| Pre-commit | ${{ needs.pre-commit.result }} |" >> test-summary.md
-          echo "| Code Quality | ${{ needs.code-quality.result }} |" >> test-summary.md
-          echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> test-summary.md
-          echo "| Integration Tests | ${{ needs.integration-tests.result }} |" >> test-summary.md
-          echo "| Docker Tests | ${{ needs.docker-tests.result }} |" >> test-summary.md
-          echo "| Security Tests | ${{ needs.security-tests.result }} |" >> test-summary.md
-          echo "| Performance Tests | ${{ needs.performance-tests.result }} |" >> test-summary.md
-          echo "| ML Tests | ${{ needs.ml-tests.result }} |" >> test-summary.md
+          echo "## Pipeline Status" >> test-summary.md
+          echo "" >> test-summary.md
+          echo "| Component | Status | Details |" >> test-summary.md
+          echo "|-----------|--------|---------|" >> test-summary.md
+          echo "| Pre-commit Checks | ${{ needs.pre-commit.result }} | Code formatting & linting |" >> test-summary.md
+          echo "| Code Quality | ${{ needs.code-quality.result }} | Type checking, security scans |" >> test-summary.md
+          echo "| Unit Tests | ${{ needs.unit-tests.result }} | Core functionality tests |" >> test-summary.md
+          echo "| Integration Tests | ${{ needs.integration-tests.result }} | Service integration |" >> test-summary.md
+          echo "| Docker Integration | ${{ needs.docker-integration-tests.result }} | Full stack testing |" >> test-summary.md
+          echo "| Security Tests | ${{ needs.security-tests.result }} | Vulnerability scanning |" >> test-summary.md
+          echo "| Performance Tests | ${{ needs.performance-tests.result }} | Load & performance metrics |" >> test-summary.md
+          echo "| ML Model Tests | ${{ needs.ml-tests.result }} | Anomaly detection validation |" >> test-summary.md
+          echo "| Smoke Tests | ${{ needs.smoke-tests.result }} | Basic functionality verification |" >> test-summary.md
+          echo "" >> test-summary.md
+
+          # Overall status
+          if [ "${{ needs.pre-commit.result }}" = "success" ] && \
+             [ "${{ needs.code-quality.result }}" = "success" ] && \
+             [ "${{ needs.unit-tests.result }}" = "success" ] && \
+             [ "${{ needs.integration-tests.result }}" = "success" ] && \
+             [ "${{ needs.docker-integration-tests.result }}" = "success" ]; then
+            echo "## ✅ Overall Status: PASSED" >> test-summary.md
+            echo "All critical tests passed. Ready for deployment." >> test-summary.md
+          else
+            echo "## ❌ Overall Status: FAILED" >> test-summary.md
+            echo "Some tests failed. Please review the detailed logs above." >> test-summary.md
+          fi
+
+          echo "" >> test-summary.md
+          echo "## Test Coverage" >> test-summary.md
+          echo "- **Infrastructure**: 11 Docker services, networking, health checks" >> test-summary.md
+          echo "- **API Endpoints**: 37+ endpoints across all services" >> test-summary.md
+          echo "- **Security Components**: Firewall, packet analysis, threat intelligence, alerting" >> test-summary.md
+          echo "- **Data Pipeline**: Kafka, Redis, Elasticsearch integration" >> test-summary.md
+          echo "- **Monitoring**: Grafana, Prometheus, custom dashboards" >> test-summary.md
+          echo "- **External Systems**: SIEM connectors, SDN integration" >> test-summary.md
 
       - name: Upload test summary
         uses: actions/upload-artifact@v3

@@ -70,8 +70,10 @@ class EventAnalyzer(BaseProcessor):
         self,
         config: Optional[Dict[str, Any]] = None,
         logger: Optional[logging.Logger] = None,
+        alert_manager: Optional[Any] = None,
     ):
         super().__init__("event_analyzer", config, logger)
+        self.alert_manager = alert_manager
 
         # Analysis configuration
         self.threat_thresholds = {
@@ -101,6 +103,11 @@ class EventAnalyzer(BaseProcessor):
 
         # Analysis rules
         self.analysis_rules = self._initialize_analysis_rules()
+        self.result_callback = None
+
+    def set_result_callback(self, callback):
+        """Set the callback for sending analysis results"""
+        self.result_callback = callback
 
         # ML analysis (if available)
         self.ml_enabled = self.config.get("ml_enabled", True)
@@ -184,6 +191,9 @@ class EventAnalyzer(BaseProcessor):
     async def _start_internal(self):
         """Start analyzer"""
         self.logger.info("Event analyzer started")
+        # Call parent _start_internal to start worker loops
+        await super()._start_internal()
+        self.logger.info("Event analyzer workers started")
 
     async def _stop_internal(self):
         """Stop analyzer"""
@@ -192,6 +202,7 @@ class EventAnalyzer(BaseProcessor):
     async def _process_item(self, item: StandardEvent):
         """Process a single event"""
         try:
+            self.logger.info(f"Analyzer received event {item.id} for processing")
             start_time = time.time()
 
             # Perform analysis
@@ -215,8 +226,19 @@ class EventAnalyzer(BaseProcessor):
             # Log analysis result
             self.logger.info(
                 f"Event {item.id} analyzed: score={result.threat_score:.2f}, "
-                f"level={result.threat_level.value}, time={analysis_time:.3f}s"
+                f"level={result.threat_level.value}, time={analysis_time:.3f}s, "
+                f"event_type={item.event_type}, rule_matches={result.rule_matches}"
             )
+
+            # Send result to callback if available
+            if self.result_callback:
+                try:
+                    if asyncio.iscoroutinefunction(self.result_callback):
+                        await self.result_callback(result)
+                    else:
+                        self.result_callback(result)
+                except Exception as e:
+                    self.logger.error(f"Error calling result callback: {e}")
 
             # If high threat, create alert
             if result.threat_level in [ThreatLevel.HIGH, ThreatLevel.CRITICAL]:
@@ -419,17 +441,28 @@ class EventAnalyzer(BaseProcessor):
     async def _create_threat_alert(self, result: AnalysisResult):
         """Create alert for high-threat event"""
         try:
-            alert = create_alert(
-                title=f"Threat Detected: {result.event.event_type}",
-                description=f"High-threat activity detected with score {result.threat_score:.2f}",
-                severity=result.threat_level.value,
-                source="event_analyzer",
-                event_data=result.event.data,
-                tags=result.indicators + ["threat_detected"],
-            )
-
-            # Store alert (this would integrate with alert manager)
-            self.logger.info(f"Created threat alert: {alert.id}")
+            if self.alert_manager:
+                # Use alert manager for proper alert handling
+                alert_id = await self.alert_manager.generate_alert(
+                    title=f"Threat Detected: {result.event.event_type}",
+                    description=f"High-threat activity detected with score {result.threat_score:.2f}",
+                    severity=result.threat_level.value,
+                    source=result.event.source or "event_analyzer",
+                    event_data=result.event.data,
+                    tags=result.indicators + ["threat_detected"],
+                )
+                self.logger.info(f"Created threat alert via alert manager: {alert_id}")
+            else:
+                # Fallback to direct alert creation
+                alert = create_alert(
+                    title=f"Threat Detected: {result.event.event_type}",
+                    description=f"High-threat activity detected with score {result.threat_score:.2f}",
+                    severity=result.threat_level.value,
+                    source="event_analyzer",
+                    event_data=result.event.data,
+                    tags=result.indicators + ["threat_detected"],
+                )
+                self.logger.info(f"Created threat alert: {alert.id}")
 
         except Exception as e:
             self.logger.error(f"Failed to create threat alert: {e}")

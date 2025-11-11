@@ -13,7 +13,7 @@ import os
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from opencanary.firewall_manager import get_firewall_manager
+from netsentinel.firewall_manager import get_firewall_manager
 
 EVENT_PROCESSOR_URL = "http://localhost:8082"
 
@@ -83,7 +83,7 @@ def test_api_endpoints():
         response = requests.get(f"{EVENT_PROCESSOR_URL}/firewall/check/{test_ip}")
         if response.status_code == 200:
             status = response.json()
-            print(f"✅ IP check API: {test_ip} blocked = {status['is_blocked']}")
+            print(f"✅ IP check API: {test_ip} blocked = {status['blocked']}")
         else:
             print(f"❌ IP check API failed: {response.status_code}")
 
@@ -91,7 +91,7 @@ def test_api_endpoints():
         response = requests.get(f"{EVENT_PROCESSOR_URL}/firewall/blocked")
         if response.status_code == 200:
             blocked = response.json()
-            print(f"✅ Blocked IPs API: {blocked['count']} blocked IPs")
+            print(f"✅ Blocked IPs API: {len(blocked['blocked_ips'])} blocked IPs")
         else:
             print(f"❌ Blocked IPs API failed: {response.status_code}")
 
@@ -115,7 +115,7 @@ def test_automated_blocking():
 
     try:
         # Test high threat score (should trigger block)
-        from opencanary.firewall_manager import block_threat_ip
+        from netsentinel.firewall_manager import block_threat_ip
 
         test_ip = "192.168.1.102"
         high_score = 8.5  # Above default threshold of 7.0

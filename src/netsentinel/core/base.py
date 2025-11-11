@@ -288,6 +288,8 @@ class BaseProcessor(BaseComponent):
                 # Get item from queue with timeout
                 item = await asyncio.wait_for(self._processing_queue.get(), timeout=1.0)
 
+                self.logger.debug(f"Worker {worker_name} retrieved item from queue: {item}")
+
                 # Process item with semaphore
                 async with self._processing_semaphore:
                     await self._process_item(item)
@@ -308,6 +310,7 @@ class BaseProcessor(BaseComponent):
         """Queue an item for processing"""
         try:
             self._processing_queue.put_nowait(item)
+            self.logger.debug(f"Queued item for processing: {item}")
             return True
         except asyncio.QueueFull:
             self.logger.warning(f"Processing queue is full, dropping item")

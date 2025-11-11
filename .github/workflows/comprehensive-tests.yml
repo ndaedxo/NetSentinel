@@ -1,0 +1,164 @@
+name: NetSentinel Comprehensive Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Test mode to run'
+        required: false
+        default: 'full'
+        type: choice
+        options:
+        - full
+        - quick
+        - components-only
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  comprehensive-tests:
+    name: Comprehensive Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpcap-dev iptables curl
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Set up Docker services
+        run: |
+          # Start Docker services for testing
+          docker-compose up -d --build
+
+          # Wait for services to be ready
+          echo "Waiting for Docker services..."
+          timeout=300
+          elapsed=0
+
+          while [ $elapsed -lt $timeout ]; do
+            healthy=$(docker-compose ps | grep -c "healthy\|running")
+            total=$(docker-compose ps | grep -c -E "(netsentinel-|elasticsearch|grafana|prometheus|kafka|redis)")
+
+            if [ "$healthy" -ge "$((total - 1))" ]; then  # Allow 1 service to not be healthy
+              echo "✅ Services are ready: $healthy/$total"
+              break
+            fi
+
+            echo "Waiting... $healthy/$total services ready"
+            sleep 10
+            elapsed=$((elapsed + 10))
+          done
+
+          if [ $elapsed -ge $timeout ]; then
+            echo "❌ Services failed to start"
+            docker-compose logs
+            exit 1
+          fi
+
+      - name: Run comprehensive tests
+        run: |
+          case "${{ github.event.inputs.test_mode || 'full' }}" in
+            "quick")
+              echo "🧪 Running quick test mode..."
+              pwsh scripts/run_all_tests.ps1 -Quick
+              ;;
+            "components-only")
+              echo "🧩 Running component tests only..."
+              python scripts/test_enterprise_database.py
+              python scripts/test_firewall.py
+              python scripts/test_alerting.py
+              python scripts/test_sdn_integration.py
+              python scripts/test_complete_data_flow.py
+              ;;
+            "full"|*)
+              echo "🚀 Running full comprehensive test suite..."
+              pwsh scripts/run_all_tests.ps1
+              ;;
+          esac
+
+      - name: Generate test artifacts
+        if: always()
+        run: |
+          # Create test results directory
+          mkdir -p test-results
+
+          # Collect Docker logs
+          docker-compose logs > test-results/docker-compose.log
+
+          # Collect service health status
+          docker-compose ps > test-results/service-status.log
+
+          # Generate test summary
+          echo "# NetSentinel Test Results" > test-results/summary.md
+          echo "" >> test-results/summary.md
+          echo "## Test Run Information" >> test-results/summary.md
+          echo "- **Date**: $(date)" >> test-results/summary.md
+          echo "- **Branch**: ${{ github.ref_name }}" >> test-results/summary.md
+          echo "- **Commit**: ${{ github.sha }}" >> test-results/summary.md
+          echo "- **Mode**: ${{ github.event.inputs.test_mode || 'full' }}" >> test-results/summary.md
+          echo "" >> test-results/summary.md
+          echo "## Docker Services Status" >> test-results/summary.md
+          docker-compose ps >> test-results/summary.md
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ github.run_number }}
+          path: test-results/
+
+      - name: Clean up Docker services
+        if: always()
+        run: |
+          docker-compose down -v
+          docker system prune -f --volumes
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install security tools
+        run: |
+          pip install bandit safety
+
+      - name: Run Bandit security scan
+        run: |
+          bandit -r netsentinel/ -f json -o security-results.json || true
+
+      - name: Run Safety dependency check
+        run: |
+          safety check --json > safety-results.json || true
+
+      - name: Upload security results
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-scan-${{ github.run_number }}
+          path: |
+            security-results.json
+            safety-results.json

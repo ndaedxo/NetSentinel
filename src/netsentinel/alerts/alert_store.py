@@ -1,331 +1,266 @@
 #!/usr/bin/env python3
 """
 Alert Store for NetSentinel
-Manages alert storage, retrieval, and persistence
+Manages alert storage, retrieval, and lifecycle
 """
 
 import asyncio
-import logging
 import time
-from typing import Any, Dict, List, Optional, Set
-from dataclasses import dataclass
+import uuid
+from typing import Dict, List, Optional, Any
+from dataclasses import dataclass, asdict
+from enum import Enum
+import json
 
-from ..core.base import BaseManager, BaseConfig
-from ..core.interfaces import Alert
-from ..core.error_handler import handle_errors
-from ..core.retry_handler import retry_on_failure
-from ..utils.validation import validate_alert_data as validate_alert
+try:
+    from ..core.base import BaseComponent
+    from ..monitoring.logger import create_logger
+except ImportError:
+    from core.base import BaseComponent
+    from monitoring.logger import create_logger
 
-logger = logging.getLogger(__name__)
+logger = create_logger("alert_store")
+
+
+class AlertSeverity(Enum):
+    """Alert severity levels"""
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+
+class AlertStatus(Enum):
+    """Alert status"""
+    ACTIVE = "active"
+    ACKNOWLEDGED = "acknowledged"
+    RESOLVED = "resolved"
+    EXPIRED = "expired"
 
 
 @dataclass
-class StoreConfig(BaseConfig):
-    """Alert store configuration"""
+class Alert:
+    """Alert data structure"""
+    alert_id: str
+    title: str
+    description: str
+    severity: AlertSeverity
+    status: AlertStatus
+    source: str
+    event_data: Dict[str, Any]
+    tags: List[str]
+    created_at: float
+    updated_at: float
+    acknowledged_at: Optional[float] = None
+    acknowledged_by: Optional[str] = None
+    resolved_at: Optional[float] = None
+    resolved_by: Optional[str] = None
+    escalation_count: int = 0
+    last_escalation: Optional[float] = None
 
-    max_alerts: int = 10000
-    alert_ttl: int = 3600  # seconds
-    cleanup_interval: int = 300  # seconds
-    persistence_enabled: bool = True
-    storage_backend: str = "memory"  # memory, redis, elasticsearch
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary"""
+        data = asdict(self)
+        data['severity'] = self.severity.value
+        data['status'] = self.status.value
+        return data
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'Alert':
+        """Create from dictionary"""
+        data_copy = data.copy()
+        data_copy['severity'] = AlertSeverity(data['severity'])
+        data_copy['status'] = AlertStatus(data['status'])
+        return cls(**data_copy)
 
 
-class AlertStore(BaseManager):
+class AlertStore(BaseComponent):
     """
-    Manages alert storage and retrieval
-    Supports multiple storage backends and automatic cleanup
+    Alert storage and management system
     """
 
-    def __init__(self, config: StoreConfig):
-        super().__init__(config)
-        self.config = config
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
+        super().__init__("alert_store", config or {})
+
+        # In-memory storage (for demo - in production use database)
         self.alerts: Dict[str, Alert] = {}
-        self.alert_index: Dict[str, Set[str]] = {
-            "by_severity": {},
-            "by_source": {},
-            "by_status": {},
-            "by_timestamp": {},
+        self._max_alerts = 1000  # Limit stored alerts
+
+        # Statistics
+        self.stats = {
+            'total_alerts': 0,
+            'active_alerts': 0,
+            'acknowledged_alerts': 0,
+            'resolved_alerts': 0,
+            'critical_alerts': 0
         }
-        self.storage_backend = None
-        self.cleanup_task = None
 
-        # Initialize storage backend
-        self._initialize_storage_backend()
+    async def _initialize(self):
+        """Initialize alert store"""
+        logger.info("Alert store initialized")
 
-    def _initialize_storage_backend(self) -> None:
-        """Initialize storage backend"""
-        try:
-            if self.config.storage_backend == "redis":
-                from ..utils.connections import ConnectionManager
+    async def _start_internal(self):
+        """Start alert store operations"""
+        logger.info("Alert store started")
 
-                self.storage_backend = ConnectionManager()
-            elif self.config.storage_backend == "elasticsearch":
-                # Initialize Elasticsearch client
-                pass
+    async def _stop_internal(self):
+        """Stop alert store operations"""
+        logger.info("Alert store stopped")
 
-            self.logger.info(
-                f"Storage backend initialized: {self.config.storage_backend}"
-            )
+    def create_alert(
+        self,
+        title: str,
+        description: str,
+        severity: str,
+        source: str,
+        event_data: Dict[str, Any],
+        tags: List[str] = None
+    ) -> str:
+        """Create a new alert"""
 
-        except Exception as e:
-            self.logger.error(f"Failed to initialize storage backend: {e}")
-            self.storage_backend = None
+        alert_id = str(uuid.uuid4())
+        now = time.time()
 
-    async def _start_internal(self) -> None:
-        """Start alert store"""
-        # Start cleanup task
-        if self.config.cleanup_interval > 0:
-            self.cleanup_task = asyncio.create_task(self._cleanup_loop())
+        alert = Alert(
+            alert_id=alert_id,
+            title=title,
+            description=description,
+            severity=AlertSeverity(severity.lower()),
+            status=AlertStatus.ACTIVE,
+            source=source,
+            event_data=event_data,
+            tags=tags or [],
+            created_at=now,
+            updated_at=now
+        )
 
-        self.logger.info("Alert store started")
+        # Store alert
+        self.alerts[alert_id] = alert
 
-    async def _stop_internal(self) -> None:
-        """Stop alert store"""
-        if self.cleanup_task:
-            self.cleanup_task.cancel()
-            try:
-                await self.cleanup_task
-            except asyncio.CancelledError:
-                pass
+        # Update statistics
+        self.stats['total_alerts'] += 1
+        self.stats['active_alerts'] += 1
+        if severity.lower() == 'critical':
+            self.stats['critical_alerts'] += 1
 
-        self.logger.info("Alert store stopped")
+        # Cleanup old alerts if needed
+        if len(self.alerts) > self._max_alerts:
+            self._cleanup_old_alerts()
 
-    async def store_alert(self, alert: Alert) -> bool:
-        """Store an alert"""
-        try:
-            # Validate alert
-            validation_result = validate_alert(alert.__dict__)
-            if not validation_result.is_valid:
-                self.logger.error(f"Invalid alert data: {validation_result.errors}")
-                return False
+        logger.info(f"Created alert {alert_id}: {title} ({severity})")
 
-            # Store in memory
-            self.alerts[alert.id] = alert
+        return alert_id
 
-            # Update indexes
-            self._update_indexes(alert)
-
-            # Persist to backend
-            if self.storage_backend and self.config.persistence_enabled:
-                await self._persist_alert(alert)
-
-            self.logger.debug(f"Alert stored: {alert.id}")
-            return True
-
-        except Exception as e:
-            self.logger.error(f"Error storing alert: {e}")
-            return False
-
-    async def get_alert(self, alert_id: str) -> Optional[Alert]:
+    def get_alert(self, alert_id: str) -> Optional[Alert]:
         """Get alert by ID"""
-        try:
-            # Check memory first
-            if alert_id in self.alerts:
-                return self.alerts[alert_id]
+        return self.alerts.get(alert_id)
 
-            # Check persistent storage
-            if self.storage_backend and self.config.persistence_enabled:
-                return await self._load_alert(alert_id)
+    def get_alerts(
+        self,
+        status: Optional[str] = None,
+        severity: Optional[str] = None,
+        source: Optional[str] = None,
+        limit: int = 100
+    ) -> List[Alert]:
+        """Get alerts with filtering"""
 
-            return None
+        alerts = list(self.alerts.values())
 
-        except Exception as e:
-            self.logger.error(f"Error getting alert {alert_id}: {e}")
-            return None
+        # Apply filters
+        if status:
+            alerts = [a for a in alerts if a.status.value == status]
 
-    async def get_alerts(self, filters: Optional[Dict[str, Any]] = None) -> List[Alert]:
-        """Get alerts with optional filters"""
-        try:
-            alerts = list(self.alerts.values())
+        if severity:
+            alerts = [a for a in alerts if a.severity.value == severity]
 
-            if not filters:
-                return alerts
+        if source:
+            alerts = [a for a in alerts if a.source == source]
 
-            # Apply filters
-            filtered_alerts = []
-            for alert in alerts:
-                if self._matches_filters(alert, filters):
-                    filtered_alerts.append(alert)
+        # Sort by creation time (newest first)
+        alerts.sort(key=lambda x: x.created_at, reverse=True)
 
-            return filtered_alerts
+        return alerts[:limit]
 
-        except Exception as e:
-            self.logger.error(f"Error getting alerts: {e}")
-            return []
+    def acknowledge_alert(self, alert_id: str, user: str = "system") -> bool:
+        """Acknowledge an alert"""
 
-    async def update_alert(self, alert_id: str, updates: Dict[str, Any]) -> bool:
-        """Update an alert"""
-        try:
-            if alert_id not in self.alerts:
-                return False
-
-            alert = self.alerts[alert_id]
-
-            # Apply updates
-            for key, value in updates.items():
-                if hasattr(alert, key):
-                    setattr(alert, key, value)
-
-            # Update indexes
-            self._update_indexes(alert)
-
-            # Persist changes
-            if self.storage_backend and self.config.persistence_enabled:
-                await self._persist_alert(alert)
-
-            self.logger.debug(f"Alert updated: {alert_id}")
-            return True
-
-        except Exception as e:
-            self.logger.error(f"Error updating alert {alert_id}: {e}")
+        alert = self.alerts.get(alert_id)
+        if not alert:
             return False
 
-    async def delete_alert(self, alert_id: str) -> bool:
-        """Delete an alert"""
-        try:
-            if alert_id not in self.alerts:
-                return False
-
-            alert = self.alerts[alert_id]
-
-            # Remove from indexes
-            self._remove_from_indexes(alert)
-
-            # Remove from memory
-            del self.alerts[alert_id]
-
-            # Remove from persistent storage
-            if self.storage_backend and self.config.persistence_enabled:
-                await self._delete_persistent_alert(alert_id)
-
-            self.logger.debug(f"Alert deleted: {alert_id}")
-            return True
-
-        except Exception as e:
-            self.logger.error(f"Error deleting alert {alert_id}: {e}")
+        if alert.status != AlertStatus.ACTIVE:
             return False
 
-    def _update_indexes(self, alert: Alert) -> None:
-        """Update alert indexes"""
-        # Severity index
-        if alert.severity not in self.alert_index["by_severity"]:
-            self.alert_index["by_severity"][alert.severity] = set()
-        self.alert_index["by_severity"][alert.severity].add(alert.id)
+        alert.status = AlertStatus.ACKNOWLEDGED
+        alert.acknowledged_at = time.time()
+        alert.acknowledged_by = user
+        alert.updated_at = time.time()
 
-        # Source index
-        if alert.source not in self.alert_index["by_source"]:
-            self.alert_index["by_source"][alert.source] = set()
-        self.alert_index["by_source"][alert.source].add(alert.id)
+        # Update statistics
+        self.stats['active_alerts'] -= 1
+        self.stats['acknowledged_alerts'] += 1
 
-        # Status index
-        status = "resolved" if alert.resolved else "active"
-        if status not in self.alert_index["by_status"]:
-            self.alert_index["by_status"][status] = set()
-        self.alert_index["by_status"][status].add(alert.id)
-
-    def _remove_from_indexes(self, alert: Alert) -> None:
-        """Remove alert from indexes"""
-        # Remove from all indexes
-        for index_name, index in self.alert_index.items():
-            for key, alert_set in index.items():
-                alert_set.discard(alert.id)
-
-    def _matches_filters(self, alert: Alert, filters: Dict[str, Any]) -> bool:
-        """Check if alert matches filters"""
-        for key, value in filters.items():
-            if key == "severity" and alert.severity != value:
-                return False
-            elif key == "source" and alert.source != value:
-                return False
-            elif key == "resolved" and alert.resolved != value:
-                return False
-            elif key == "acknowledged" and alert.acknowledged != value:
-                return False
-            elif key == "start_time" and alert.timestamp < value:
-                return False
-            elif key == "end_time" and alert.timestamp > value:
-                return False
+        logger.info(f"Alert {alert_id} acknowledged by {user}")
 
         return True
 
-    async def _cleanup_loop(self) -> None:
-        """Cleanup expired alerts"""
-        while True:
-            try:
-                await asyncio.sleep(self.config.cleanup_interval)
-                await self._cleanup_expired_alerts()
-            except asyncio.CancelledError:
-                break
-            except Exception as e:
-                self.logger.error(f"Error in cleanup loop: {e}")
+    def resolve_alert(self, alert_id: str, user: str = "system") -> bool:
+        """Resolve an alert"""
 
-    async def _cleanup_expired_alerts(self) -> None:
-        """Remove expired alerts"""
-        current_time = time.time()
-        expired_alerts = []
+        alert = self.alerts.get(alert_id)
+        if not alert:
+            return False
 
-        for alert_id, alert in self.alerts.items():
-            if current_time - alert.timestamp > self.config.alert_ttl:
-                expired_alerts.append(alert_id)
+        alert.status = AlertStatus.RESOLVED
+        alert.resolved_at = time.time()
+        alert.resolved_by = user
+        alert.updated_at = time.time()
 
-        for alert_id in expired_alerts:
-            await self.delete_alert(alert_id)
+        # Update statistics
+        if alert.status == AlertStatus.ACTIVE:
+            self.stats['active_alerts'] -= 1
+        elif alert.status == AlertStatus.ACKNOWLEDGED:
+            self.stats['acknowledged_alerts'] -= 1
 
-        if expired_alerts:
-            self.logger.info(f"Cleaned up {len(expired_alerts)} expired alerts")
+        self.stats['resolved_alerts'] += 1
 
-    async def _persist_alert(self, alert: Alert) -> None:
-        """Persist alert to storage backend"""
-        try:
-            if self.config.storage_backend == "redis":
-                # Store in Redis
-                pass
-            elif self.config.storage_backend == "elasticsearch":
-                # Store in Elasticsearch
-                pass
+        logger.info(f"Alert {alert_id} resolved by {user}")
 
-        except Exception as e:
-            self.logger.error(f"Error persisting alert: {e}")
+        return True
 
-    async def _load_alert(self, alert_id: str) -> Optional[Alert]:
-        """Load alert from storage backend"""
-        try:
-            if self.config.storage_backend == "redis":
-                # Load from Redis
-                pass
-            elif self.config.storage_backend == "elasticsearch":
-                # Load from Elasticsearch
-                pass
+    def get_statistics(self) -> Dict[str, Any]:
+        """Get alert statistics"""
+        return self.stats.copy()
 
-            return None
+    def _cleanup_old_alerts(self):
+        """Clean up old resolved alerts to prevent memory issues"""
 
-        except Exception as e:
-            self.logger.error(f"Error loading alert: {e}")
-            return None
+        # Keep only the most recent 500 alerts, remove older resolved ones
+        resolved_alerts = [(aid, alert) for aid, alert in self.alerts.items()
+                          if alert.status in [AlertStatus.RESOLVED, AlertStatus.EXPIRED]]
 
-    async def _delete_persistent_alert(self, alert_id: str) -> None:
-        """Delete alert from storage backend"""
-        try:
-            if self.config.storage_backend == "redis":
-                # Delete from Redis
-                pass
-            elif self.config.storage_backend == "elasticsearch":
-                # Delete from Elasticsearch
-                pass
+        if len(resolved_alerts) > 500:
+            # Sort by creation time and keep newest 500
+            resolved_alerts.sort(key=lambda x: x[1].created_at, reverse=True)
+            keep_alerts = resolved_alerts[:500]
+            keep_ids = {aid for aid, _ in keep_alerts}
 
-        except Exception as e:
-            self.logger.error(f"Error deleting persistent alert: {e}")
+            # Remove old alerts
+            to_remove = [aid for aid in self.alerts.keys()
+                        if aid not in keep_ids and self.alerts[aid].status in
+                        [AlertStatus.RESOLVED, AlertStatus.EXPIRED]]
 
-    def get_store_metrics(self) -> Dict[str, Any]:
-        """Get store metrics"""
-        return {
-            "total_alerts": len(self.alerts),
-            "max_alerts": self.config.max_alerts,
-            "storage_backend": self.config.storage_backend,
-            "persistence_enabled": self.config.persistence_enabled,
-            "indexes": {
-                "by_severity": len(self.alert_index["by_severity"]),
-                "by_source": len(self.alert_index["by_source"]),
-                "by_status": len(self.alert_index["by_status"]),
-            },
-        }
+            for aid in to_remove:
+                del self.alerts[aid]
+
+            logger.info(f"Cleaned up {len(to_remove)} old alerts")
+
+# Global alert store instance
+_alert_store = None
+
+def get_alert_store() -> AlertStore:
+    """Get global alert store instance"""
+    global _alert_store
+    if _alert_store is None:
+        _alert_store = AlertStore()
+    return _alert_store

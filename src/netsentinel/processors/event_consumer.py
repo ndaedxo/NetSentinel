@@ -114,21 +114,34 @@ class EventConsumer(BaseProcessor):
 
     async def _consumer_loop(self):
         """Main consumer loop"""
+        self.logger.info("Starting consumer loop")
+        poll_count = 0
+
         while self._running and self.state.value == "running":
             try:
+                poll_count += 1
+                if poll_count % 100 == 0:  # Log every 100 polls
+                    self.logger.info(f"Consumer poll #{poll_count}, still running")
+
                 # Poll for messages
                 message_batch = self.kafka_consumer.poll(
                     timeout_ms=self.consumer_config.poll_timeout_ms
                 )
 
                 if not message_batch:
+                    if poll_count % 1000 == 0:  # Log less frequently for empty polls
+                        self.logger.debug("No messages received in poll")
                     await asyncio.sleep(0.1)
                     continue
 
+                self.logger.info(f"Received message batch with {len(message_batch)} partitions")
+
                 # Process messages
                 for topic_partition, messages in message_batch.items():
+                    self.logger.info(f"Processing {len(messages)} messages from partition {topic_partition}")
                     for message in messages:
                         try:
+                            self.logger.info(f"Processing message: {message.value}")
                             await self._process_message(message.value)
                         except Exception as e:
                             context = create_error_context(
@@ -142,6 +155,7 @@ class EventConsumer(BaseProcessor):
 
             except Exception as e:
                 self.logger.error(f"Error in consumer loop: {e}")
+                await asyncio.sleep(1)  # Back off on errors
                 await self._handle_error(e)
                 await asyncio.sleep(1)
 
@@ -183,7 +197,24 @@ class EventConsumer(BaseProcessor):
         """Convert Kafka message to standard event"""
         # Extract basic information
         event_type = str(message_data.get("logtype", "unknown"))
-        source = message_data.get("src_host", "unknown")
+
+        # Extract source IP - try multiple possible fields
+        source = message_data.get("src_host")
+        self.logger.debug(f"Initial source from src_host: {source}")
+
+        if not source or source == "unknown":
+            # For SSH events, the source IP might be in logdata.REMOTE_ADDRESS
+            logdata = message_data.get("logdata", {})
+            self.logger.debug(f"Checking logdata for REMOTE_ADDRESS: {logdata}")
+            if isinstance(logdata, dict) and "REMOTE_ADDRESS" in logdata:
+                source = logdata["REMOTE_ADDRESS"]
+                self.logger.debug(f"Found source in REMOTE_ADDRESS: {source}")
+
+        if not source:
+            source = "unknown"
+
+        self.logger.debug(f"Final source: {source}")
+
         timestamp = message_data.get("timestamp", time.time())
 
         # Create event data

@@ -1,8 +1,17 @@
+#!/usr/bin/env python3
 """
-NetSentinel Alert Management
-Refactored alert management components for better scalability
+NetSentinel Alerting System
 """
 
-from .alert_store import AlertStore
+from .alert_store import get_alert_store, AlertStore, AlertSeverity, AlertStatus, Alert
+from .alert_manager import get_alert_manager, AlertManager
 
-__all__ = ["AlertStore"]
+__all__ = [
+    'get_alert_store',
+    'AlertStore',
+    'AlertSeverity',
+    'AlertStatus',
+    'Alert',
+    'get_alert_manager',
+    'AlertManager'
+]

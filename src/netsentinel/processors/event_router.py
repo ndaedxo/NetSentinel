@@ -157,9 +157,12 @@ class EventRouter(BaseProcessor):
 
     async def _process_item(self, item: Any):
         """Process a single routing item"""
+        self.logger.debug(f"Router processing item: {type(item)}")
         if isinstance(item, StandardEvent):
+            self.logger.debug(f"Router routing standard event: {item.id}")
             await self._route_event(item)
         elif isinstance(item, AnalysisResult):
+            self.logger.info(f"Router processing analysis result for event {item.event.id} (score={item.threat_score})")
             await self._route_analysis_result(item)
         else:
             self.logger.warning(f"Unknown item type for routing: {type(item)}")

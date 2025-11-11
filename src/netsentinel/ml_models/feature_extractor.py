@@ -61,6 +61,42 @@ class NetworkFeatures:
     is_weekend: bool = False
     ip_numeric: int = 0  # Numeric representation of IP
 
+
+@dataclass
+class AdvancedNetworkFeatures(NetworkFeatures):
+    """Extended network features with advanced engineering"""
+
+    # Contextual features
+    context_event_count: int = 0
+    context_mean_bytes: float = 0.0
+    context_std_bytes: float = 0.0
+    context_event_rate: float = 0.0
+    context_similarity_mean: float = 0.0
+    context_similarity_std: float = 0.0
+
+    # Temporal pattern features
+    hour_sin: float = 0.0
+    hour_cos: float = 0.0
+    day_sin: float = 0.0
+    day_cos: float = 0.0
+    is_business_hours: int = 0
+    is_peak_attack_hour: int = 0
+
+    # Network behavioral features
+    avg_packet_size: float = 0.0
+    upload_ratio: float = 0.0
+    download_ratio: float = 0.0
+    bytes_per_second: float = 0.0
+    packets_per_second: float = 0.0
+    is_web_traffic: int = 0
+    is_secure_protocol: int = 0
+
+    # Anomaly score features
+    z_score_max: float = 0.0
+    z_score_mean: float = 0.0
+    anomaly_score: float = 0.0
+    rarity_score: float = 0.0
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
         return asdict(self)
@@ -73,7 +109,7 @@ class NetworkFeatures:
             "SSH": 5, "FTP": 6, "SMTP": 7, "DNS": 8, "MySQL": 9
         }
 
-        # Create feature vector
+        # Create feature vector including all advanced features
         features = np.array([
             self.event_type,
             self.destination_port,
@@ -92,9 +128,36 @@ class NetworkFeatures:
             self.day_of_week,
             int(self.is_weekend),
             self.ip_numeric,
+            # Advanced features
+            self.context_event_count,
+            self.context_mean_bytes,
+            self.context_std_bytes,
+            self.context_event_rate,
+            self.context_similarity_mean,
+            self.context_similarity_std,
+            self.hour_sin,
+            self.hour_cos,
+            self.day_sin,
+            self.day_cos,
+            self.is_business_hours,
+            self.is_peak_attack_hour,
+            self.avg_packet_size,
+            self.upload_ratio,
+            self.download_ratio,
+            self.bytes_per_second,
+            self.packets_per_second,
+            self.is_web_traffic,
+            self.is_secure_protocol,
+            self.z_score_max,
+            self.z_score_mean,
+            self.anomaly_score,
+            self.rarity_score,
         ], dtype=np.float32)
 
         return features
+
+
+class FeatureExtractor(BaseComponent):
 
     @property
     def protocol_map(self):
@@ -561,6 +624,245 @@ class FeatureExtractor(BaseComponent):
             "feature_stats": self.feature_stats,
             "history_sizes": {k: len(v) for k, v in self.feature_history.items()},
             "feature_weights": self.feature_weights,
+        }
+
+    def extract_advanced_features(self, event_data: Dict[str, Any], context_events: Optional[List[Dict[str, Any]]] = None) -> AdvancedNetworkFeatures:
+        """
+        Extract advanced features including contextual and statistical features
+
+        Args:
+            event_data: Current event data
+            context_events: Optional list of related events for context
+
+        Returns:
+            AdvancedNetworkFeatures with enhanced features
+        """
+        # Get basic features first
+        basic_features = self.extract_features(event_data)
+
+        if basic_features is None:
+            return None
+
+        # Convert to AdvancedNetworkFeatures
+        advanced_features = AdvancedNetworkFeatures(**basic_features.to_dict())
+
+        # Add statistical features if context is available
+        if context_events and len(context_events) > 0:
+            advanced_features = self._add_contextual_features(advanced_features, context_events)
+
+        # Add temporal pattern features
+        advanced_features = self._add_temporal_pattern_features(advanced_features)
+
+        # Add network behavioral features
+        advanced_features = self._add_network_behavioral_features(advanced_features)
+
+        # Add anomaly score features
+        advanced_features = self._add_anomaly_score_features(advanced_features)
+
+        return advanced_features
+
+    def _add_contextual_features(self, features: AdvancedNetworkFeatures, context_events: List[Dict[str, Any]]) -> AdvancedNetworkFeatures:
+        """Add features based on context from related events"""
+        try:
+            # Extract features from context events
+            context_features = []
+            for event in context_events:
+                ctx_feat = self.extract_features(event)
+                if ctx_feat:
+                    context_features.append(ctx_feat.to_numpy_array())
+
+            if len(context_features) > 0:
+                context_array = np.array(context_features)
+
+                # Calculate statistical features from context
+                features.context_event_count = len(context_events)
+                features.context_mean_bytes = float(np.mean(context_array[:, 6:8]))  # bytes_sent, bytes_received
+                features.context_std_bytes = float(np.std(context_array[:, 6:8]))
+                features.context_event_rate = len(context_events) / max(1, features.connection_duration)
+
+                # Similarity features
+                current_array = features.to_numpy_array()[:17]  # Use only basic features for similarity
+                similarities = []
+                for ctx_arr in context_array:
+                    ctx_basic = ctx_arr[:17]  # Use only basic features
+                    similarity = np.dot(current_array, ctx_basic) / (np.linalg.norm(current_array) * np.linalg.norm(ctx_basic))
+                    similarities.append(similarity)
+
+                features.context_similarity_mean = float(np.mean(similarities))
+                features.context_similarity_std = float(np.std(similarities))
+
+        except Exception as e:
+            logger.warning(f"Failed to add contextual features: {e}")
+
+        return features
+
+    def _add_temporal_pattern_features(self, features: AdvancedNetworkFeatures) -> AdvancedNetworkFeatures:
+        """Add temporal pattern features"""
+        try:
+            # Time-based patterns
+            features.hour_sin = np.sin(2 * np.pi * features.time_of_day / 24)
+            features.hour_cos = np.cos(2 * np.pi * features.time_of_day / 24)
+            features.day_sin = np.sin(2 * np.pi * features.day_of_week / 7)
+            features.day_cos = np.cos(2 * np.pi * features.day_of_week / 7)
+
+            # Business hours indicator
+            features.is_business_hours = 1 if 9 <= features.time_of_day <= 17 and features.day_of_week < 5 else 0
+
+            # Peak hours indicator (typical attack times)
+            peak_hours = [22, 23, 0, 1, 2, 3, 4, 5, 6]
+            features.is_peak_attack_hour = 1 if features.time_of_day in peak_hours else 0
+
+        except Exception as e:
+            logger.warning(f"Failed to add temporal pattern features: {e}")
+
+        return features
+
+    def _add_network_behavioral_features(self, features: AdvancedNetworkFeatures) -> AdvancedNetworkFeatures:
+        """Add network behavioral features"""
+        try:
+            # Connection efficiency metrics
+            total_bytes = features.bytes_sent + features.bytes_received
+            total_packets = features.packets_sent + features.packets_received
+
+            if total_packets > 0:
+                features.avg_packet_size = total_bytes / total_packets
+            else:
+                features.avg_packet_size = 0.0
+
+            # Asymmetry features
+            if features.bytes_sent + features.bytes_received > 0:
+                features.upload_ratio = features.bytes_sent / (features.bytes_sent + features.bytes_received)
+                features.download_ratio = features.bytes_received / (features.bytes_sent + features.bytes_received)
+            else:
+                features.upload_ratio = 0.0
+                features.download_ratio = 0.0
+
+            # Rate features
+            if features.connection_duration > 0:
+                features.bytes_per_second = total_bytes / features.connection_duration
+                features.packets_per_second = total_packets / features.connection_duration
+            else:
+                features.bytes_per_second = 0.0
+                features.packets_per_second = 0.0
+
+            # Protocol-specific features
+            if features.protocol == "HTTP":
+                features.is_web_traffic = 1
+                features.is_secure_protocol = 0
+            elif features.protocol in ["HTTPS", "SSH"]:
+                features.is_web_traffic = 0
+                features.is_secure_protocol = 1
+            else:
+                features.is_web_traffic = 0
+                features.is_secure_protocol = 0
+
+        except Exception as e:
+            logger.warning(f"Failed to add network behavioral features: {e}")
+
+        return features
+
+    def _add_anomaly_score_features(self, features: AdvancedNetworkFeatures) -> AdvancedNetworkFeatures:
+        """Add anomaly score features based on statistical analysis"""
+        try:
+            # Calculate z-scores for numerical features using running statistics
+            feature_array = features.to_numpy_array()
+            z_scores = []
+
+            for i, feature_name in enumerate(NetworkFeatures.__dataclass_fields__.keys()):
+                if feature_name in self.feature_stats and i < len(feature_array):
+                    stats = self.feature_stats[feature_name]
+                    mean_val = stats.get("mean", 0)
+                    std_val = stats.get("std", 1)
+
+                    if std_val > 0:
+                        z_score = abs(feature_array[i] - mean_val) / std_val
+                        z_scores.append(z_score)
+                    else:
+                        z_scores.append(0.0)
+
+            # Anomaly indicators
+            features.z_score_max = max(z_scores) if z_scores else 0.0
+            features.z_score_mean = np.mean(z_scores) if z_scores else 0.0
+            features.anomaly_score = min(1.0, features.z_score_max / 3.0)  # Normalize to [0,1]
+
+            # Rarity score (based on how unusual the feature combination is)
+            features.rarity_score = self._calculate_rarity_score(features)
+
+        except Exception as e:
+            logger.warning(f"Failed to add anomaly score features: {e}")
+            features.z_score_max = 0.0
+            features.z_score_mean = 0.0
+            features.anomaly_score = 0.0
+            features.rarity_score = 0.0
+
+        return features
+
+    def _calculate_rarity_score(self, features: NetworkFeatures) -> float:
+        """Calculate rarity score based on feature combinations"""
+        try:
+            rarity_components = []
+
+            # Port rarity (uncommon ports are more suspicious)
+            common_ports = {22, 23, 25, 53, 80, 110, 143, 443, 993, 995, 3306, 5432}
+            if features.destination_port not in common_ports:
+                rarity_components.append(0.3)
+
+            # Time rarity (attacks often happen at unusual times)
+            if features.is_peak_attack_hour:
+                rarity_components.append(0.2)
+
+            # Protocol rarity
+            common_protocols = {"HTTP", "HTTPS", "SSH", "SMTP", "DNS"}
+            if features.protocol not in common_protocols:
+                rarity_components.append(0.2)
+
+            # High error rate
+            if features.error_count > 5:
+                rarity_components.append(0.3)
+
+            return min(1.0, sum(rarity_components))
+
+        except Exception:
+            return 0.0
+
+    def extract_features_batch(self, events_data: List[Dict[str, Any]], include_advanced: bool = True) -> np.ndarray:
+        """
+        Extract features from a batch of events
+
+        Args:
+            events_data: List of event dictionaries
+            include_advanced: Whether to include advanced features
+
+        Returns:
+            Numpy array of extracted features
+        """
+        features_list = []
+
+        for event_data in events_data:
+            if include_advanced:
+                features = self.extract_advanced_features(event_data)
+            else:
+                features = self.extract_features(event_data)
+
+            if features:
+                features_list.append(features.to_numpy_array())
+
+        return np.array(features_list) if features_list else np.array([])
+
+    def get_feature_engineering_summary(self) -> Dict[str, Any]:
+        """Get summary of feature engineering capabilities"""
+        return {
+            "basic_features": list(NetworkFeatures.__dataclass_fields__.keys()),
+            "feature_weights": self.feature_weights,
+            "normalization_method": self.normalization_method,
+            "statistics_tracking": len(self.feature_stats),
+            "history_size": sum(len(v) for v in self.feature_history.values()),
+            "advanced_features_available": [
+                "contextual_features",
+                "temporal_patterns",
+                "network_behavioral",
+                "anomaly_scores"
+            ]
         }
 
     # BaseComponent abstract methods

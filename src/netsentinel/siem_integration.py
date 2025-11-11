@@ -33,6 +33,13 @@ from .utils import (
     verify_hmac,
 )
 
+# Import event bus for WebSocket integration
+try:
+    from .core.event_bus import get_event_bus, create_event
+except ImportError:
+    get_event_bus = None
+    create_event = None
+
 logger = create_logger("siem_integration", level="INFO")
 
 
@@ -467,12 +474,45 @@ class SiemManager:
         self.event_filters = {}
         self.active_flows = set()  # Track active data flows
         self.running = False
+
+        # WebSocket integration
+        self.event_bus = get_event_bus() if get_event_bus else None
+
         self.stats = {
             "events_sent": 0,
             "events_failed": 0,
             "connectors_active": 0,
             "last_event_time": None,
         }
+
+    def _publish_siem_event(self, event_type: str, data: Dict[str, Any]):
+        """
+        Publish SIEM event via WebSocket
+
+        Args:
+            event_type: Type of SIEM event
+            data: Event data
+        """
+        if not self.event_bus:
+            return
+
+        try:
+            event_data = {
+                "type": f"siem.{event_type}",
+                "data": {
+                    "event_type": event_type,
+                    "timestamp": time.time(),
+                    **data
+                }
+            }
+
+            event = create_event(f"siem.{event_type}", event_data)
+            self.event_bus.publish(event)
+
+            logger.debug(f"Published SIEM event: {event_type}")
+
+        except Exception as e:
+            logger.warning(f"Failed to publish SIEM event {event_type}: {e}")
 
     def add_splunk_connector(self, name: str, endpoint: str, token: str, **kwargs):
         """Add Splunk connector"""
@@ -560,9 +600,24 @@ class SiemManager:
             if success_count > 0:
                 self.stats["events_sent"] += 1
                 self.stats["last_event_time"] = time.time()
+
+                # Publish WebSocket event for successful SIEM forwarding
+                self._publish_siem_event("event_forwarded", {
+                    "event_data": event_data,
+                    "systems_reached": success_count,
+                    "total_systems": len(self.enabled_systems)
+                })
+
                 return True
             else:
                 self.stats["events_failed"] += 1
+
+                # Publish WebSocket event for failed SIEM forwarding
+                self._publish_siem_event("event_failed", {
+                    "event_data": event_data,
+                    "error": "No SIEM systems available or all failed"
+                })
+
                 return False
 
         except Exception as e:

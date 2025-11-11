@@ -167,6 +167,8 @@ services:
     # Remove host network mode for Windows compatibility
     # network_mode: host
     volumes:
+      # Mount source code for development
+      - ./src:/app/src
       # Mount host iptables for firewall management
       - /var/lib/iptables:/var/lib/iptables
       - /etc/iptables:/etc/iptables

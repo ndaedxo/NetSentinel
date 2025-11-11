@@ -29,6 +29,7 @@ from .event_router import EventRouter
 from .api_server import APIServer, create_api_server
 from .threat_storage import ThreatStorage, create_threat_storage
 from ..firewall_manager import FirewallManager
+from ..alerts import get_alert_manager
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +55,7 @@ class ProcessorConfig:
     correlation_ttl: int = 1800
     firewall_manager_enabled: bool = True
     websocket_enabled: bool = True
+    alert_manager_enabled: bool = True
 
 
 class RefactoredEventProcessor(BaseComponent):
@@ -77,6 +79,7 @@ class RefactoredEventProcessor(BaseComponent):
         self.api_server: Optional[APIServer] = None
         self.threat_storage: Optional[ThreatStorage] = None
         self.firewall_manager: Optional[FirewallManager] = None
+        self.alert_manager = None
         self.websocket_manager = None  # Will be initialized if websocket_enabled
 
         # Processing metrics
@@ -98,12 +101,16 @@ class RefactoredEventProcessor(BaseComponent):
             )
             self.consumer = EventConsumer(consumer_config, self.logger)
 
+            # Initialize alert manager if enabled (before analyzer)
+            if self.config.alert_manager_enabled:
+                self.alert_manager = get_alert_manager()
+
             # Initialize analyzer
             analyzer_config = {
                 "ml_enabled": self.config.ml_enabled,
                 "max_workers": self.config.max_workers,
             }
-            self.analyzer = EventAnalyzer(analyzer_config, self.logger)
+            self.analyzer = EventAnalyzer(analyzer_config, self.logger, self.alert_manager)
 
             # Initialize router
             router_config = {
@@ -205,6 +212,10 @@ class RefactoredEventProcessor(BaseComponent):
                 await self.threat_storage.start()
                 self.logger.info("Threat storage started")
 
+            if self.alert_manager:
+                await self.alert_manager.start()
+                self.logger.info("Alert manager started")
+
             if self.router:
                 await self.router.start()
                 self.logger.info("Event router started")
@@ -245,6 +256,10 @@ class RefactoredEventProcessor(BaseComponent):
                 await self.threat_storage.stop()
                 self.logger.info("Threat storage stopped")
 
+            if self.alert_manager:
+                await self.alert_manager.stop()
+                self.logger.info("Alert manager stopped")
+
             if self.analyzer:
                 await self.analyzer.stop()
                 self.logger.info("Event analyzer stopped")
@@ -276,8 +291,10 @@ class RefactoredEventProcessor(BaseComponent):
         # Consumer -> Analyzer flow
         async def route_to_analyzer(event: StandardEvent):
             try:
+                self.logger.info(f"Routing event {event.id} to analyzer (type: {event.event_type})")
                 await self.analyzer.queue_item(event)
                 self.events_processed += 1
+                self.logger.info(f"Event {event.id} queued to analyzer successfully")
 
                 # Track metrics
                 self.metrics_collector.increment_counter(
@@ -288,16 +305,12 @@ class RefactoredEventProcessor(BaseComponent):
                 self.events_failed += 1
                 self.logger.error(f"Error routing to analyzer: {e}")
 
-                # Track error metrics
-                self.metrics_collector.increment_counter(
-                    "events_failed_total", labels={"error_type": type(e).__name__}
-                )
-
         self.consumer.add_event_handler(route_to_analyzer)
 
         # Analyzer -> Router flow
         async def route_analysis_result(result: AnalysisResult):
             try:
+                self.logger.info(f"Routing analysis result for event {result.event.id} (score={result.threat_score}) to router")
                 await self.router.queue_item(result)
 
                 # Store threat data and perform correlation if threat storage is enabled
@@ -352,6 +365,9 @@ class RefactoredEventProcessor(BaseComponent):
                 self.metrics_collector.increment_counter(
                     "analysis_routing_failed_total"
                 )
+
+        # Set analyzer result callback after function is defined
+        self.analyzer.set_result_callback(route_analysis_result)
 
         # Register router handlers
         self.router.register_handler("alert_store", self._handle_alert)

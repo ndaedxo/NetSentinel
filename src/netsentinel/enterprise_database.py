@@ -445,9 +445,73 @@ class EnterpriseDatabaseManager:
         self.elasticsearch = None
         self.influxdb = None
 
+        # WebSocket integration
+        self.event_bus = get_event_bus() if get_event_bus else None
+
         self._init_databases()
 
         logger.info("Initialized enterprise database manager")
+
+    def _publish_database_event(self, event_type: str, data: Dict[str, Any]):
+        """
+        Publish database event via WebSocket
+
+        Args:
+            event_type: Type of database event
+            data: Event data
+        """
+        if not self.event_bus:
+            return
+
+        try:
+            event_data = {
+                "type": f"db.{event_type}",
+                "data": {
+                    "event_type": event_type,
+                    "timestamp": time.time(),
+                    **data
+                }
+            }
+
+            event = create_event(f"db.{event_type}", event_data)
+            self.event_bus.publish(event)
+
+            logger.debug(f"Published database event: {event_type}")
+
+        except Exception as e:
+            logger.warning(f"Failed to publish database event {event_type}: {e}")
+
+    def store_event(self, event_data: Dict[str, Any], event_type: str = "events") -> bool:
+        """
+        Store an event and publish WebSocket notification
+
+        Args:
+            event_data: Event data to store
+            event_type: Type of event
+
+        Returns:
+            bool: Success status
+        """
+        try:
+            # Store in Elasticsearch
+            if self.elasticsearch:
+                self.elasticsearch.index_event(event_data, event_type)
+
+            # Store in InfluxDB if it's a metric
+            if self.influxdb and event_type == "metrics":
+                self.influxdb.write_metric(event_data)
+
+            # Publish WebSocket event
+            self._publish_database_event("event_stored", {
+                "event_type": event_type,
+                "event_data": event_data
+            })
+
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to store event: {e}")
+            return False
 
     def _init_databases(self):
         """Initialize database connections"""
